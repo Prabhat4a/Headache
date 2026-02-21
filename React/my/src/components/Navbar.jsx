@@ -1,25 +1,19 @@
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
 
-function Navbar() {
-  const navigate = useNavigate();
-
-  const handleLoginClick = () => {
-    navigate("/login");
-  };
-
+const Navbar = () => {
   return (
     <nav className="navbar">
-      <div className="logo">
-        <h1>STUVO5</h1>
+      <div className="nav-logo">
+        <img src="/logo.png" alt="STUVO" className="logo-icon" />
+        <span className="logo-text">STUVO5</span>
+        <span className="beta">β</span>
       </div>
-
-      <div className="nav-links">
-        <button className="login-btn" onClick={handleLoginClick}>
-          Login
-        </button>
-      </div>
+      <Link to="/login" className="login-btn">
+        Login
+      </Link>
     </nav>
   );
-}
+};
 
 export default Navbar;

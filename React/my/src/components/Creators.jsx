@@ -1,226 +1,135 @@
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
 
-// Creators Section Component
-function Creators() {
-  const navigate = useNavigate();
+const Creators = () => {
+  const creators = [
+    {
+      name: "Prabhat Kumar Behera",
+      role: "Frontend Developer",
+      image: "/prabhat.jpg",
+      socials: {
+        instagram: "https://www.instagram.com/prabhat4a/",
+        github: "https://github.com/Prabhat4a",
+        linkedin: "https://www.linkedin.com/in/prabhat-kumar-behera-a806a3363/",
+      },
+    },
+    {
+      name: "Jitu Senapati",
+      role: "UI/UX Designer",
+      image: "/jitu.jpeg",
+      socials: {
+        instagram: "#",
+        github: "https://github.com/JituSenapati",
+        linkedin: "https://www.linkedin.com/in/jitu-senapati-702854363/",
+      },
+    },
+    {
+      name: "N.Eswar Sunny",
+      role: "Backend Developer",
+      image: "/Sunny.jpg",
+      socials: {
+        instagram: "https://www.instagram.com/the_e_square_/",
+        github: "https://github.com/NESWAR-SUNNY",
+        linkedin: "https://www.linkedin.com/in/n-eswar-sunny-483a1937b/",
+      },
+    },
+    {
+      name: "Aryan Kumar Rajak",
+      role: "Content Strategist",
+      image: "/Aryan.jpg",
+      socials: {
+        instagram: "https://www.instagram.com/aryan_kumar_rajak/",
+        github: "https://github.com/AryanKumarRajak",
+        linkedin: "https://www.linkedin.com/in/aryan-kumar-rajak-702854363/",
+      },
+    },
+    {
+      name: "Sudhansu Sekhara Sunani",
+      role: "Marketing Lead",
+      image: "/sudhansu.jpeg",
+      socials: {
+        instagram:
+          "https://www.instagram.com/sudhansu_sudhansu_sekhara_sunani/",
+        github: "https://github.com/Sudhansu-Sekhara-Sunani",
+        linkedin:
+          "https://www.linkedin.com/in/sudhansu-sudhansu-sekhara-sunani-702854363/",
+      },
+    },
+  ];
 
-  const handleRegisterClick = () => {
-    navigate("/register");
-  };
+  const firstRow = creators.slice(0, 3);
+  const secondRow = creators.slice(3, 5);
+
+  const CreatorCard = ({ creator }) => (
+    <div className="creator-card">
+      <div className="creator-image">
+        <img src={creator.image} alt={creator.name} />
+      </div>
+      <h3 className="creator-name">{creator.name}</h3>
+      <p className="creator-role">{creator.role}</p>
+      <div className="creator-socials">
+        <a
+          href={creator.socials.instagram}
+          className="social-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Instagram"
+        >
+          <i className="bx bxl-instagram"></i>
+        </a>
+        <a
+          href={creator.socials.github}
+          className="social-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="GitHub"
+        >
+          <i className="bx bxl-github"></i>
+        </a>
+        <a
+          href={creator.socials.linkedin}
+          className="social-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="LinkedIn"
+        >
+          <i className="bx bxl-linkedin"></i>
+        </a>
+        <a href="#" className="social-link" aria-label="STUVO">
+          <img src="/logo.png" alt="STUVO" />
+        </a>
+      </div>
+    </div>
+  );
 
   return (
     <section className="creators-section" id="creators">
       <h2 className="creators-title">Meet the Creators</h2>
 
       <div className="creators-wrapper">
-        {/* First Row */}
         <div className="creators-row">
-          {/* Creator 1 */}
-          <div className="creator-card">
-            <div className="creator-image">
-              <img src="/prabhat.jpg" alt="Prabhat Kumar Behera" />
-            </div>
-            <h3 className="creator-name">Prabhat Kumar Behera</h3>
-            <p className="creator-role">Frontend Developer</p>
-
-            <div className="creator-socials">
-              <a
-                href="https://www.instagram.com/prabhat4a/"
-                className="social-link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="bx bxl-instagram"></i>
-              </a>
-              <a
-                href="https://github.com/Prabhat4a"
-                className="social-link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="bx bxl-github"></i>
-              </a>
-              <a
-                href="https://www.linkedin.com/in/prabhat-kumar-behera-a806a3363/"
-                className="social-link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="bx bxl-linkedin"></i>
-              </a>
-              <a href="#" className="social-link">
-                <img src="/logo.png" alt="STUVO" />
-              </a>
-            </div>
-          </div>
-
-          {/* Creator 2 */}
-          <div className="creator-card">
-            <div className="creator-image">
-              <img src="/jitu.jpeg" alt="Jitu Senapati" />
-            </div>
-            <h3 className="creator-name">Jitu Senapati</h3>
-            <p className="creator-role">UI/UX Designer</p>
-
-            <div className="creator-socials">
-              <a href="#" className="social-link">
-                <i className="bx bxl-instagram"></i>
-              </a>
-              <a
-                href="https://github.com/JituSenapati"
-                className="social-link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="bx bxl-github"></i>
-              </a>
-              <a
-                href="https://www.linkedin.com/in/jitu-senapati-702854363/"
-                className="social-link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="bx bxl-linkedin"></i>
-              </a>
-              <a href="#" className="social-link">
-                <img src="/logo.png" alt="STUVO" />
-              </a>
-            </div>
-          </div>
-
-          {/* Creator 3 */}
-          <div className="creator-card">
-            <div className="creator-image">
-              <img src="/Sunny.jpg" alt="N Eswar Sunny" />
-            </div>
-            <h3 className="creator-name">N. Eswar Sunny</h3>
-            <p className="creator-role">Backend Developer</p>
-
-            <div className="creator-socials">
-              <a
-                href="https://www.instagram.com/the_e_square_/"
-                className="social-link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="bx bxl-instagram"></i>
-              </a>
-              <a
-                href="https://github.com/NESWAR-SUNNY"
-                className="social-link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="bx bxl-github"></i>
-              </a>
-              <a
-                href="https://www.linkedin.com/in/n-eswar-sunny-483a1937b/"
-                className="social-link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="bx bxl-linkedin"></i>
-              </a>
-              <a href="#" className="social-link">
-                <img src="/logo.png" alt="STUVO" />
-              </a>
-            </div>
-          </div>
+          {firstRow.map((creator, index) => (
+            <CreatorCard creator={creator} key={index} />
+          ))}
         </div>
 
-        {/* Second Row */}
         <div className="creators-row second">
-          {/* Creator 4 */}
-          <div className="creator-card">
-            <div className="creator-image">
-              <img src="/Aryan.jpg" alt="Aryan Kumar Rajak" />
-            </div>
-            <h3 className="creator-name">Aryan Kumar Rajak</h3>
-            <p className="creator-role">Content Strategist</p>
-
-            <div className="creator-socials">
-              <a
-                href="https://www.instagram.com/aryan_kumar_rajak/"
-                className="social-link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="bx bxl-instagram"></i>
-              </a>
-              <a
-                href="https://github.com/AryanKumarRajak"
-                className="social-link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="bx bxl-github"></i>
-              </a>
-              <a
-                href="https://www.linkedin.com/in/aryan-kumar-rajak-702854363/"
-                className="social-link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="bx bxl-linkedin"></i>
-              </a>
-              <a href="#" className="social-link">
-                <img src="/logo.png" alt="STUVO" />
-              </a>
-            </div>
-          </div>
-
-          {/* Creator 5 */}
-          <div className="creator-card">
-            <div className="creator-image">
-              <img src="/sudhansu.jpeg" alt="Sudhansu Sekhara Sunani" />
-            </div>
-            <h3 className="creator-name">Sudhansu Sekhara Sunani</h3>
-            <p className="creator-role">Marketing Lead</p>
-
-            <div className="creator-socials">
-              <a
-                href="https://www.instagram.com/sudhansu_sudhansu_sekhara_sunani/"
-                className="social-link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="bx bxl-instagram"></i>
-              </a>
-              <a
-                href="https://github.com/Sudhansu-Sekhara-Sunani"
-                className="social-link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="bx bxl-github"></i>
-              </a>
-              <a
-                href="https://www.linkedin.com/in/sudhansu-sudhansu-sekhara-sunani-702854363/"
-                className="social-link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="bx bxl-linkedin"></i>
-              </a>
-              <a href="#" className="social-link">
-                <img src="/logo.png" alt="STUVO" />
-              </a>
-            </div>
-          </div>
+          {secondRow.map((creator, index) => (
+            <CreatorCard creator={creator} key={index} />
+          ))}
         </div>
       </div>
 
-      {/* Call To Action */}
       <div className="cta-section">
         <h3 className="cta-title">
           Create your account and experience STUVO5 for yourself
         </h3>
-        <button className="cta-button" onClick={handleRegisterClick}>
+        <Link to="/register" className="cta-button">
           Join STUVO5
-        </button>
+        </Link>
       </div>
     </section>
   );
-}
+};
 
 export default Creators;
