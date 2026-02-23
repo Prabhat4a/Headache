@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import AuthContainer from "../components/auth/AuthContainer";
 import PrivacyModal from "../components/auth/PrivacyModal";
 import ContactModal from "../components/auth/ContactModal";
+import Footer from "../components/Footer";
+
 import "../styles/auth.css";
 
 const Login = () => {

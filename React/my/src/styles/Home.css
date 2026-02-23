@@ -263,10 +263,11 @@ body {
 }
 
 /* ==================== ABOUT SECTION ==================== */
+/* min-height: 100vh ensures only this section fills the screen */
 .about-section {
-  min-height: auto;
+  min-height: 100vh;
   height: auto;
-  padding: 6rem 4%;
+  padding: 8rem 4%;
   background: linear-gradient(180deg, #050505 0%, #0a0712 50%, #0d0818 100%);
   display: flex;
   align-items: center;
@@ -486,11 +487,16 @@ body {
 }
 
 /* ==================== CREATORS SECTION ==================== */
+/* min-height: 100vh ensures only this section fills the screen */
 .creators-section {
-  padding: 4rem 4% 6rem;
+  min-height: 100vh;
+  padding: 8rem 4%;
   background: linear-gradient(180deg, #0d0818 0%, #0d0818 50%, #0a0712 100%);
   position: relative;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .creators-section::before {
@@ -645,9 +651,15 @@ body {
   text-decoration: none;
   font-size: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
   position: relative;
   overflow: hidden;
+  /* Fix mobile tap glitch */
+  -webkit-tap-highlight-color: transparent;
+  transform: translateZ(0);
 }
 
 .social-link::before {
@@ -656,16 +668,30 @@ body {
   inset: 0;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+  border-radius: 50%;
 }
 
 .social-link:hover {
-  transform: translateY(-4px);
+  transform: translateY(-4px) translateZ(0);
   border-color: transparent;
   box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
 }
 
 .social-link:hover::before {
+  opacity: 1;
+}
+
+/* Snap back cleanly on touch release */
+.social-link:not(:hover):not(:active)::before {
+  opacity: 0;
+}
+
+.social-link:active {
+  transform: translateY(-2px) translateZ(0);
+}
+.social-link:active::before {
   opacity: 1;
 }
 
@@ -762,11 +788,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Side-by-side on large screens, wraps naturally */
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: 20px;
   padding: 15px 20px;
   width: 100%;
   position: relative;
-  flex-wrap: wrap;
 }
 
 .footer-link {
@@ -1212,7 +1240,6 @@ body {
     width: 100px;
     height: 100px;
   }
-
   .creator-card {
     padding: 1.25rem;
   }
@@ -1223,11 +1250,9 @@ body {
   .navbar {
     padding: 0.75rem 4%;
   }
-
   .logo-text {
     font-size: 1.1rem;
   }
-
   .login-btn {
     padding: 0.4rem 1rem;
     font-size: 0.8rem;
@@ -1235,7 +1260,7 @@ body {
 
   .hero {
     padding: 4rem 0 1.5rem;
-    min-height: auto;
+    min-height: 100vh;
   }
 
   .hero-content {
@@ -1252,33 +1277,30 @@ body {
     grid-template-columns: repeat(3, 1fr);
     gap: 0.4rem;
   }
-
   .col-4,
   .col-5 {
     display: none;
   }
 
+  /* About — keep full-screen but tighten padding so content fits */
   .about-section {
-    padding: 3rem 4%;
+    min-height: 100vh;
+    padding: 5rem 4%;
   }
 
   .about-animation {
     height: 200px;
   }
-
   .floating-element {
     width: 50px;
     height: 50px;
   }
-
   .floating-element i {
     font-size: 1.25rem;
   }
-
   .animated-orb {
     filter: blur(30px);
   }
-
   .orb-1 {
     width: 100px;
     height: 100px;
@@ -1292,66 +1314,83 @@ body {
     height: 90px;
   }
 
+  /* Creators — keep full-screen */
+  .creators-section {
+    min-height: 100vh;
+    padding: 5rem 4%;
+  }
+
   .creators-row,
   .creators-row.second {
     grid-template-columns: 1fr;
-    max-width: 320px;
+    max-width: 100%; /* fill screen width, no more tiny 320px cap */
     margin: 0 auto;
   }
 
   .creator-card {
     padding: 1.5rem;
   }
-
   .creator-image {
     width: 100px;
     height: 100px;
   }
-
   .creator-name {
     font-size: 1rem;
   }
 
+  /* Extra bottom margin so CTA breathes above footer */
   .cta-section {
     padding: 1.5rem 1rem;
-    margin: 0 1rem;
+    margin: 0 1rem 3rem;
   }
 
+  /* ---- FOOTER: stack every item vertically on mobile ---- */
   .site-footer {
     flex-direction: column;
-    gap: 8px;
-    padding: 12px;
+    align-items: center;
+    gap: 10px;
+    padding: 22px 12px;
     text-align: center;
   }
 
+  /* Each link on its own line, full width, centered */
+  .footer-link {
+    font-size: 13px;
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+  .footer-copyright {
+    font-size: 11px;
+    margin-top: 4px;
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Modals */
   .modal-content {
     width: 95%;
     max-height: 85vh;
     border-radius: 16px;
   }
-
   .modal-header {
     padding: 16px 20px;
     border-radius: 16px 16px 0 0;
   }
-
   .modal-header h2 {
     font-size: 14px;
   }
-
   .modal-body {
     padding: 16px 20px;
   }
-
   .modal-footer {
     padding: 12px 20px;
   }
-
   .topic-grid {
     grid-template-columns: 1fr;
     gap: 8px;
   }
-
   .topic-btn {
     padding: 10px 12px;
     font-size: 12px;
@@ -1363,37 +1402,39 @@ body {
   .hero-title {
     font-size: 1.5rem;
   }
-
   .hero-logo-icon {
     height: 2rem;
   }
 
+  .about-section {
+    min-height: 100vh;
+    padding: 4.5rem 4%;
+  }
   .about-title {
     font-size: 1.25rem;
   }
-
   .about-description {
     font-size: 0.8rem;
   }
-
   .feature-item {
     font-size: 0.75rem;
     padding: 0.5rem;
   }
 
+  .creators-section {
+    min-height: 100vh;
+    padding: 4.5rem 4%;
+  }
   .creators-title {
     font-size: 1.25rem;
   }
-
   .creator-image {
     width: 90px;
     height: 90px;
   }
-
   .creator-name {
     font-size: 0.95rem;
   }
-
   .creator-role {
     font-size: 0.75rem;
   }
@@ -1403,11 +1444,9 @@ body {
     height: 2rem;
     font-size: 0.875rem;
   }
-
   .cta-title {
     font-size: 0.9rem;
   }
-
   .cta-button {
     padding: 0.75rem 1.5rem;
     font-size: 0.8rem;
@@ -1420,60 +1459,56 @@ body {
     font-size: 1.25rem;
     letter-spacing: 0.05rem;
   }
-
   .parallax-grid {
     gap: 0.3rem;
   }
-
   .creator-image {
     width: 80px;
     height: 80px;
   }
-
   .creator-card {
     padding: 1rem;
   }
-
   .footer-link {
     font-size: 11px;
   }
-
   .footer-copyright {
     font-size: 10px;
   }
 }
 
-/* Landscape mode / Short screens */
+/* Landscape / Short screens — disable min-height so content stays reachable */
 @media (max-height: 600px) and (orientation: landscape) {
   .hero {
     min-height: auto;
     padding: 3.5rem 0 1rem;
   }
-
   .hero-content {
     margin-top: 2vh;
     margin-bottom: 1rem;
   }
-
   .hero-images-container {
     min-height: 40vh;
   }
 
   .about-section {
-    padding: 2rem 4%;
+    min-height: auto;
+    padding: 4rem 4%;
   }
-
   .about-animation {
     height: 150px;
   }
-
   .floating-element {
     width: 40px;
     height: 40px;
   }
-
   .floating-element i {
     font-size: 1rem;
+  }
+
+  .creators-section {
+    min-height: auto;
+    padding: 4rem 4%;
   }
 }
 

@@ -79,50 +79,21 @@ const Footer = () => {
     setTimeout(resetContact, 300);
   };
 
-  // Inline styles to ensure footer is NOT fixed
-  const footerStyles = {
-    background: "rgba(5, 5, 10, 0.95)",
-    backdropFilter: "blur(12px)",
-    WebkitBackdropFilter: "blur(12px)",
-    borderTop: "1px solid rgba(255, 255, 255, 0.07)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "28px",
-    padding: "20px",
-    position: "relative", // NOT fixed!
-    width: "100%",
-    marginTop: "auto",
-  };
-
-  const footerLinkStyles = {
-    color: "rgba(255, 255, 255, 0.45)",
-    textDecoration: "none",
-    fontSize: "13px",
-    fontWeight: 500,
-    transition: "color 0.25s ease",
-    whiteSpace: "nowrap",
-    background: "none",
-    border: "none",
-    cursor: "pointer",
-  };
-
-  const copyrightStyles = {
-    color: "rgba(255, 255, 255, 0.3)",
-    fontSize: "12px",
-    whiteSpace: "nowrap",
-  };
-
   return (
     <>
-      <footer style={footerStyles}>
-        <button style={footerLinkStyles} onClick={() => setShowPrivacy(true)}>
-          Privacy
-        </button>
-        <button style={footerLinkStyles} onClick={() => setShowContact(true)}>
-          Contact with STUVO5
-        </button>
-        <span style={copyrightStyles}>© 2026 STUVO5. All rights reserved.</span>
+      <footer className="site-footer">
+        <div className="footer-links">
+          <button className="footer-link" onClick={() => setShowPrivacy(true)}>
+            Privacy
+          </button>
+          <button className="footer-link" onClick={() => setShowContact(true)}>
+            Contact with STUVO5
+          </button>
+        </div>
+        <span className="footer-divider">|</span>
+        <span className="footer-copyright">
+          © 2026 STUVO5. All rights reserved.
+        </span>
       </footer>
 
       {/* Privacy Modal */}
