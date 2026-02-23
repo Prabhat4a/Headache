@@ -1,66 +1,76 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Creators = () => {
-  const creators = [
-    {
-      name: "Prabhat Kumar Behera",
-      role: "Frontend Developer",
-      image: "/prabhat.jpg",
-      socials: {
-        instagram: "https://www.instagram.com/prabhat4a/",
-        github: "https://github.com/Prabhat4a",
-        linkedin: "https://www.linkedin.com/in/prabhat-kumar-behera-a806a3363/",
-      },
+const creatorsData = [
+  {
+    id: 1,
+    name: "Prabhat Kumar Behera",
+    role: "Frontend Developer",
+    image: "prabhat.jpg",
+    socials: {
+      instagram: "https://www.instagram.com/prabhat4a/",
+      github: "https://github.com/Prabhat4a",
+      linkedin: "https://www.linkedin.com/in/prabhat-kumar-behera-a806a3363/",
+      stuvo: "#",
     },
-    {
-      name: "Jitu Senapati",
-      role: "UI/UX Designer",
-      image: "/jitu.jpeg",
-      socials: {
-        instagram: "#",
-        github: "https://github.com/JituSenapati",
-        linkedin: "https://www.linkedin.com/in/jitu-senapati-702854363/",
-      },
+  },
+  {
+    id: 2,
+    name: "Jitu Senapati",
+    role: "UI/UX Designer",
+    image: "jitu.jpeg",
+    socials: {
+      instagram: "#",
+      github: "https://github.com/JituSenapati",
+      linkedin: "https://www.linkedin.com/in/jitu-senapati-702854363/",
+      stuvo: "#",
     },
-    {
-      name: "N.Eswar Sunny",
-      role: "Backend Developer",
-      image: "/Sunny.jpg",
-      socials: {
-        instagram: "https://www.instagram.com/the_e_square_/",
-        github: "https://github.com/NESWAR-SUNNY",
-        linkedin: "https://www.linkedin.com/in/n-eswar-sunny-483a1937b/",
-      },
+  },
+  {
+    id: 3,
+    name: "N.Eswar Sunny",
+    role: "Backend Developer",
+    image: "Sunny.jpg",
+    socials: {
+      instagram: "https://www.instagram.com/the_e_square_/",
+      github: "https://github.com/NESWAR-SUNNY",
+      linkedin: "https://www.linkedin.com/in/n-eswar-sunny-483a1937b/",
+      stuvo: "#",
     },
-    {
-      name: "Aryan Kumar Rajak",
-      role: "Content Strategist",
-      image: "/Aryan.jpg",
-      socials: {
-        instagram: "https://www.instagram.com/aryan_kumar_rajak/",
-        github: "https://github.com/AryanKumarRajak",
-        linkedin: "https://www.linkedin.com/in/aryan-kumar-rajak-702854363/",
-      },
+  },
+  {
+    id: 4,
+    name: "Aryan Kumar Rajak",
+    role: "Content Strategist",
+    image: "Aryan.jpg",
+    socials: {
+      instagram: "https://www.instagram.com/aryan_kumar_rajak/",
+      github: "https://github.com/AryanKumarRajak",
+      linkedin: "https://www.linkedin.com/in/aryan-kumar-rajak-702854363/",
+      stuvo: "#",
     },
-    {
-      name: "Sudhansu Sekhara Sunani",
-      role: "Marketing Lead",
-      image: "/sudhansu.jpeg",
-      socials: {
-        instagram:
-          "https://www.instagram.com/sudhansu_sudhansu_sekhara_sunani/",
-        github: "https://github.com/Sudhansu-Sekhara-Sunani",
-        linkedin:
-          "https://www.linkedin.com/in/sudhansu-sudhansu-sekhara-sunani-702854363/",
-      },
+  },
+  {
+    id: 5,
+    name: "Sudhansu Sekhara Sunani",
+    role: "Marketing Lead",
+    image: "sudhansu.jpeg",
+    socials: {
+      instagram: "https://www.instagram.com/sudhansu_sudhansu_sekhara_sunani/",
+      github: "https://github.com/Sudhansu-Sekhara-Sunani",
+      linkedin:
+        "https://www.linkedin.com/in/sudhansu-sudhansu-sekhara-sunani-702854363/",
+      stuvo: "#",
     },
-  ];
+  },
+];
 
-  const firstRow = creators.slice(0, 3);
-  const secondRow = creators.slice(3, 5);
+const CreatorCard = ({ creator }) => {
+  const handleSocialClick = (e) => {
+    e.currentTarget.blur();
+  };
 
-  const CreatorCard = ({ creator }) => (
+  return (
     <div className="creator-card">
       <div className="creator-image">
         <img src={creator.image} alt={creator.name} />
@@ -73,7 +83,7 @@ const Creators = () => {
           className="social-link"
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="Instagram"
+          onClick={handleSocialClick}
         >
           <i className="bx bxl-instagram"></i>
         </a>
@@ -82,7 +92,7 @@ const Creators = () => {
           className="social-link"
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="GitHub"
+          onClick={handleSocialClick}
         >
           <i className="bx bxl-github"></i>
         </a>
@@ -91,31 +101,35 @@ const Creators = () => {
           className="social-link"
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="LinkedIn"
+          onClick={handleSocialClick}
         >
           <i className="bx bxl-linkedin"></i>
         </a>
-        <a href="#" className="social-link" aria-label="STUVO">
-          <img src="/logo.png" alt="STUVO" />
+        <a
+          href={creator.socials.stuvo}
+          className="social-link"
+          onClick={handleSocialClick}
+        >
+          <img src="logo.png" alt="STUVO" />
         </a>
       </div>
     </div>
   );
+};
 
+const Creators = () => {
   return (
     <section className="creators-section" id="creators">
       <h2 className="creators-title">Meet the Creators</h2>
-
       <div className="creators-wrapper">
         <div className="creators-row">
-          {firstRow.map((creator, index) => (
-            <CreatorCard creator={creator} key={index} />
+          {creatorsData.slice(0, 3).map((creator) => (
+            <CreatorCard key={creator.id} creator={creator} />
           ))}
         </div>
-
         <div className="creators-row second">
-          {secondRow.map((creator, index) => (
-            <CreatorCard creator={creator} key={index} />
+          {creatorsData.slice(3, 5).map((creator) => (
+            <CreatorCard key={creator.id} creator={creator} />
           ))}
         </div>
       </div>
