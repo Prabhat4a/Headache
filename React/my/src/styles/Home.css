@@ -27,69 +27,6 @@ body {
   flex: 1 0 auto;
 }
 
-/* Footer - At bottom of page content, visible when scrolling */
-.site-footer {
-  background: rgba(5, 5, 10, 0.88);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 28px;
-  padding: 13px 20px;
-  position: relative;
-  z-index: 100;
-  flex-shrink: 0;
-  width: 100%;
-  margin-top: auto;
-}
-
-.footer-links {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-}
-
-.site-footer a {
-  color: rgba(255, 255, 255, 0.45);
-  text-decoration: none;
-  font-size: 12.5px;
-  font-weight: 500;
-  transition: color 0.2s ease;
-  white-space: nowrap;
-  -webkit-tap-highlight-color: transparent;
-  outline: none;
-  cursor: pointer;
-}
-
-.site-footer a:hover {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.site-footer a:focus,
-.site-footer a:active {
-  outline: none;
-  color: rgba(255, 255, 255, 0.45);
-}
-
-@media (hover: none) {
-  .site-footer a:hover {
-    color: rgba(255, 255, 255, 0.45);
-  }
-
-  .site-footer a:active {
-    color: rgba(255, 255, 255, 0.9);
-    transition: none;
-  }
-}
-
-.footer-copy {
-  color: rgba(255, 255, 255, 0.3);
-  font-size: 12px;
-  white-space: nowrap;
-}
-
 /* Navigation */
 .navbar {
   position: fixed;
@@ -157,7 +94,6 @@ body {
     transform: none;
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
   }
-
   .login-btn:active {
     transform: scale(0.95);
     transition: all 0.1s ease;
@@ -343,18 +279,20 @@ body {
   pointer-events: none;
 }
 
-/* About Section */
+/* ==================== ABOUT SECTION ====================
+   KEY FIX: NO height: 100vh — only min-height so it can grow
+   KEY FIX: NO margin-bottom — was creating the black gap
+*/
 .about-section {
   min-height: 100vh;
-  height: 100vh;
-  padding: 2rem 4%;
+  padding: 6rem 4%;
   background: #050505;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  margin-bottom: 4rem;
   overflow: hidden;
+  margin: 0;
 }
 
 .about-section::before {
@@ -559,13 +497,6 @@ body {
   transform: translateX(5px);
 }
 
-.feature-item:focus,
-.feature-item:active {
-  background: rgba(255, 255, 255, 0.03);
-  border-color: rgba(255, 255, 255, 0.06);
-  transform: none;
-}
-
 @media (hover: none) {
   .feature-item:hover {
     background: rgba(255, 255, 255, 0.03);
@@ -581,13 +512,16 @@ body {
   margin-top: 0.1rem;
 }
 
-/* Creators Section */
+/* ==================== CREATORS SECTION ====================
+   KEY FIX: padding-top reduced, no margin gaps
+*/
 .creators-section {
-  padding: 4rem 4% 2rem; /* was: 6rem 4% 2rem — 6rem top was too much */
+  padding: 5rem 4% 3rem;
   background: linear-gradient(180deg, #050505 0%, #0a0712 50%, #0d0818 100%);
-  margin-bottom: 0;
   position: relative;
+  margin: 0;
 }
+
 .creators-section::before {
   content: "";
   position: absolute;
@@ -651,14 +585,6 @@ body {
   box-shadow: 0 15px 40px rgba(102, 126, 234, 0.12);
 }
 
-.creator-card:focus,
-.creator-card:active {
-  transform: none;
-  border-color: rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.04);
-  box-shadow: none;
-}
-
 @media (hover: none) {
   .creator-card:hover {
     transform: none;
@@ -682,12 +608,6 @@ body {
 .creator-card:hover .creator-image {
   transform: scale(1.03);
   border-color: rgba(102, 126, 234, 0.5);
-}
-
-.creator-card:focus .creator-image,
-.creator-card:active .creator-image {
-  transform: none;
-  border-color: rgba(102, 126, 234, 0.2);
 }
 
 @media (hover: none) {
@@ -722,6 +642,7 @@ body {
   gap: 0.75rem;
 }
 
+/* Social link - clean, no sticky hover glitch */
 .social-link {
   width: 2.5rem;
   height: 2.5rem;
@@ -735,8 +656,6 @@ body {
   font-size: 1.1rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.2s ease;
-  position: relative;
-  overflow: hidden;
   -webkit-tap-highlight-color: transparent;
   outline: none;
 }
@@ -748,15 +667,7 @@ body {
   box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
 }
 
-.social-link:focus,
-.social-link:active {
-  outline: none;
-  transform: none;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: none;
-}
-
+/* On touch devices: disable hover, only show gradient on actual tap */
 @media (hover: none) {
   .social-link:hover {
     transform: none;
@@ -764,7 +675,6 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: none;
   }
-
   .social-link:active {
     transform: scale(0.95);
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -791,7 +701,7 @@ body {
   text-align: center;
   padding: 3rem 2rem;
   max-width: 800px;
-  margin: 0 auto 1rem;
+  margin: 0 auto 2rem;
   background: rgba(102, 126, 234, 0.08);
   border-radius: 24px;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -857,76 +767,19 @@ body {
   filter: brightness(1.1);
 }
 
-.cta-button:focus,
-.cta-button:active {
-  outline: none;
-  transform: none;
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-  filter: brightness(1);
-}
-
 @media (hover: none) {
   .cta-button:hover {
     transform: none;
     box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
     filter: brightness(1);
   }
-
   .cta-button:active {
     transform: scale(0.98);
     transition: all 0.1s ease;
   }
 }
 
-/* Footer */
-/* Footer - At bottom of page content, NOT fixed to screen */
-.site-footer {
-  background: rgba(5, 5, 10, 0.88);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 28px;
-  padding: 13px 20px;
-  /* NO position: fixed, NO position: relative needed */
-  /* Just normal document flow */
-  width: 100%;
-  clear: both;
-}
-
-.footer-links {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-}
-
-/* Footer - At bottom of page content, NOT fixed to viewport */
-.site-footer {
-  background: rgba(5, 5, 10, 0.88);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 28px;
-  padding: 13px 20px;
-  /* NO position: fixed, NO position: sticky, NO position: absolute */
-  /* NO bottom: 0, NO left: 0, NO width: 100% */
-  position: static; /* Normal document flow */
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.footer-links {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-}
-
-/* Footer - FORCE normal document flow, NOT fixed */
+/* ==================== FOOTER ==================== */
 .site-footer {
   background: rgba(5, 5, 10, 0.88) !important;
   backdrop-filter: blur(12px) !important;
@@ -937,10 +790,9 @@ body {
   justify-content: center !important;
   gap: 28px !important;
   padding: 13px 20px !important;
-  position: static !important; /* FORCE normal flow */
+  position: static !important;
   width: 100% !important;
   box-sizing: border-box !important;
-  /* Explicitly remove any fixed/sticky positioning */
   bottom: auto !important;
   left: auto !important;
   right: auto !important;
@@ -956,7 +808,8 @@ body {
   gap: 28px !important;
 }
 
-.site-footer a {
+.site-footer a,
+.footer-link {
   color: rgba(255, 255, 255, 0.45) !important;
   text-decoration: none !important;
   font-size: 12.5px !important;
@@ -966,33 +819,24 @@ body {
   -webkit-tap-highlight-color: transparent !important;
   outline: none !important;
   cursor: pointer !important;
+  background: none;
+  border: none;
 }
 
-.site-footer a:hover {
+.site-footer a:hover,
+.footer-link:hover {
   color: rgba(255, 255, 255, 0.9) !important;
 }
 
-.footer-copy {
+.footer-copy,
+.footer-copyright {
   color: rgba(255, 255, 255, 0.3) !important;
   font-size: 12px !important;
   white-space: nowrap !important;
 }
+white-space: nowrap;
 
-/* Mobile responsive */
-@media (max-width: 768px) {
-  .site-footer {
-    flex-direction: column !important;
-    gap: 8px !important;
-    padding: 12px 15px !important;
-  }
-}
-
-.footer-copy {
-  color: rgba(255, 255, 255, 0.3);
-  font-size: 12px;
-  white-space: nowrap;
-}
-/* Modals */
+/* ==================== MODALS ==================== */
 .privacy-modal,
 .contact-modal {
   display: none;
@@ -1125,7 +969,6 @@ body {
   box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
 }
 
-/* Contact Modal Specific */
 .contact-content {
   background: rgba(12, 12, 22, 0.96);
   backdrop-filter: blur(20px);
@@ -1154,13 +997,11 @@ body {
   flex: 1;
   scrollbar-width: thin;
   scrollbar-color: rgba(167, 139, 250, 0.4) transparent;
-  -ms-overflow-style: none;
 }
 
 .contact-body::-webkit-scrollbar {
   width: 4px;
 }
-
 .contact-body::-webkit-scrollbar-thumb {
   background: rgba(167, 139, 250, 0.4);
   border-radius: 4px;
@@ -1195,15 +1036,6 @@ body {
   transform: translateY(-1px);
 }
 
-.topic-btn:focus,
-.topic-btn:active {
-  outline: none;
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.85);
-  transform: none;
-}
-
 @media (hover: none) {
   .topic-btn:hover {
     background: rgba(255, 255, 255, 0.05);
@@ -1211,7 +1043,6 @@ body {
     color: rgba(255, 255, 255, 0.85);
     transform: none;
   }
-
   .topic-btn:active {
     background: rgba(102, 126, 234, 0.15);
     border-color: rgba(102, 126, 234, 0.5);
@@ -1399,61 +1230,51 @@ body {
   color: #fff;
   margin-bottom: 12px;
 }
-
 .success-msg {
   color: rgba(255, 255, 255, 0.65);
   font-size: 14.5px;
   line-height: 1.7;
   margin-bottom: 12px;
 }
-
 .success-msg strong {
   color: #c4b5fd;
 }
-
 .success-ref {
   color: rgba(255, 255, 255, 0.35);
   font-size: 12.5px;
 }
-
 .success-ref span {
   color: #a78bfa;
   font-weight: 600;
   font-family: monospace;
 }
 
-/* Responsive */
+/* ==================== RESPONSIVE ==================== */
 @media (max-width: 1024px) {
   .about-container {
     grid-template-columns: 1fr;
     gap: 3rem;
   }
-
   .about-animation {
     height: 300px;
     order: -1;
   }
-
   .about-content {
     text-align: center;
     align-items: center;
   }
-
   .about-features {
     align-items: center;
     width: 100%;
     max-width: 500px;
   }
-
   .feature-item {
     text-align: left;
     width: 100%;
   }
-
   .hero-content {
     margin-top: 10vh;
   }
-
   .creator-image {
     width: 140px;
     height: 140px;
@@ -1464,55 +1285,40 @@ body {
   .navbar {
     padding: 1rem 4%;
   }
-
   .hero-content {
     margin-top: 6vh;
     margin-bottom: 2rem;
   }
-
   .hero-title {
     font-size: 2.2rem;
     letter-spacing: 0.2rem;
   }
-
   .parallax-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-
   .col-4,
   .col-5 {
     display: none;
   }
+
   .about-section {
     min-height: 100vh;
-    height: auto; /* was: height: 100vh — this forced a full extra blank screen */
-    padding: 2rem 4%;
-    background: #050505;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    margin-bottom: 0; /* was: margin-bottom: 4rem — this added the black gap */
-    overflow: hidden;
+    padding: 5rem 4%;
   }
 
   .about-animation {
     height: 250px;
   }
-
   .floating-element {
     width: 60px;
     height: 60px;
   }
-
   .floating-element i {
     font-size: 1.5rem;
   }
-
   .animated-orb {
     filter: blur(40px);
   }
-
   .orb-1 {
     width: 120px;
     height: 120px;
@@ -1526,30 +1332,49 @@ body {
     height: 110px;
   }
 
+  .creators-section {
+    padding: 4rem 4% 2rem;
+  }
+
+  /* Full width creator cards on mobile */
+  .creators-wrapper {
+    max-width: 100%;
+    width: 100%;
+    margin: 0 0 2rem 0;
+  }
   .creators-row,
   .creators-row.second {
     grid-template-columns: 1fr;
-    max-width: 400px;
-    margin: 0 auto;
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
   }
-
   .creator-card {
     padding: 2rem;
+    width: 100%;
   }
-
   .creator-image {
-    width: 150px;
-    height: 150px;
+    width: 130px;
+    height: 130px;
   }
-
   .creator-name {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
 
+  .cta-section {
+    padding: 2rem 1.5rem;
+    margin: 0 0 2rem 0;
+  }
+
+  /* Footer stacked on mobile */
   .site-footer {
-    flex-direction: column;
-    gap: 8px;
-    padding: 12px 15px;
+    flex-direction: column !important;
+    gap: 8px !important;
+    padding: 12px 15px !important;
+  }
+  .footer-links {
+    flex-direction: column !important;
+    gap: 8px !important;
   }
 
   .terms-content {
@@ -1557,39 +1382,31 @@ body {
     max-height: 80vh;
     border-radius: 16px;
   }
-
   .terms-header {
     padding: 16px 18px;
     border-radius: 16px 16px 0 0;
   }
-
   .terms-header h2 {
     font-size: 15px;
   }
-
   .terms-body {
     padding: 16px 18px;
   }
-
   .terms-footer {
     padding: 14px 18px;
   }
-
   .contact-content {
     width: 96%;
     max-height: 88vh;
     border-radius: 16px;
   }
-
   .contact-body {
     padding: 16px 14px;
   }
-
   .topic-grid {
     grid-template-columns: 1fr;
     gap: 8px;
   }
-
   .topic-btn {
     padding: 11px 12px;
     font-size: 13px;
@@ -1598,24 +1415,20 @@ body {
 
 @media (max-width: 480px) {
   .creator-image {
-    width: 140px;
-    height: 140px;
+    width: 120px;
+    height: 120px;
   }
-
   .creator-card {
-    padding: 1.75rem;
+    padding: 1.5rem;
   }
-
   .site-footer {
     gap: 6px;
-    padding: 10px 14px;
+    padding: 12px 14px;
   }
-
   .site-footer a,
   .site-footer span {
     font-size: 11px;
   }
-
   .terms-header h2 {
     font-size: 14px;
   }
@@ -1625,24 +1438,20 @@ body {
   .hero-title {
     font-size: 1.8rem;
   }
-
   .parallax-grid {
     gap: 0.5rem;
   }
-
   .creator-image {
-    width: 130px;
-    height: 130px;
+    width: 110px;
+    height: 110px;
   }
 }
 
 @media (max-height: 600px) and (orientation: landscape) {
   .about-section {
-    height: auto;
-    min-height: 100vh;
+    min-height: auto;
     padding: 5rem 4%;
   }
-
   .about-animation {
     height: 200px;
   }
