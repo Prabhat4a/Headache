@@ -4,6 +4,8 @@ import RegisterForm from "./RegisterForm";
 import VerificationForm from "./VerificationForm";
 import TermsModal from "./TermsModal";
 import VerificationModal from "./VerificationModal";
+import ForgotPasswordForm from "./ForgotPasswordForm"; // Import this
+
 const AuthContainer = ({ initialView = "login" }) => {
   const [currentView, setCurrentView] = useState(initialView);
   const [showVerification, setShowVerification] = useState(false);
@@ -22,6 +24,11 @@ const AuthContainer = ({ initialView = "login" }) => {
 
   const handleSwitchToLogin = () => {
     setCurrentView("login");
+  };
+
+  // Add this handler for forgot password
+  const handleSwitchToForgotPassword = () => {
+    setCurrentView("forgot-password");
   };
 
   const handleShowTerms = () => setShowTerms(true);
@@ -91,12 +98,14 @@ const AuthContainer = ({ initialView = "login" }) => {
 
       <div className="login-box">
         {/* Login Form */}
-        {/* Login Form */}
         <div
           className="objects"
           style={{ display: currentView === "login" ? "block" : "none" }}
         >
-          <LoginForm onSwitchToRegister={handleSwitchToRegister} />
+          <LoginForm
+            onSwitchToRegister={handleSwitchToRegister}
+            onForgotPassword={handleSwitchToForgotPassword} // Pass this prop
+          />
         </div>
 
         {/* Register Form */}
@@ -112,6 +121,20 @@ const AuthContainer = ({ initialView = "login" }) => {
             phoneVerified={phoneVerified}
             resetVerification={resetVerification}
             onRegisterSuccess={handleRegisterSuccess}
+          />
+        </div>
+
+        {/* Forgot Password Form - ADD THIS */}
+        {/* Forgot Password Form */}
+        <div
+          className="objects-forgot"
+          style={{
+            display: currentView === "forgot-password" ? "block" : "none",
+          }}
+        >
+          <ForgotPasswordForm
+            key={Date.now()}
+            onBackToLogin={handleSwitchToLogin}
           />
         </div>
       </div>
