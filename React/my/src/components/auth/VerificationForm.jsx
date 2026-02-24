@@ -1,17 +1,17 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 
-const VerificationForm = ({ userData, onComplete, onBack }) => {
-  const [formData, setFormData] = useState({
-    name: "",
-    roll: "",
-    branch: "",
-    year: "",
-  });
-  const [errors, setErrors] = useState({});
-  const [avatar, setAvatar] = useState(null);
-  const fileInputRef = useRef(null);
+const VerificationForm = ({ registeredData, onBackToLogin }) => {
+  const [name, setName] = useState("");
+  const [roll, setRoll] = useState("");
+  const [branch, setBranch] = useState("");
+  const [year, setYear] = useState("");
+  const [photo, setPhoto] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState("");
+  const [nameError, setNameError] = useState("");
+  const [rollError, setRollError] = useState("");
+  const [branchError, setBranchError] = useState("");
+  const [yearError, setYearError] = useState("");
 
-  // Simulated existing users
   const existingUsers = [
     {
       name: "John Doe",
@@ -33,105 +33,114 @@ const VerificationForm = ({ userData, onComplete, onBack }) => {
     },
   ];
 
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
-    }
-  };
-
-  const handleFileUpload = (e) => {
+  const handlePhotoChange = (e) => {
     const file = e.target.files[0];
-    if (!file) return;
-
-    if (file.size > 2 * 1024 * 1024) {
-      alert("File size must be less than 2MB");
-      return;
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert("File size must be less than 2MB");
+        return;
+      }
+      setPhoto(file);
+      const reader = new FileReader();
+      reader.onload = (e) => setPhotoPreview(e.target.result);
+      reader.readAsDataURL(file);
     }
-
-    const reader = new FileReader();
-    reader.onload = (e) => setAvatar(e.target.result);
-    reader.readAsDataURL(file);
   };
 
-  const checkDuplicates = () => {
+  const checkDuplicates = (name, roll, email, phone) => {
     const duplicates = [];
     for (let user of existingUsers) {
-      if (user.name.toLowerCase() === formData.name.toLowerCase())
+      if (user.name.toLowerCase() === name.toLowerCase())
         duplicates.push("Name");
-      if (user.roll.toLowerCase() === formData.roll.toLowerCase())
+      if (roll && user.roll.toLowerCase() === roll.toLowerCase())
         duplicates.push("Roll Number");
-      if (user.email.toLowerCase() === (userData?.email || "").toLowerCase())
+      if (user.email.toLowerCase() === email.toLowerCase())
         duplicates.push("Email");
-      if (user.phone === (userData?.phone || ""))
-        duplicates.push("Phone Number");
+      if (user.phone === phone) duplicates.push("Phone Number");
     }
     return duplicates;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newErrors = {};
+    setNameError("");
+    setRollError("");
+    setBranchError("");
+    setYearError("");
 
-    // Validate name
-    if (!formData.name.trim()) {
-      newErrors.name = "Please enter your full name";
-    } else if (formData.name.trim().length < 3) {
-      newErrors.name = "Name must be at least 3 characters";
+    let isValid = true;
+
+    if (!name.trim()) {
+      setNameError("Please enter your full name");
+      isValid = false;
+    } else if (name.trim().length < 3) {
+      setNameError("Name must be at least 3 characters");
+      isValid = false;
     }
 
-    // Validate roll
-    if (!formData.roll.trim()) {
-      newErrors.roll = "Please enter roll number";
-    } else if (formData.roll.trim().length < 5) {
-      newErrors.roll = "Roll number must be at least 5 characters";
+    if (roll.trim() && roll.trim().length < 5) {
+      setRollError("Roll number must be at least 5 characters");
+      isValid = false;
     }
 
-    // Validate branch
-    if (!formData.branch) {
-      newErrors.branch = "Please select your branch";
+    if (!branch) {
+      setBranchError("Please select your branch");
+      isValid = false;
     }
 
-    // Validate year
-    if (!formData.year) {
-      newErrors.year = "Please select your year";
+    if (!year) {
+      setYearError("Please select your year");
+      isValid = false;
     }
 
-    // Check duplicates
-    if (Object.keys(newErrors).length === 0) {
-      const duplicates = checkDuplicates();
+    if (isValid) {
+      const duplicates = checkDuplicates(
+        name.trim(),
+        roll.trim(),
+        registeredData.email || "",
+        registeredData.phone || "",
+      );
+
       if (duplicates.length > 0) {
         alert(
           "⚠️ Registration Failed!\n\nThe following data already exists:\n" +
             duplicates.join(", ") +
             "\n\nPlease use different information.",
         );
-        if (duplicates.includes("Name"))
-          newErrors.name = "This name is already registered";
-        if (duplicates.includes("Roll Number"))
-          newErrors.roll = "This roll number is already registered";
+        if (duplicates.includes("Name")) {
+          setNameError("This name is already registered");
+        }
+        if (duplicates.includes("Roll Number")) {
+          setRollError("This roll number is already registered");
+        }
+        isValid = false;
       }
     }
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
+    if (isValid) {
+      alert(
+        "✅ Registration Successful!\n\nYour account has been created. Please login with your credentials.",
+      );
+      onBackToLogin();
     }
-
-    // Success
-    alert(
-      "✅ Registration Successful!\n\nYour account has been created. Please login with your credentials.",
-    );
-    onComplete();
-  };
-
-  const removePhoto = () => {
-    setAvatar(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   return (
-    <div className="verification-section" style={{ display: "flex" }}>
+    <div
+      className="verification-section"
+      id="verificationSection"
+      style={{ display: "flex" }}
+    >
+      <video autoPlay muted loop id="bg-video-verify">
+        <source src="website.mp4" type="video/mp4" />
+      </video>
+      <div className="video-overlay"></div>
+
+      <div className="logo">
+        <img src="logo.png" alt="STRUVO" className="logo-icon" />
+        <h1>STUVO5</h1>
+      </div>
+
       <div className="verification-box">
         <div className="box-head-verify">
           <h1>Complete Your Profile</h1>
@@ -142,20 +151,24 @@ const VerificationForm = ({ userData, onComplete, onBack }) => {
           <div className="avatar-upload-section">
             <div
               className="avatar-circle"
-              onClick={() => fileInputRef.current?.click()}
+              id="avatarCircle"
+              onClick={() => document.getElementById("verifyPhoto").click()}
             >
-              {!avatar ? (
-                <div className="avatar-placeholder">
-                  <i className="bx bx-user-circle"></i>
-                </div>
-              ) : (
-                <img
-                  src={avatar}
-                  alt="Profile"
-                  className="avatar-preview-img"
-                />
-              )}
-              <div className="avatar-overlay">
+              <div
+                className="avatar-placeholder"
+                id="avatarPlaceholder"
+                style={{ display: photoPreview ? "none" : "flex" }}
+              >
+                <i className="bx bx-user-circle"></i>
+              </div>
+              <img
+                src={photoPreview}
+                alt="Profile"
+                className="avatar-preview-img"
+                id="avatarPreviewImg"
+                style={{ display: photoPreview ? "block" : "none" }}
+              />
+              <div className="avatar-overlay" id="avatarOverlay">
                 <i className="bx bx-camera"></i>
                 <span>Change</span>
               </div>
@@ -165,10 +178,10 @@ const VerificationForm = ({ userData, onComplete, onBack }) => {
             </p>
             <input
               type="file"
-              ref={fileInputRef}
+              id="verifyPhoto"
               accept="image/png, image/jpeg, image/jpg"
               hidden
-              onChange={handleFileUpload}
+              onChange={handlePhotoChange}
             />
           </div>
 
@@ -179,30 +192,46 @@ const VerificationForm = ({ userData, onComplete, onBack }) => {
                 <i className="bx bx-user"></i>
                 <input
                   type="text"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange("name", e.target.value)}
+                  id="verifyName"
                   placeholder="Enter your full name"
-                  className={errors.name ? "error" : ""}
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    setNameError("");
+                  }}
+                  className={nameError ? "error" : ""}
                 />
               </div>
-              <div className={`error-message ${errors.name ? "show" : ""}`}>
-                {errors.name}
+              <div
+                className={`error-message ${nameError ? "show" : ""}`}
+                id="verifyNameError"
+              >
+                {nameError}
               </div>
             </div>
             <div className="input-box">
-              <label>Roll Number</label>
+              <label>
+                Roll Number <span className="optional-label">· Optional</span>
+              </label>
               <div className="input-wrapper">
                 <i className="bx bx-id-card"></i>
                 <input
                   type="text"
-                  value={formData.roll}
-                  onChange={(e) => handleInputChange("roll", e.target.value)}
-                  placeholder="Enter roll number"
-                  className={errors.roll ? "error" : ""}
+                  id="verifyRoll"
+                  placeholder="Enter roll number (optional)"
+                  value={roll}
+                  onChange={(e) => {
+                    setRoll(e.target.value);
+                    setRollError("");
+                  }}
+                  className={rollError ? "error" : ""}
                 />
               </div>
-              <div className={`error-message ${errors.roll ? "show" : ""}`}>
-                {errors.roll}
+              <div
+                className={`error-message ${rollError ? "show" : ""}`}
+                id="verifyRollError"
+              >
+                {rollError}
               </div>
             </div>
           </div>
@@ -213,9 +242,13 @@ const VerificationForm = ({ userData, onComplete, onBack }) => {
               <div className="input-wrapper">
                 <i className="bx bx-book"></i>
                 <select
-                  value={formData.branch}
-                  onChange={(e) => handleInputChange("branch", e.target.value)}
-                  className={errors.branch ? "error" : ""}
+                  id="verifyBranch"
+                  value={branch}
+                  onChange={(e) => {
+                    setBranch(e.target.value);
+                    setBranchError("");
+                  }}
+                  className={branchError ? "error" : ""}
                 >
                   <option value="">Select Branch</option>
                   <option value="CSE">Computer Science Engineering</option>
@@ -228,8 +261,11 @@ const VerificationForm = ({ userData, onComplete, onBack }) => {
                   <option value="DS">Data Science</option>
                 </select>
               </div>
-              <div className={`error-message ${errors.branch ? "show" : ""}`}>
-                {errors.branch}
+              <div
+                className={`error-message ${branchError ? "show" : ""}`}
+                id="verifyBranchError"
+              >
+                {branchError}
               </div>
             </div>
             <div className="input-box">
@@ -237,9 +273,13 @@ const VerificationForm = ({ userData, onComplete, onBack }) => {
               <div className="input-wrapper">
                 <i className="bx bx-calendar"></i>
                 <select
-                  value={formData.year}
-                  onChange={(e) => handleInputChange("year", e.target.value)}
-                  className={errors.year ? "error" : ""}
+                  id="verifyYear"
+                  value={year}
+                  onChange={(e) => {
+                    setYear(e.target.value);
+                    setYearError("");
+                  }}
+                  className={yearError ? "error" : ""}
                 >
                   <option value="">Select Year</option>
                   <option value="1">1st Year</option>
@@ -250,8 +290,11 @@ const VerificationForm = ({ userData, onComplete, onBack }) => {
                   <option value="6">6th Year</option>
                 </select>
               </div>
-              <div className={`error-message ${errors.year ? "show" : ""}`}>
-                {errors.year}
+              <div
+                className={`error-message ${yearError ? "show" : ""}`}
+                id="verifyYearError"
+              >
+                {yearError}
               </div>
             </div>
           </div>
@@ -260,28 +303,16 @@ const VerificationForm = ({ userData, onComplete, onBack }) => {
             <button type="submit">Complete Registration</button>
           </div>
 
-          <div className="divider">
-            <span>OR</span>
-          </div>
-
-          <button type="button" className="google-register-btn">
-            <img
-              src="https://www.svgrepo.com/show/475656/google-color.svg"
-              alt="Google"
-              className="google-icon"
-            />
-            Register with Google
-          </button>
-
           <div className="back-to-login">
             <a
               href="#"
+              id="backToLogin"
               onClick={(e) => {
                 e.preventDefault();
-                onBack();
+                onBackToLogin();
               }}
             >
-              ← Back to Login
+              ← Back to Registration
             </a>
           </div>
         </form>

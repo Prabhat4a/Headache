@@ -1,13 +1,13 @@
 import React from "react";
 
-const TermsModal = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
+const TermsModal = ({ show, onClose, onAccept }) => {
+  if (!show) return null;
 
   return (
-    <div className="terms-modal show">
+    <div className="terms-modal show" id="termsModal">
       <div className="terms-content">
         <div className="terms-header">
-          <h2>Terms and Conditions – STUVO5</h2>
+          <h2>Terms and Conditions</h2>
           <span className="close-terms" onClick={onClose}>
             &times;
           </span>
@@ -84,7 +84,7 @@ const TermsModal = ({ isOpen, onClose }) => {
           </p>
         </div>
         <div className="terms-footer">
-          <button className="accept-terms" onClick={onClose}>
+          <button className="accept-terms" id="acceptTerms" onClick={onAccept}>
             Accept
           </button>
         </div>

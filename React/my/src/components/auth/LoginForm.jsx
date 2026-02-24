@@ -1,61 +1,48 @@
-import React, { useState } from "react";
-import ForgotPasswordForm from "./ForgotPasswordForm";
+import React, { useState, forwardRef } from "react";
 
-const LoginForm = ({ onSwitchToRegister }) => {
+const LoginForm = forwardRef(({ onSwitchToRegister }, ref) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [rememberMe, setRememberMe] = useState(false);
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
-  const validateEmail = (email) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newErrors = {};
+    setEmailError("");
+    setPasswordError("");
+
+    let valid = true;
 
     if (!email.trim()) {
-      newErrors.email = "Please enter your email";
+      setEmailError("Please enter your email");
+      valid = false;
     } else if (!validateEmail(email.trim())) {
-      newErrors.email = "Please enter a valid email";
+      setEmailError("Please enter a valid email");
+      valid = false;
     }
 
     if (!password) {
-      newErrors.password = "Please enter your password";
+      setPasswordError("Please enter your password");
+      valid = false;
     } else if (password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+      setPasswordError("Password must be at least 6 characters");
+      valid = false;
     }
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    window.location.href = "app.html";
-  };
-
-  const clearError = (field) => {
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
+    if (valid) {
+      window.location.href = "app.html";
     }
   };
-
-  // Show Forgot Password Form
-  if (showForgotPassword) {
-    return (
-      <ForgotPasswordForm onBackToLogin={() => setShowForgotPassword(false)} />
-    );
-  }
 
   return (
-    <>
+    <div className="objects">
       <div className="box-head">
         <h1>Log in</h1>
       </div>
-      <form id="loginForm" onSubmit={handleSubmit} noValidate>
+      <form id="loginForm" onSubmit={handleSubmit}>
         <div className="input-box">
           <div className="input-wrapper">
             <i className="bx bx-envelope"></i>
@@ -66,13 +53,16 @@ const LoginForm = ({ onSwitchToRegister }) => {
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
-                clearError("email");
+                setEmailError("");
               }}
-              className={errors.email ? "error" : ""}
+              className={emailError ? "error" : ""}
             />
           </div>
-          <div className={`error-message ${errors.email ? "show" : ""}`}>
-            {errors.email}
+          <div
+            className={`error-message ${emailError ? "show" : ""}`}
+            id="emailError"
+          >
+            {emailError}
           </div>
         </div>
 
@@ -86,9 +76,9 @@ const LoginForm = ({ onSwitchToRegister }) => {
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
-                clearError("password");
+                setPasswordError("");
               }}
-              className={errors.password ? "error" : ""}
+              className={passwordError ? "error" : ""}
             />
             <i
               className={`bx ${showPassword ? "bx-show" : "bx-hide"} toggle-password`}
@@ -96,29 +86,19 @@ const LoginForm = ({ onSwitchToRegister }) => {
               onClick={() => setShowPassword(!showPassword)}
             ></i>
           </div>
-          <div className={`error-message ${errors.password ? "show" : ""}`}>
-            {errors.password}
+          <div
+            className={`error-message ${passwordError ? "show" : ""}`}
+            id="passwordError"
+          >
+            {passwordError}
           </div>
         </div>
 
         <div className="remember-forgot">
           <label>
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-            />{" "}
-            Remember me
+            <input type="checkbox" /> Remember me
           </label>
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              setShowForgotPassword(true);
-            }}
-          >
-            Forgot password?
-          </a>
+          <a href="forgot-password.html">Forgot password?</a>
         </div>
 
         <div className="login-button">
@@ -143,14 +123,21 @@ const LoginForm = ({ onSwitchToRegister }) => {
         <div className="account">
           <p>
             Don't have an account?
-            <a href="#" className="creat-acc" onClick={onSwitchToRegister}>
+            <a
+              href="#"
+              className="creat-acc"
+              onClick={(e) => {
+                e.preventDefault();
+                onSwitchToRegister();
+              }}
+            >
               Create an account
             </a>
           </p>
         </div>
       </form>
-    </>
+    </div>
   );
-};
+});
 
 export default LoginForm;

@@ -1,66 +1,49 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 
-const VerificationModal = ({
-  isOpen,
-  onClose,
-  type,
-  targetValue,
-  onVerify,
-}) => {
+const VerificationModal = ({ show, onClose, onVerify, type, target }) => {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
-  const [shake, setShake] = useState(false);
-  const inputRef = useRef(null);
-
-  const GENERATED_CODE = "123456"; // Demo code
 
   useEffect(() => {
-    if (isOpen) {
+    if (show) {
       setCode("");
       setError("");
-      setShake(false);
-      setTimeout(() => inputRef.current?.focus(), 100);
     }
-  }, [isOpen]);
+  }, [show]);
 
-  const handleVerify = () => {
+  const handleSubmit = () => {
     if (!code.trim()) {
       setError("Please enter the code");
-      setShake(true);
-      setTimeout(() => setShake(false), 400);
       return;
     }
 
-    if (code !== GENERATED_CODE) {
+    const success = onVerify(code.trim());
+    if (!success) {
       setError("Incorrect code. Try: 123456");
-      setShake(true);
-      setTimeout(() => setShake(false), 400);
-      return;
     }
-
-    onVerify(type);
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      handleVerify();
-    }
+    if (e.key === "Enter") handleSubmit();
   };
 
-  if (!isOpen) return null;
+  if (!show) return null;
 
   return (
-    <div className="verify-modal show">
+    <div className="verify-modal show" id="verifyModal">
       <div className="verify-modal-content">
         <div className="verify-modal-header">
-          <h3>Verify {type === "email" ? "Email" : "Phone"}</h3>
-          <span className="close-verify" onClick={onClose}>
+          <h3 id="verifyModalTitle">
+            Verify {type === "email" ? "Email" : "Phone"}
+          </h3>
+          <span className="close-verify" id="closeVerify" onClick={onClose}>
             &times;
           </span>
         </div>
         <div className="verify-modal-body">
           <p className="verify-text">
-            Enter the 6-digit code sent to your <span>{targetValue}</span>
+            Enter the 6-digit code sent to your
+            <span id="verifyTarget"> {target}</span>
           </p>
           <div className="code-input-wrapper">
             <input
@@ -74,8 +57,8 @@ const VerificationModal = ({
                 setError("");
               }}
               onKeyPress={handleKeyPress}
-              ref={inputRef}
-              className={shake ? "error" : ""}
+              className={error ? "error" : ""}
+              autoFocus
             />
           </div>
           <div
@@ -87,7 +70,8 @@ const VerificationModal = ({
           <button
             type="button"
             className="verify-submit-btn"
-            onClick={handleVerify}
+            id="verifySubmitBtn"
+            onClick={handleSubmit}
           >
             Verify Code
           </button>

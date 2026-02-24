@@ -1,82 +1,63 @@
+// src/components/auth/PrivacyModal.jsx
 import React from "react";
 
-const PrivacyModal = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
+const PrivacyModal = () => {
+  const closeModal = () => {
+    document.getElementById("privacyModal").classList.remove("show");
+  };
 
   return (
-    <div className="privacy-modal show">
+    <div
+      className="terms-modal privacy-modal"
+      id="privacyModal"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) closeModal();
+      }}
+    >
       <div className="terms-content">
         <div className="terms-header">
-          <h2>Privacy Policy – STUVO5</h2>
-          <span className="close-terms" onClick={onClose}>
+          <h2>Privacy Policy</h2>
+          <span className="close-terms" onClick={closeModal}>
             &times;
           </span>
         </div>
         <div className="terms-body">
-          <h3>1. Introduction</h3>
+          <h3>Information We Collect</h3>
           <p>
-            Your privacy is important to us. This Privacy Policy explains how
-            STUVO5 collects, uses, and protects your personal information.
+            We collect information you provide directly to us, including your
+            name, email address, phone number, academic information, and profile
+            photo.
           </p>
 
-          <h3>2. Data We Collect</h3>
+          <h3>How We Use Your Information</h3>
           <p>
-            We collect your name, email address, username, roll number, branch,
-            year, profile photo (optional), and general usage activity.
+            We use the information we collect to provide, maintain, and improve
+            our services, to communicate with you, and to personalize your
+            experience.
           </p>
 
-          <h3>3. How We Use Your Data</h3>
+          <h3>Information Sharing</h3>
           <p>
-            Your data is used solely to provide and improve our student
-            services. We do not use your data for advertising.
+            We do not sell or share your personal information with third parties
+            except as described in this policy or with your consent.
           </p>
 
-          <h3>4. Data Storage & Security</h3>
+          <h3>Data Security</h3>
           <p>
-            We take reasonable measures to protect your information. However, as
-            STUVO5 is an academic project, we cannot guarantee absolute
-            security.
+            We implement reasonable security measures to protect your personal
+            information. However, no method of transmission over the Internet is
+            100% secure.
           </p>
 
-          <h3>5. Cookies & Sessions</h3>
+          <h3>Your Rights</h3>
           <p>
-            STUVO5 may use session data to keep you logged in. No third-party
-            tracking cookies are used.
-          </p>
-
-          <h3>6. Third-Party Services</h3>
-          <p>
-            If you choose to sign in with Google, your basic Google profile
-            information may be shared with us.
-          </p>
-
-          <h3>7. Data Sharing</h3>
-          <p>
-            We do not sell, trade, or share your personal data with any external
-            parties.
-          </p>
-
-          <h3>8. Your Rights</h3>
-          <p>
-            You have the right to request access to, correction of, or deletion
-            of your personal data at any time.
-          </p>
-
-          <h3>9. Minors</h3>
-          <p>STUVO5 is intended for college students aged 17 or older.</p>
-
-          <h3>10. Policy Updates</h3>
-          <p>This policy may be updated as the platform evolves.</p>
-
-          <h3>11. Contact Regarding Privacy</h3>
-          <p>
-            For any privacy-related concerns, please reach us through the
-            Contact page.
+            You have the right to access, update, or delete your personal
+            information. Contact us to exercise these rights.
           </p>
         </div>
         <div className="terms-footer">
-          <button className="accept-terms" onClick={onClose}>
-            Got it
+          <button className="accept-terms" onClick={closeModal}>
+            Close
           </button>
         </div>
       </div>

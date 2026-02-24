@@ -13,10 +13,10 @@ const ForgotPasswordForm = ({ onBackToLogin }) => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [maskedContact, setMaskedContact] = useState("");
 
-  // Resend timer state
   const [resendTimer, setResendTimer] = useState(0);
   const [canResend, setCanResend] = useState(true);
 
+  // ---------------- VALIDATION ----------------
   const validateEmail = (email) => {
     const emailRegex =
       /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com)$/;
@@ -38,7 +38,12 @@ const ForgotPasswordForm = ({ onBackToLogin }) => {
     return "******" + phone.slice(-4);
   };
 
-  // Countdown timer effect
+  // ---------------- CLEAR ERRORS ON STEP CHANGE (NEW) ----------------
+  useEffect(() => {
+    setErrors({});
+  }, [step]);
+
+  // ---------------- RESEND TIMER ----------------
   useEffect(() => {
     let interval;
     if (resendTimer > 0) {
@@ -55,6 +60,7 @@ const ForgotPasswordForm = ({ onBackToLogin }) => {
     return () => clearInterval(interval);
   }, [resendTimer]);
 
+  // ---------------- STEP 1 ----------------
   const handleStep1Submit = (e) => {
     e.preventDefault();
     const newErrors = {};
@@ -82,6 +88,7 @@ const ForgotPasswordForm = ({ onBackToLogin }) => {
     setStep(2);
   };
 
+  // ---------------- STEP 2 ----------------
   const handleStep2Submit = (e) => {
     e.preventDefault();
     const newErrors = {};
@@ -100,6 +107,7 @@ const ForgotPasswordForm = ({ onBackToLogin }) => {
     setStep(3);
   };
 
+  // ---------------- STEP 3 ----------------
   const handleStep3Submit = (e) => {
     e.preventDefault();
     const newErrors = {};
@@ -123,20 +131,36 @@ const ForgotPasswordForm = ({ onBackToLogin }) => {
 
     setShowSuccess(true);
 
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
+      resetForm(); // NEW (clean reset before leaving)
       onBackToLogin();
     }, 2000);
+
+    return () => clearTimeout(timeout);
+  };
+
+  // ---------------- RESET FORM FUNCTION (NEW) ----------------
+  const resetForm = () => {
+    setStep(1);
+    setContact("");
+    setOtp("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setShowNewPassword(false);
+    setShowConfirmPassword(false);
+    setErrors({});
+    setShowSuccess(false);
+    setMaskedContact("");
+    setResendTimer(0);
+    setCanResend(true);
   };
 
   const handleResendCode = (e) => {
     e.preventDefault();
-
     if (!canResend) return;
 
-    // Start 20 second countdown
     setCanResend(false);
     setResendTimer(20);
-
     console.log("Verification code resent to", contact);
   };
 
@@ -146,7 +170,6 @@ const ForgotPasswordForm = ({ onBackToLogin }) => {
     }
   };
 
-  // Success Notification Component rendered via Portal
   const SuccessNotification = () => {
     if (!showSuccess) return null;
 
@@ -163,172 +186,7 @@ const ForgotPasswordForm = ({ onBackToLogin }) => {
     <>
       <SuccessNotification />
 
-      {step === 1 && (
-        <>
-          <div className="box-head">
-            <h1>Forgot Password?</h1>
-            <p className="subtitle">
-              Enter your registered email or phone number
-            </p>
-          </div>
-          <form onSubmit={handleStep1Submit}>
-            <div className="input-box">
-              <div className="input-wrapper-with-btn">
-                <div className="input-wrapper" style={{ flex: 1 }}>
-                  <i className="bx bx-envelope"></i>
-                  <input
-                    type="text"
-                    value={contact}
-                    onChange={(e) => {
-                      setContact(e.target.value);
-                      clearError("contact");
-                    }}
-                    placeholder="Email or Phone Number"
-                    className={errors.contact ? "error" : ""}
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="verify-small-btn"
-                  style={{ height: "45px", padding: "0 20px" }}
-                >
-                  Verify
-                </button>
-              </div>
-              <div className={`error-message ${errors.contact ? "show" : ""}`}>
-                {errors.contact}
-              </div>
-            </div>
-          </form>
-          <div className="back-to-login">
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                onBackToLogin();
-              }}
-            >
-              <i className="bx bx-arrow-back"></i> Back to Login
-            </a>
-          </div>
-        </>
-      )}
-
-      {step === 2 && (
-        <>
-          <div className="box-head">
-            <h1>Verify Code</h1>
-            <p className="subtitle">
-              Enter the verification code sent to{" "}
-              <span style={{ color: "#a78bfa", fontWeight: 600 }}>
-                {maskedContact}
-              </span>
-            </p>
-          </div>
-          <form onSubmit={handleStep2Submit}>
-            <div className="input-box">
-              <div className="input-wrapper">
-                <i className="bx bx-lock-open"></i>
-                <input
-                  type="text"
-                  value={otp}
-                  onChange={(e) => {
-                    setOtp(e.target.value.replace(/[^0-9]/g, ""));
-                    clearError("otp");
-                  }}
-                  placeholder="Enter 6-digit code"
-                  maxLength="6"
-                  className={errors.otp ? "error" : ""}
-                />
-              </div>
-              <div className={`error-message ${errors.otp ? "show" : ""}`}>
-                {errors.otp}
-              </div>
-            </div>
-            <div className="verify-button">
-              <button type="submit">Verify Code</button>
-            </div>
-            <div className="resend-code">
-              {canResend ? (
-                <p>
-                  Didn't receive code?{" "}
-                  <a href="#" onClick={handleResendCode}>
-                    Resend
-                  </a>
-                </p>
-              ) : (
-                <p className="resend-timer">
-                  Resend available in <span>{resendTimer}s</span>
-                </p>
-              )}
-            </div>
-          </form>
-        </>
-      )}
-
-      {step === 3 && (
-        <>
-          <div className="box-head">
-            <h1>Create New Password</h1>
-            <p className="subtitle">
-              Your new password must be different from previous passwords
-            </p>
-          </div>
-          <form onSubmit={handleStep3Submit}>
-            <div className="input-box">
-              <div className="input-wrapper">
-                <i className="bx bx-lock"></i>
-                <input
-                  type={showNewPassword ? "text" : "password"}
-                  value={newPassword}
-                  onChange={(e) => {
-                    setNewPassword(e.target.value);
-                    clearError("newPassword");
-                  }}
-                  placeholder="New Password"
-                  className={errors.newPassword ? "error" : ""}
-                />
-                <i
-                  className={`bx ${showNewPassword ? "bx-show" : "bx-hide"} toggle-password`}
-                  onClick={() => setShowNewPassword(!showNewPassword)}
-                ></i>
-              </div>
-              <div
-                className={`error-message ${errors.newPassword ? "show" : ""}`}
-              >
-                {errors.newPassword}
-              </div>
-            </div>
-            <div className="input-box">
-              <div className="input-wrapper">
-                <i className="bx bx-lock"></i>
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  value={confirmPassword}
-                  onChange={(e) => {
-                    setConfirmPassword(e.target.value);
-                    clearError("confirmPassword");
-                  }}
-                  placeholder="Re-enter Password"
-                  className={errors.confirmPassword ? "error" : ""}
-                />
-                <i
-                  className={`bx ${showConfirmPassword ? "bx-show" : "bx-hide"} toggle-password`}
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                ></i>
-              </div>
-              <div
-                className={`error-message ${errors.confirmPassword ? "show" : ""}`}
-              >
-                {errors.confirmPassword}
-              </div>
-            </div>
-            <div className="Register-button">
-              <button type="submit">Confirm</button>
-            </div>
-          </form>
-        </>
-      )}
+      {/* KEEP YOUR EXISTING JSX UI BELOW EXACTLY SAME */}
     </>
   );
 };

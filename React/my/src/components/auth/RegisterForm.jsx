@@ -1,24 +1,30 @@
-// src/components/auth/RegisterForm.jsx
 import React, { useState } from "react";
-import VerificationModal from "./VerificationModal";
 
-const RegisterForm = ({ onSwitchToLogin, onShowTerms, onRegisterSuccess }) => {
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    phone: "",
-    password: "",
-  });
-  const [errors, setErrors] = useState({});
+const RegisterForm = ({
+  onSwitchToLogin,
+  onShowTerms,
+  onOpenVerifyModal,
+  emailVerified,
+  phoneVerified,
+  resetVerification,
+  onRegisterSuccess,
+}) => {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const [verified, setVerified] = useState({ email: false, phone: false });
-  const [showVerificationModal, setShowVerificationModal] = useState(false);
-  const [verificationType, setVerificationType] = useState(null);
-  const [blinkError, setBlinkError] = useState(false);
+  const [termsChecked, setTermsChecked] = useState(false);
+  const [usernameError, setUsernameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [termsError, setTermsError] = useState(false);
 
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
   const validatePhone = (phone) => /^\d{10}$/.test(phone);
+
   const validateUsername = (username) => {
     if (!username) return { valid: false, message: "Please enter a username" };
     if (!/^[a-zA-Z]/.test(username))
@@ -30,178 +36,139 @@ const RegisterForm = ({ onSwitchToLogin, onShowTerms, onRegisterSuccess }) => {
     return { valid: true };
   };
 
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-
-    if (field === "email" && verified.email) {
-      setVerified((prev) => ({ ...prev, email: false }));
-    }
-    if (field === "phone" && verified.phone) {
-      setVerified((prev) => ({ ...prev, phone: false }));
-    }
-
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
-    }
-  };
-
-  const handlePhoneInput = (e) => {
-    const value = e.target.value.replace(/[^0-9]/g, "");
-    handleInputChange("phone", value);
-  };
-
-  const openVerification = (type) => {
-    if (type === "email" && !validateEmail(formData.email.trim())) {
-      setErrors((prev) => ({ ...prev, email: "Enter a valid email first" }));
-      return;
-    }
-    if (type === "phone" && !validatePhone(formData.phone.trim())) {
-      setErrors((prev) => ({
-        ...prev,
-        phone: "Enter a valid 10-digit number first",
-      }));
-      return;
-    }
-
-    setVerificationType(type);
-    setShowVerificationModal(true);
-  };
-
-  const handleVerificationSuccess = (type) => {
-    setVerified((prev) => ({ ...prev, [type]: true }));
-    setShowVerificationModal(false);
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newErrors = {};
+    let valid = true;
 
-    const userCheck = validateUsername(formData.username.trim());
+    const userCheck = validateUsername(username.trim());
     if (!userCheck.valid) {
-      newErrors.username = userCheck.message;
+      setUsernameError(userCheck.message);
+      valid = false;
     }
 
-    if (!formData.email.trim()) {
-      newErrors.email = "Please enter your email";
-    } else if (!validateEmail(formData.email.trim())) {
-      newErrors.email = "Please enter a valid email";
-    } else if (!verified.email) {
-      newErrors.email = "Please verify your email first";
+    if (!validateEmail(email.trim())) {
+      setEmailError("Invalid email");
+      valid = false;
     }
 
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Please enter your phone number";
-    } else if (!validatePhone(formData.phone.trim())) {
-      newErrors.phone = "Please enter a valid 10-digit number";
-    } else if (!verified.phone) {
-      newErrors.phone = "Please verify your phone number first";
+    if (!emailVerified) {
+      setEmailError("Please verify your email");
+      valid = false;
     }
 
-    if (!formData.password) {
-      newErrors.password = "Please enter your password";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+    if (!validatePhone(phone.trim())) {
+      setPhoneError("Invalid phone number");
+      valid = false;
     }
 
-    if (!termsAccepted) {
-      setBlinkError(true);
-      setTimeout(() => setBlinkError(false), 1600);
+    if (!phoneVerified) {
+      setPhoneError("Please verify your phone number");
+      valid = false;
     }
 
-    if (Object.keys(newErrors).length > 0 || !termsAccepted) {
-      setErrors(newErrors);
-      return;
+    if (!password || password.length < 6) {
+      setPasswordError("Password min 6 characters");
+      valid = false;
     }
 
-    onRegisterSuccess({
-      email: formData.email,
-      password: formData.password,
-      username: formData.username,
-      phone: formData.phone,
-    });
+    if (!termsChecked) {
+      setTermsError(true);
+      valid = false;
+    }
+
+    if (valid) {
+      onRegisterSuccess({ email, password, username, phone });
+    }
   };
 
   return (
-    <>
+    <div>
+      {" "}
+      {/* IMPORTANT: removed objects-register class here */}
       <div className="box-head-2">
         <h1>Register</h1>
       </div>
       <form id="registerForm" onSubmit={handleSubmit}>
-        {/* Username - Full width */}
+        {/* Username */}
         <div className="input-box">
           <div className="input-wrapper">
             <i className="bx bx-user"></i>
             <input
               type="text"
-              id="registerUsername"
               placeholder="Username"
-              value={formData.username}
-              onChange={(e) => handleInputChange("username", e.target.value)}
-              className={errors.username ? "error" : ""}
+              value={username}
+              onChange={(e) => {
+                setUsername(e.target.value);
+                setUsernameError("");
+              }}
+              className={usernameError ? "error" : ""}
             />
           </div>
-          <div className={`error-message ${errors.username ? "show" : ""}`}>
-            {errors.username}
-          </div>
+          {usernameError && (
+            <div className="error-message show">{usernameError}</div>
+          )}
         </div>
 
-        {/* Email with Verify Button */}
+        {/* Email */}
         <div className="input-box verify-box">
           <div className="input-wrapper-with-btn">
             <div className="input-wrapper">
               <i className="bx bx-envelope"></i>
               <input
                 type="email"
-                id="registerEmail"
                 placeholder="Enter your email"
-                value={formData.email}
-                onChange={(e) => handleInputChange("email", e.target.value)}
-                className={errors.email ? "error" : ""}
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setEmailError("");
+                  if (emailVerified) resetVerification();
+                }}
+                className={emailError ? "error" : ""}
               />
             </div>
+
             <button
               type="button"
-              className="verify-small-btn"
-              id="verifyEmailBtn"
-              onClick={() => openVerification("email")}
-              disabled={verified.email}
+              className={`verify-small-btn ${emailVerified ? "verified" : ""}`}
+              onClick={() => onOpenVerifyModal("email", email)}
             >
-              {verified.email ? "Verified ✓" : "Verify"}
+              {emailVerified ? "Verified ✓" : "Verify"}
             </button>
           </div>
-          <div className={`error-message ${errors.email ? "show" : ""}`}>
-            {errors.email}
-          </div>
+
+          {emailError && <div className="error-message show">{emailError}</div>}
         </div>
 
-        {/* Phone with +91 and Verify Button */}
+        {/* Phone */}
         <div className="input-box verify-box">
           <div className="input-wrapper-with-btn">
             <div className="input-wrapper phone-input-wrapper">
               <span className="country-code">+91</span>
               <input
                 type="tel"
-                id="registerPhone"
                 placeholder="Phone number"
                 maxLength="10"
-                value={formData.phone}
-                onChange={handlePhoneInput}
-                className={errors.phone ? "error" : ""}
+                value={phone}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/[^0-9]/g, "");
+                  setPhone(val);
+                  setPhoneError("");
+                  if (phoneVerified) resetVerification();
+                }}
+                className={phoneError ? "error" : ""}
               />
             </div>
+
             <button
               type="button"
-              className="verify-small-btn"
-              id="verifyPhoneBtn"
-              onClick={() => openVerification("phone")}
-              disabled={verified.phone}
+              className={`verify-small-btn ${phoneVerified ? "verified" : ""}`}
+              onClick={() => onOpenVerifyModal("phone", "+91 " + phone)}
             >
-              {verified.phone ? "Verified ✓" : "Verify"}
+              {phoneVerified ? "Verified ✓" : "Verify"}
             </button>
           </div>
-          <div className={`error-message ${errors.phone ? "show" : ""}`}>
-            {errors.phone}
-          </div>
+
+          {phoneError && <div className="error-message show">{phoneError}</div>}
         </div>
 
         {/* Password */}
@@ -210,39 +177,40 @@ const RegisterForm = ({ onSwitchToLogin, onShowTerms, onRegisterSuccess }) => {
             <i className="bx bx-lock"></i>
             <input
               type={showPassword ? "text" : "password"}
-              id="registerPassword"
               placeholder="Password"
-              value={formData.password}
-              onChange={(e) => handleInputChange("password", e.target.value)}
-              className={errors.password ? "error" : ""}
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setPasswordError("");
+              }}
+              className={passwordError ? "error" : ""}
             />
             <i
               className={`bx ${showPassword ? "bx-show" : "bx-hide"} toggle-password`}
-              id="toggleRegisterPassword"
               onClick={() => setShowPassword(!showPassword)}
             ></i>
           </div>
-          <div className={`error-message ${errors.password ? "show" : ""}`}>
-            {errors.password}
-          </div>
+
+          {passwordError && (
+            <div className="error-message show">{passwordError}</div>
+          )}
         </div>
 
-        {/* Terms Checkbox */}
-        <div className={`remember ${blinkError ? "blink-error" : ""}`}>
+        {/* Terms */}
+        <div className="remember">
           <label>
             <input
               type="checkbox"
-              id="termsCheckbox"
-              checked={termsAccepted}
+              checked={termsChecked}
               onChange={(e) => {
-                setTermsAccepted(e.target.checked);
-                setBlinkError(false);
+                setTermsChecked(e.target.checked);
+                setTermsError(false);
               }}
-            />{" "}
+            />
             I agree with{" "}
             <a
               href="#"
-              className="terms-link"
+              className="auth-link"
               onClick={(e) => {
                 e.preventDefault();
                 onShowTerms();
@@ -253,48 +221,17 @@ const RegisterForm = ({ onSwitchToLogin, onShowTerms, onRegisterSuccess }) => {
           </label>
         </div>
 
-        {/* Register Button */}
+        {termsError && (
+          <div className="error-message show">
+            You must accept terms and conditions
+          </div>
+        )}
+
         <div className="Register-button">
           <button type="submit">Register</button>
         </div>
-
-        <div className="divider">
-          <span>OR</span>
-        </div>
-
-        {/* Google Button */}
-        <button type="button" className="google-login">
-          <img
-            src="https://www.svgrepo.com/show/475656/google-color.svg"
-            alt="Google"
-            className="google-icon"
-          />
-          Continue with Google
-        </button>
-
-        {/* Already have account */}
-        <div className="have-account">
-          <p>
-            Already have an account?{" "}
-            <a href="#" className="Login-acc" onClick={onSwitchToLogin}>
-              Login
-            </a>
-          </p>
-        </div>
       </form>
-
-      <VerificationModal
-        isOpen={showVerificationModal}
-        onClose={() => setShowVerificationModal(false)}
-        type={verificationType}
-        targetValue={
-          verificationType === "email"
-            ? formData.email
-            : `+91 ${formData.phone}`
-        }
-        onVerify={handleVerificationSuccess}
-      />
-    </>
+    </div>
   );
 };
 
