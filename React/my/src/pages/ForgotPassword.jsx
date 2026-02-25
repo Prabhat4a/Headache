@@ -1,8 +1,13 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import ForgotPasswordForm from "../components/auth/ForgotPasswordForm";
-const ForgotPassword = ({ onBackToLogin }) => {
+import "../styles/auth.css";
+
+const ForgotPassword = () => {
+  const navigate = useNavigate();
+
   return (
-    <div className="forgot-section">
+    <div className="auth-section">
       <video autoPlay muted loop id="bg-video">
         <source src="/website.mp4" type="video/mp4" />
       </video>
@@ -13,7 +18,9 @@ const ForgotPassword = ({ onBackToLogin }) => {
         <h1>STUVO5</h1>
       </div>
 
-      <ForgotPasswordForm onBackToLogin={onBackToLogin} />
+      <div className="login-box">
+        <ForgotPasswordForm onBackToLogin={() => navigate("/login")} />
+      </div>
     </div>
   );
 };
