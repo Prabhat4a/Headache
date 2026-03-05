@@ -1,6 +1,13 @@
 import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
-const VerificationForm = ({ registeredData, onBackToLogin }) => {
+const VerificationForm = ({ registeredData: propData, onBackToLogin }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Use route state if navigated to, otherwise fall back to props
+  const registeredData = location.state?.registeredData || propData || {};
+
   const [name, setName] = useState("");
   const [roll, setRoll] = useState("");
   const [branch, setBranch] = useState("");
@@ -32,6 +39,11 @@ const VerificationForm = ({ registeredData, onBackToLogin }) => {
       phone: "7654321098",
     },
   ];
+
+  const handleBackToLogin = () => {
+    if (onBackToLogin) onBackToLogin();
+    else navigate("/login");
+  };
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
@@ -107,12 +119,10 @@ const VerificationForm = ({ registeredData, onBackToLogin }) => {
             duplicates.join(", ") +
             "\n\nPlease use different information.",
         );
-        if (duplicates.includes("Name")) {
+        if (duplicates.includes("Name"))
           setNameError("This name is already registered");
-        }
-        if (duplicates.includes("Roll Number")) {
+        if (duplicates.includes("Roll Number"))
           setRollError("This roll number is already registered");
-        }
         isValid = false;
       }
     }
@@ -121,7 +131,7 @@ const VerificationForm = ({ registeredData, onBackToLogin }) => {
       alert(
         "✅ Registration Successful!\n\nYour account has been created. Please login with your credentials.",
       );
-      onBackToLogin();
+      handleBackToLogin();
     }
   };
 
@@ -202,13 +212,11 @@ const VerificationForm = ({ registeredData, onBackToLogin }) => {
                   className={nameError ? "error" : ""}
                 />
               </div>
-              <div
-                className={`error-message ${nameError ? "show" : ""}`}
-                id="verifyNameError"
-              >
+              <div className={`error-message ${nameError ? "show" : ""}`}>
                 {nameError}
               </div>
             </div>
+
             <div className="input-box">
               <label>
                 Roll Number <span className="optional-label">· Optional</span>
@@ -227,10 +235,7 @@ const VerificationForm = ({ registeredData, onBackToLogin }) => {
                   className={rollError ? "error" : ""}
                 />
               </div>
-              <div
-                className={`error-message ${rollError ? "show" : ""}`}
-                id="verifyRollError"
-              >
+              <div className={`error-message ${rollError ? "show" : ""}`}>
                 {rollError}
               </div>
             </div>
@@ -261,13 +266,11 @@ const VerificationForm = ({ registeredData, onBackToLogin }) => {
                   <option value="DS">Data Science</option>
                 </select>
               </div>
-              <div
-                className={`error-message ${branchError ? "show" : ""}`}
-                id="verifyBranchError"
-              >
+              <div className={`error-message ${branchError ? "show" : ""}`}>
                 {branchError}
               </div>
             </div>
+
             <div className="input-box">
               <label>Year</label>
               <div className="input-wrapper">
@@ -290,10 +293,7 @@ const VerificationForm = ({ registeredData, onBackToLogin }) => {
                   <option value="6">6th Year</option>
                 </select>
               </div>
-              <div
-                className={`error-message ${yearError ? "show" : ""}`}
-                id="verifyYearError"
-              >
+              <div className={`error-message ${yearError ? "show" : ""}`}>
                 {yearError}
               </div>
             </div>
@@ -306,10 +306,9 @@ const VerificationForm = ({ registeredData, onBackToLogin }) => {
           <div className="back-to-login">
             <a
               href="#"
-              id="backToLogin"
               onClick={(e) => {
                 e.preventDefault();
-                onBackToLogin();
+                handleBackToLogin();
               }}
             >
               ← Back to Registration

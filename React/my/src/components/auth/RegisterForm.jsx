@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 const RegisterForm = ({
   onSwitchToLogin,
   onShowTerms,
@@ -20,7 +20,7 @@ const RegisterForm = ({
   const [phoneError, setPhoneError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [termsError, setTermsError] = useState(false);
-
+  const navigate = useNavigate();
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const validatePhone = (phone) => {
@@ -81,6 +81,7 @@ const RegisterForm = ({
 
     if (valid) {
       onRegisterSuccess({ email, password, username, phone });
+      navigate("/complete-register");
     }
   };
 
