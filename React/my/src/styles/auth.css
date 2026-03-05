@@ -1,3 +1,24 @@
+/* ============================================================
+   COMBINED AUTH CSS
+   Merges: auth.css (CSS1) + index.css (CSS2)
+   - CSS1 unique: contact modal, forgot password section,
+     .input-box select, .verify-button in login buttons,
+     .close-privacy, .close-contact, .close-privacy-btn,
+     .creat-acc-phone missing in CSS1 (added from CSS2),
+     .verification-section.active, success-notification,
+     resend-code, forgot-box, step-container, verify-btn,
+     confirm-button, input-wrapper-verify, input-with-icon,
+     auth-link, sentTo, .verify-small-btn.verified
+   - CSS2 unique: login tab switcher (.login-tabs, .tab-btn,
+     .tab-form), tab-slide-in animation, .creat-acc-phone,
+     resend-otp-wrap, resend countdown, success overlay
+     (full animated card with progress bar)
+============================================================ */
+
+/* ==================== */
+/* RESET & BASE         */
+/* ==================== */
+
 * {
   margin: 0;
   padding: 0;
@@ -13,7 +34,10 @@ body {
   overflow-x: hidden;
 }
 
-/* Auth Section */
+/* ==================== */
+/* AUTH SECTION         */
+/* ==================== */
+
 .auth-section {
   display: flex;
   flex-direction: column;
@@ -45,6 +69,10 @@ body {
   z-index: -1;
 }
 
+/* ==================== */
+/* LOGO                 */
+/* ==================== */
+
 .logo {
   color: aliceblue;
   user-select: none;
@@ -71,6 +99,10 @@ body {
   margin: 0;
 }
 
+/* ==================== */
+/* LOGIN BOX            */
+/* ==================== */
+
 .login-box {
   background: transparent;
   border: 2px solid rgba(255, 255, 255, 0.2);
@@ -89,6 +121,7 @@ body {
 .box-head-2 h1 {
   text-align: center;
   color: aliceblue;
+  /* CSS1 uses 30px margin-bottom, CSS2 uses 20px — using CSS1 value */
   margin-bottom: 30px;
   font-size: 32px;
   user-select: none;
@@ -102,6 +135,56 @@ body {
 .objects-register {
   display: none;
 }
+
+/* ==================== */
+/* LOGIN TAB SWITCHER   */
+/* ==================== (CSS2 only) */
+
+.login-tabs {
+  display: flex;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 22px;
+  gap: 4px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 9px 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  letter-spacing: 0.3px;
+}
+
+.tab-btn:hover {
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(102, 126, 234, 0.4);
+}
+
+/* Tab form visibility */
+.tab-form {
+  display: none;
+}
+.tab-form.active {
+  display: block;
+}
+
+/* ==================== */
+/* INPUT STYLES         */
+/* ==================== */
 
 .input-box {
   margin: 15px auto;
@@ -119,6 +202,7 @@ body {
   align-items: center;
 }
 
+/* CSS1 includes select in this rule, CSS2 does not — keeping CSS1 */
 .input-box input,
 .input-box select {
   padding: 12px 45px 12px 40px;
@@ -178,6 +262,10 @@ body {
   display: block;
 }
 
+/* ==================== */
+/* ANIMATIONS           */
+/* ==================== */
+
 @keyframes blinkRed {
   0%,
   100% {
@@ -196,6 +284,96 @@ body {
   color: #ef4444;
 }
 
+/* Form toggle animations */
+.slide-up-out {
+  animation: slideUpOut 0.35s ease forwards;
+}
+.slide-up-in {
+  display: block !important;
+  animation: slideUpIn 0.35s ease forwards;
+}
+.slide-down-out {
+  animation: slideDownOut 0.35s ease forwards;
+}
+.slide-down-in {
+  display: block !important;
+  animation: slideDownIn 0.35s ease forwards;
+}
+
+/* Tab switch animation (CSS2 only) */
+.tab-slide-in {
+  animation: tabSlideIn 0.25s ease forwards;
+}
+@keyframes tabSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUpOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+@keyframes slideUpIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes slideDownOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+@keyframes slideDownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-8px);
+  }
+  75% {
+    transform: translateX(8px);
+  }
+}
+
+/* ==================== */
+/* BUTTONS              */
+/* ==================== */
+
+/* CSS1 includes .verify-button button here too; CSS2 keeps it separate */
 .login-button button,
 .Register-button button,
 .verify-button button {
@@ -247,6 +425,10 @@ body {
   flex-shrink: 0;
 }
 
+/* ==================== */
+/* REMEMBER / FORGOT    */
+/* ==================== */
+
 .remember-forgot,
 .remember {
   display: flex;
@@ -256,14 +438,21 @@ body {
   margin: 15px 0;
 }
 
+/* CSS1 has .terms-link here; CSS2 has .creat-acc-phone — merged both */
 .remember-forgot a,
 .creat-acc,
+.creat-acc-phone,
 .Login-acc,
 .terms-link {
   color: #a78bfa;
   text-decoration: none;
   font-weight: 500;
   cursor: pointer;
+}
+
+.terms-link:hover {
+  color: #c4b5fd;
+  text-decoration: underline;
 }
 
 .remember,
@@ -274,6 +463,19 @@ body {
   margin-top: 15px;
   font-size: 14px;
 }
+
+/* Auth link utility (CSS1 only) */
+.auth-section a.auth-link {
+  color: #8f5eff !important;
+  text-decoration: none;
+}
+.auth-section a.auth-link:hover {
+  text-decoration: underline;
+}
+
+/* ==================== */
+/* DIVIDER              */
+/* ==================== */
 
 .divider {
   display: flex;
@@ -295,7 +497,10 @@ body {
   font-size: 14px;
 }
 
-/* Verify Input Styles */
+/* ==================== */
+/* VERIFY INPUT STYLES  */
+/* ==================== */
+
 .input-wrapper-with-btn {
   display: flex;
   gap: 8px;
@@ -335,7 +540,16 @@ body {
   opacity: 0.9;
 }
 
-/* Phone Input Styles */
+/* CSS1 explicit verified state */
+.verify-small-btn.verified {
+  background: #28a745;
+  color: white;
+}
+
+/* ==================== */
+/* PHONE INPUT STYLES   */
+/* ==================== */
+
 .phone-input-wrapper {
   display: flex;
   align-items: center;
@@ -385,64 +599,66 @@ body {
   font-size: 14px;
 }
 
-/* Form Toggle Animation */
-.slide-up-out {
-  animation: slideUpOut 0.35s ease forwards;
-}
-.slide-up-in {
-  display: block !important;
-  animation: slideUpIn 0.35s ease forwards;
-}
-.slide-down-out {
-  animation: slideDownOut 0.35s ease forwards;
-}
-.slide-down-in {
-  display: block !important;
-  animation: slideDownIn 0.35s ease forwards;
+/* ==================== */
+/* RESEND OTP COUNTDOWN */
+/* ==================== (CSS2 only) */
+
+.resend-otp-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-@keyframes slideUpOut {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-}
-@keyframes slideUpIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@keyframes slideDownOut {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-}
-@keyframes slideDownIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+#resendOtpBtn {
+  color: #a78bfa;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s;
 }
 
-/* OTP Verify Modal */
+#resendOtpBtn.resend-disabled {
+  color: rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+  cursor: default;
+}
+
+.resend-countdown {
+  color: #a78bfa;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==================== */
+/* RESEND CODE (CSS1)   */
+/* ==================== */
+
+.resend-code {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.resend-code p {
+  color: rgba(240, 248, 255, 0.8);
+  font-size: 14px;
+}
+
+.resend-code a {
+  color: #a78bfa;
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.resend-code a:hover {
+  color: #c4b5fd;
+}
+
+/* ==================== */
+/* OTP VERIFY MODAL     */
+/* ==================== */
+
 .verify-modal {
   display: none;
   position: fixed;
@@ -566,19 +782,6 @@ body {
   animation: shake 0.4s;
 }
 
-@keyframes shake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-8px);
-  }
-  75% {
-    transform: translateX(8px);
-  }
-}
-
 .verify-submit-btn {
   width: 100%;
   padding: 14px;
@@ -598,7 +801,10 @@ body {
   box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
 }
 
-/* Footer */
+/* ==================== */
+/* FOOTER               */
+/* ==================== */
+
 .site-footer {
   position: fixed;
   bottom: 0;
@@ -634,7 +840,11 @@ body {
   white-space: nowrap;
 }
 
-/* Terms / Privacy / Contact Modals */
+/* ==================== */
+/* TERMS / PRIVACY /    */
+/* CONTACT MODALS       */
+/* ==================== */
+
 .terms-modal,
 .privacy-modal,
 .contact-modal {
@@ -663,6 +873,7 @@ body {
   align-items: center;
 }
 
+/* Terms content */
 .terms-content {
   background: rgba(12, 12, 22, 0.96);
   backdrop-filter: blur(20px);
@@ -694,6 +905,7 @@ body {
   color: rgba(255, 255, 255, 0.92);
 }
 
+/* CSS1 also has .close-privacy, .close-contact */
 .close-terms,
 .close-privacy,
 .close-contact {
@@ -750,6 +962,7 @@ body {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+/* CSS1 also includes .close-privacy-btn here */
 .accept-terms,
 .close-privacy-btn {
   padding: 11px 40px;
@@ -770,16 +983,10 @@ body {
   box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
 }
 
-.terms-link {
-  color: #a78bfa;
-  text-decoration: underline;
-  cursor: pointer;
-}
-.terms-link:hover {
-  color: #c4b5fd;
-}
+/* ==================== */
+/* CONTACT MODAL        */
+/* ==================== (CSS1 only) */
 
-/* Contact Modal */
 .contact-content {
   background: rgba(12, 12, 22, 0.96);
   backdrop-filter: blur(20px);
@@ -1031,7 +1238,10 @@ body {
   font-family: monospace;
 }
 
-/* Verification Page */
+/* ============================================ */
+/* VERIFICATION PAGE                            */
+/* ============================================ */
+
 .verification-section {
   display: none;
   flex-direction: column;
@@ -1046,6 +1256,7 @@ body {
   overflow-x: hidden;
 }
 
+/* CSS1 only — active state via class toggle */
 .verification-section.active {
   display: flex;
 }
@@ -1270,23 +1481,19 @@ body {
   margin-bottom: 0;
 }
 
-.verify-button button {
-  width: 100%;
+/* Override for verify page button (more styled than base) */
+.verification-box .verify-button button {
   height: 50px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
   border-radius: 14px;
-  border: none;
   font-weight: 700;
   font-size: 15px;
-  cursor: pointer;
-  transition: all 0.3s ease;
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
   text-transform: uppercase;
   letter-spacing: 1px;
+  margin: 0;
+  transition: all 0.3s ease;
 }
-
-.verify-button button:hover {
+.verification-box .verify-button button:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
 }
@@ -1308,7 +1515,279 @@ body {
   color: #fff;
 }
 
-/* Responsive */
+/* ==================== */
+/* SUCCESS OVERLAY      */
+/* ==================== (CSS2 only — full animated card) */
+
+.success-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.success-overlay.show {
+  display: flex;
+}
+
+.success-card {
+  background: rgba(15, 15, 28, 0.96);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  padding: 44px 40px 36px;
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.6),
+    0 0 60px rgba(102, 126, 234, 0.12);
+  animation: successCardIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes successCardIn {
+  from {
+    opacity: 0;
+    transform: scale(0.88) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.success-icon-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  box-shadow: 0 8px 28px rgba(102, 126, 234, 0.45);
+  animation: iconPop 0.5s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes iconPop {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.success-icon-circle i {
+  font-size: 40px;
+  color: #fff;
+  position: static;
+  transform: none;
+  left: auto;
+  top: auto;
+}
+
+.success-card h2 {
+  color: #fff;
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #fff 0%, #c4b5fd 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.success-card p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+.success-progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.success-progress-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #667eea, #a78bfa);
+  border-radius: 99px;
+  transform-origin: left;
+  animation: progressDrain 3s linear forwards;
+}
+
+@keyframes progressDrain {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+.success-redirect-text {
+  color: rgba(255, 255, 255, 0.35) !important;
+  font-size: 13px !important;
+  margin-bottom: 0 !important;
+}
+
+.success-redirect-text span {
+  color: #a78bfa;
+  font-weight: 700;
+}
+
+/* ==================== */
+/* SUCCESS NOTIFICATION */
+/* ==================== (CSS1 only — toast style) */
+
+.success-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: 15px 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  z-index: 1000;
+  opacity: 0;
+  transform: translateX(400px);
+  transition: all 0.5s ease;
+}
+
+.success-notification.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.success-notification i {
+  font-size: 24px;
+}
+
+/* ============================== */
+/* FORGOT PASSWORD SECTION        */
+/* ============================== (CSS1 only) */
+
+.forgot-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 20px;
+  padding: 20px;
+}
+
+.forgot-box {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 30px black;
+  backdrop-filter: blur(10px);
+  width: 500px;
+  min-height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  padding: 40px;
+}
+
+.forgot-password-wrapper {
+  width: 100%;
+  padding: 20px;
+}
+
+.step-container {
+  width: 100%;
+}
+
+.step-container.hidden {
+  display: none;
+}
+
+#sentTo {
+  color: #a78bfa;
+  font-weight: 600;
+}
+
+/* Forgot password input with verify button inline */
+.input-wrapper-verify {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.input-with-icon {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* Inline verify button used in forgot password flow */
+.verify-btn {
+  height: 45px;
+  padding: 0 25px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+  white-space: nowrap;
+}
+
+.verify-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Confirm button (forgot password step 3) */
+.confirm-button button {
+  width: 100%;
+  height: 45px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 2px;
+  transition: 0.3s;
+}
+
+.confirm-button button:hover {
+  transform: scale(1.02);
+  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* ==================== */
+/* RESPONSIVE           */
+/* ==================== */
+
 @media (max-width: 768px) {
   .login-box {
     width: 92%;
@@ -1367,11 +1846,26 @@ body {
     padding: 10px 15px;
   }
 
+  /* Contact modal (CSS1) */
   .contact-content {
     width: 96%;
     max-height: 88vh;
     border-radius: 16px;
     margin: auto;
+  }
+
+  .contact-body {
+    padding: 16px 14px;
+  }
+
+  .topic-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .topic-btn {
+    padding: 11px 12px;
+    font-size: 13px;
   }
 
   .terms-content {
@@ -1397,18 +1891,26 @@ body {
     padding: 14px 18px;
   }
 
-  .contact-body {
-    padding: 16px 14px;
+  /* Forgot password (CSS1) */
+  .forgot-box {
+    width: 90%;
+    padding: 30px 25px;
   }
 
-  .topic-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
+  .input-wrapper-verify {
+    flex-direction: column;
+    gap: 10px;
   }
 
-  .topic-btn {
-    padding: 11px 12px;
-    font-size: 13px;
+  .verify-btn {
+    width: 100%;
+  }
+
+  .success-notification {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    font-size: 14px;
   }
 }
 
@@ -1540,388 +2042,3 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
-.verify-small-btn {
-  background: linear-gradient(45deg, #5f6fff, #8f5eff);
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: 0.3s ease;
-}
-
-.verify-small-btn.verified {
-  background: #28a745; /* green */
-  color: white;
-}
-.auth-section a.auth-link {
-  color: #8f5eff !important;
-  text-decoration: none;
-}
-
-.auth-section a.auth-link:hover {
-  text-decoration: underline;
-}
-
-/* forgoot passowrd css */
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-}
-
-body {
-  background: #0a0a0a;
-  color: #fff;
-  overflow-x: hidden;
-}
-
-.forgot-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  gap: 20px;
-  padding: 20px;
-}
-
-#bg-video {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -2;
-}
-
-.video-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: -1;
-}
-
-.logo {
-  color: aliceblue;
-  user-select: none;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-}
-
-.logo-icon {
-  width: 45px;
-  height: 45px;
-  object-fit: contain;
-}
-
-.logo h1 {
-  font-size: 48px;
-  letter-spacing: 8px;
-  background: white;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin: 0;
-}
-
-.forgot-box {
-  background: transparent;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 30px black;
-  backdrop-filter: blur(10px);
-  width: 500px;
-  min-height: 300px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 20px;
-  padding: 40px;
-}
-
-.step-container {
-  width: 100%;
-}
-
-.step-container.hidden {
-  display: none;
-}
-
-.box-head {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.box-head h1 {
-  color: aliceblue;
-  font-size: 32px;
-  margin-bottom: 10px;
-}
-
-.subtitle {
-  color: rgba(240, 248, 255, 0.7);
-  font-size: 14px;
-  margin-top: 10px;
-}
-
-#sentTo {
-  color: #a78bfa;
-  font-weight: 600;
-}
-
-.input-box {
-  margin: 20px auto;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-
-.input-wrapper {
-  position: relative;
-  width: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.input-wrapper-verify {
-  width: 100%;
-  display: flex;
-  gap: 10px;
-  align-items: center; /* FIXED */
-}
-
-.input-with-icon {
-  position: relative;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-
-.input-box input {
-  padding: 12px 45px 12px 40px;
-  border-radius: 10px;
-  border: 2px solid transparent;
-  outline: none;
-  height: 45px;
-  width: 100%;
-  font-size: 15px;
-  background: rgba(255, 255, 255, 0.95);
-  transition: border-color 0.3s;
-}
-
-.input-box input.error {
-  border-color: #ef4444;
-}
-
-.input-box i {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #666;
-  font-size: 18px;
-}
-
-.toggle-password {
-  position: absolute;
-  right: 12px !important;
-  left: auto !important;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #666;
-  font-size: 20px;
-  cursor: pointer !important;
-  transition: color 0.3s;
-  z-index: 100;
-  pointer-events: auto !important;
-}
-
-.toggle-password:hover {
-  color: #a78bfa;
-}
-
-.verify-btn {
-  height: 45px;
-  padding: 0 25px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 10px;
-  border: none;
-  font-weight: 600;
-  font-size: 15px;
-  cursor: pointer;
-  transition: 0.3s;
-  white-space: nowrap;
-}
-
-.verify-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-}
-
-.error-message {
-  color: #ef4444;
-  font-size: 13px;
-  margin-top: 5px;
-  display: none;
-  align-self: flex-start;
-  font-weight: 500;
-}
-
-.error-message.show {
-  display: block;
-}
-
-.verify-button button,
-.confirm-button button {
-  width: 100%;
-  height: 45px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 10px;
-  border: none;
-  font-weight: 600;
-  font-size: 16px;
-  cursor: pointer;
-  margin: 2px;
-  transition: 0.3s;
-}
-
-.verify-button button:hover,
-.confirm-button button:hover {
-  transform: scale(1.02);
-  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-}
-
-.back-to-login {
-  text-align: center;
-  margin-top: 20px;
-}
-
-.back-to-login a {
-  color: #a78bfa;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  transition: 0.3s;
-}
-
-.back-to-login a:hover {
-  color: #c4b5fd;
-}
-
-.resend-code {
-  text-align: center;
-  margin-top: 15px;
-}
-
-.resend-code p {
-  color: rgba(240, 248, 255, 0.8);
-  font-size: 14px;
-}
-
-.resend-code a {
-  color: #a78bfa;
-  text-decoration: none;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.resend-code a:hover {
-  color: #c4b5fd;
-}
-
-/* Success Notification */
-.success-notification {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-  padding: 15px 25px;
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 600;
-  z-index: 1000;
-  opacity: 0;
-  transform: translateX(400px);
-  transition: all 0.5s ease;
-}
-
-.success-notification.show {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.success-notification i {
-  font-size: 24px;
-}
-
-@media (max-width: 768px) {
-  .forgot-box {
-    width: 90%;
-    padding: 30px 25px;
-  }
-
-  .logo h1 {
-    font-size: 36px;
-  }
-
-  .input-wrapper-verify {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .verify-btn {
-    width: 100%;
-  }
-
-  .success-notification {
-    top: 10px;
-    right: 10px;
-    left: 10px;
-    font-size: 14px;
-  }
-}
-.forgot-password-wrapper {
-  width: 100%;
-  padding: 20px;
-}
-
-/* Remove or comment out these styles since login-box already provides the box */
-/*
-.forgot-box {
-  background: transparent;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 30px black;
-  backdrop-filter: blur(10px);
-  width: 500px;
-  min-height: 300px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 20px;
-  padding: 40px;
-}
-*/
-
-/* Remove the forgot-box styles since login-box already provides the container */
-/* You can delete or comment out the .forgot-box CSS rules */
