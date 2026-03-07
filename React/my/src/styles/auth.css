@@ -1,19 +1,6 @@
 /* ============================================================
-   COMBINED AUTH CSS
-   Merges: auth.css (CSS1) + index.css (CSS2)
-   - CSS1 unique: contact modal, forgot password section,
-     .input-box select, .verify-button in login buttons,
-     .close-privacy, .close-contact, .close-privacy-btn,
-     .creat-acc-phone missing in CSS1 (added from CSS2),
-     .verification-section.active, success-notification,
-     resend-code, forgot-box, step-container, verify-btn,
-     confirm-button, input-wrapper-verify, input-with-icon,
-     auth-link, sentTo, .verify-small-btn.verified
-   - CSS2 unique: login tab switcher (.login-tabs, .tab-btn,
-     .tab-form), tab-slide-in animation, .creat-acc-phone,
-     resend-otp-wrap, resend countdown, success overlay
-     (full animated card with progress bar)
-============================================================ */
+   COMBINED AUTH CSS - FIXED SPACING & SMOOTH TRANSITIONS
+   ============================================================ */
 
 /* ==================== */
 /* RESET & BASE         */
@@ -100,7 +87,7 @@ body {
 }
 
 /* ==================== */
-/* LOGIN BOX            */
+/* LOGIN BOX - FIXED    */
 /* ==================== */
 
 .login-box {
@@ -109,43 +96,137 @@ body {
   box-shadow: 0 0 30px black;
   backdrop-filter: blur(10px);
   width: 500px;
-  min-height: 300px;
+  min-height: 520px; /* FIXED: Consistent height */
+  max-height: 520px;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* FIXED: Align to top */
   border-radius: 20px;
-  padding: 40px;
+  padding: 35px;
+  position: relative;
+  overflow: hidden; /* FIXED: Prevent content spill */
+  transition: min-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==================== */
+/* FORM CONTAINER - NEW */
+/* ==================== */
+
+.form-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ==================== */
+/* HEADERS - FIXED      */
+/* ==================== */
+
+.box-head,
+.box-head-2 {
+  position: relative;
+  width: 100%;
+  margin-bottom: 20px; /* FIXED: Consistent spacing */
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .box-head h1,
 .box-head-2 h1 {
   text-align: center;
   color: aliceblue;
-  /* CSS1 uses 30px margin-bottom, CSS2 uses 20px — using CSS1 value */
-  margin-bottom: 30px;
   font-size: 32px;
   user-select: none;
+  margin: 0;
 }
+
+.back-arrow {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: white;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.back-arrow:hover {
+  color: #a78bfa;
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* ==================== */
+/* FORM OBJECTS - FIXED */
+/* ==================== */
 
 .objects,
 .objects-register {
   width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Login form visible by default */
+.objects {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: all;
+}
+
+/* Register form hidden by default */
 .objects-register {
-  display: none;
+  opacity: 0;
+  transform: translateX(30px);
+  pointer-events: none;
+}
+
+/* Active states for JS toggle */
+.objects.active {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: all;
+}
+
+.objects.inactive {
+  opacity: 0;
+  transform: translateX(-30px);
+  pointer-events: none;
+}
+
+.objects-register.active {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: all;
+}
+
+.objects-register.inactive {
+  opacity: 0;
+  transform: translateX(30px);
+  pointer-events: none;
 }
 
 /* ==================== */
 /* LOGIN TAB SWITCHER   */
-/* ==================== (CSS2 only) */
+/* ==================== */
 
 .login-tabs {
   display: flex;
   background: rgba(255, 255, 255, 0.08);
   border-radius: 10px;
   padding: 4px;
-  margin-bottom: 22px;
+  margin-bottom: 16px; /* FIXED: Consistent spacing */
   gap: 4px;
 }
 
@@ -174,7 +255,6 @@ body {
   box-shadow: 0 3px 10px rgba(102, 126, 234, 0.4);
 }
 
-/* Tab form visibility */
 .tab-form {
   display: none;
 }
@@ -183,16 +263,17 @@ body {
 }
 
 /* ==================== */
-/* INPUT STYLES         */
+/* INPUT STYLES - FIXED */
 /* ==================== */
 
 .input-box {
-  margin: 15px auto;
+  margin: 10px 0; /* FIXED: Reduced from 15px for consistency */
   position: relative;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* FIXED: Align to top */
   flex-direction: column;
+  min-height: 72px; /* FIXED: Fixed height for consistent spacing */
 }
 
 .input-wrapper {
@@ -202,14 +283,13 @@ body {
   align-items: center;
 }
 
-/* CSS1 includes select in this rule, CSS2 does not — keeping CSS1 */
 .input-box input,
 .input-box select {
   padding: 12px 45px 12px 40px;
   border-radius: 10px;
   border: 2px solid transparent;
   outline: none;
-  height: 45px;
+  height: 45px; /* FIXED: Consistent height */
   width: 100%;
   font-size: 15px;
   background: rgba(255, 255, 255, 0.95);
@@ -251,15 +331,253 @@ body {
 
 .error-message {
   color: #ef4444;
-  font-size: 13px;
-  margin-top: 5px;
+  font-size: 12px; /* FIXED: Slightly smaller */
+  margin-top: 4px; /* FIXED: Tighter spacing */
   display: none;
   align-self: flex-start;
   font-weight: 500;
+  min-height: 16px; /* FIXED: Reserve space to prevent jump */
 }
 
 .error-message.show {
   display: block;
+}
+
+/* ==================== */
+/* PHONE INPUT - FIXED  */
+/* ==================== */
+
+.phone-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  height: 45px; /* FIXED: Match standard input */
+  position: relative;
+  width: 100%; /* FIXED: Full width */
+}
+
+.phone-input-wrapper:focus-within {
+  border-color: #a78bfa;
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2);
+}
+
+.country-code {
+  padding: 0 10px; /* FIXED: Better spacing */
+  color: #667eea;
+  font-weight: 700;
+  font-size: 13px;
+  border-right: 1px solid rgba(102, 126, 234, 0.3);
+  background: rgba(102, 126, 234, 0.15);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 40px; /* FIXED: Consistent width */
+}
+
+.phone-input-wrapper input {
+  border: none;
+  outline: none;
+  background: transparent;
+  padding-left: 12px;
+  padding-right: 12px;
+  flex: 1;
+  height: 100%;
+  font-size: 15px; /* FIXED: Match standard input */
+  color: #333;
+}
+
+.phone-input-wrapper input::placeholder {
+  color: #888;
+  font-size: 15px; /* FIXED: Match */
+}
+
+/* ==================== */
+/* VERIFY BUTTON ROW    */
+/* ==================== */
+
+.input-wrapper-with-btn {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  align-items: flex-start;
+  min-height: 45px; /* FIXED: Match input height */
+}
+
+.input-wrapper-with-btn .input-wrapper {
+  flex: 1;
+}
+
+.verify-small-btn {
+  padding: 0 16px; /* FIXED: Better padding */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px; /* FIXED: Match input radius */
+  font-size: 13px; /* FIXED: Slightly larger */
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+  height: 45px; /* FIXED: Exact match to input */
+  min-width: 70px; /* FIXED: Wider for "Verify" */
+}
+
+.verify-small-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.verify-small-btn:disabled {
+  background: #48bb78;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
+  opacity: 0.9;
+}
+
+.verify-small-btn.verified {
+  background: #28a745;
+  color: white;
+}
+
+/* ==================== */
+/* CHECKBOX ROW - FIXED */
+/* ==================== */
+
+.remember-forgot,
+.remember {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* FIXED: Center align */
+  color: aliceblue;
+  font-size: 14px;
+  margin: 12px 0; /* FIXED: Consistent with input-box */
+  min-height: 24px; /* FIXED: Reserve space */
+}
+
+.remember-forgot a,
+.creat-acc,
+.creat-acc-phone,
+.Login-acc,
+.terms-link {
+  color: #a78bfa;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.terms-link:hover {
+  color: #c4b5fd;
+  text-decoration: underline;
+}
+
+.remember,
+.account,
+.have-account {
+  color: aliceblue;
+  text-align: center;
+  margin-top: 12px; /* FIXED: Consistent */
+  font-size: 14px;
+}
+
+.auth-section a.auth-link {
+  color: #8f5eff !important;
+  text-decoration: none;
+}
+.auth-section a.auth-link:hover {
+  text-decoration: underline;
+}
+
+/* ==================== */
+/* BUTTONS              */
+/* ==================== */
+
+.login-button,
+.Register-button,
+.verify-button {
+  margin-top: 8px; /* FIXED: Consistent spacing */
+}
+
+.login-button button,
+.Register-button button,
+.verify-button button {
+  width: 100%;
+  height: 45px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-button button:hover,
+.Register-button button:hover,
+.verify-button button:hover {
+  transform: scale(1.02);
+  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+.google-login {
+  width: 100%;
+  height: 45px;
+  background: white;
+  color: #444;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 8px; /* FIXED: Consistent */
+}
+
+.google-login:hover {
+  background: #f8f8f8;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.google-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* ==================== */
+/* DIVIDER              */
+/* ==================== */
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 16px 0; /* FIXED: Consistent */
+  color: aliceblue;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.divider span {
+  padding: 0 15px;
+  font-size: 14px;
 }
 
 /* ==================== */
@@ -284,78 +602,6 @@ body {
   color: #ef4444;
 }
 
-/* Form toggle animations */
-.slide-up-out {
-  animation: slideUpOut 0.35s ease forwards;
-}
-.slide-up-in {
-  display: block !important;
-  animation: slideUpIn 0.35s ease forwards;
-}
-.slide-down-out {
-  animation: slideDownOut 0.35s ease forwards;
-}
-.slide-down-in {
-  display: block !important;
-  animation: slideDownIn 0.35s ease forwards;
-}
-
-/* Tab switch animation (CSS2 only) */
-.tab-slide-in {
-  animation: tabSlideIn 0.25s ease forwards;
-}
-@keyframes tabSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideUpOut {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-}
-@keyframes slideUpIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@keyframes slideDownOut {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-}
-@keyframes slideDownIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @keyframes shake {
   0%,
   100% {
@@ -369,239 +615,24 @@ body {
   }
 }
 
-/* ==================== */
-/* BUTTONS              */
-/* ==================== */
-
-/* CSS1 includes .verify-button button here too; CSS2 keeps it separate */
-.login-button button,
-.Register-button button,
-.verify-button button {
-  width: 100%;
-  height: 45px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 10px;
-  border: none;
-  font-weight: 600;
-  font-size: 16px;
-  cursor: pointer;
-  margin: 20px 0;
-  transition: 0.3s;
+.tab-slide-in {
+  animation: tabSlideIn 0.25s ease forwards;
 }
 
-.login-button button:hover,
-.Register-button button:hover,
-.verify-button button:hover {
-  transform: scale(1.02);
-  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-}
-
-.google-login {
-  width: 100%;
-  height: 45px;
-  background: white;
-  color: #444;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.3s;
-  font-size: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-.google-login:hover {
-  background: #f8f8f8;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.google-icon {
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
+@keyframes tabSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ==================== */
-/* REMEMBER / FORGOT    */
+/* RESEND OTP           */
 /* ==================== */
-
-.remember-forgot,
-.remember {
-  display: flex;
-  justify-content: space-between;
-  color: aliceblue;
-  font-size: 14px;
-  margin: 15px 0;
-}
-
-/* CSS1 has .terms-link here; CSS2 has .creat-acc-phone — merged both */
-.remember-forgot a,
-.creat-acc,
-.creat-acc-phone,
-.Login-acc,
-.terms-link {
-  color: #a78bfa;
-  text-decoration: none;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.terms-link:hover {
-  color: #c4b5fd;
-  text-decoration: underline;
-}
-
-.remember,
-.account,
-.have-account {
-  color: aliceblue;
-  text-align: center;
-  margin-top: 15px;
-  font-size: 14px;
-}
-
-/* Auth link utility (CSS1 only) */
-.auth-section a.auth-link {
-  color: #8f5eff !important;
-  text-decoration: none;
-}
-.auth-section a.auth-link:hover {
-  text-decoration: underline;
-}
-
-/* ==================== */
-/* DIVIDER              */
-/* ==================== */
-
-.divider {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  margin: 20px 0;
-  color: aliceblue;
-}
-
-.divider::before,
-.divider::after {
-  content: "";
-  flex: 1;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.divider span {
-  padding: 0 15px;
-  font-size: 14px;
-}
-
-/* ==================== */
-/* VERIFY INPUT STYLES  */
-/* ==================== */
-
-.input-wrapper-with-btn {
-  display: flex;
-  gap: 8px;
-  width: 100%;
-  align-items: flex-start;
-}
-
-.input-wrapper-with-btn .input-wrapper {
-  flex: 1;
-}
-
-.verify-small-btn {
-  padding: 0 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-  white-space: nowrap;
-  height: 44px;
-  min-width: 60px;
-}
-
-.verify-small-btn:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-.verify-small-btn:disabled {
-  background: #48bb78;
-  cursor: default;
-  transform: none;
-  box-shadow: none;
-  opacity: 0.9;
-}
-
-/* CSS1 explicit verified state */
-.verify-small-btn.verified {
-  background: #28a745;
-  color: white;
-}
-
-/* ==================== */
-/* PHONE INPUT STYLES   */
-/* ==================== */
-
-.phone-input-wrapper {
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease;
-  overflow: hidden;
-  height: 44px;
-  position: relative;
-}
-
-.phone-input-wrapper:focus-within {
-  border-color: #a78bfa;
-  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2);
-}
-
-.country-code {
-  padding: 0 8px;
-  color: #667eea;
-  font-weight: 700;
-  font-size: 13px;
-  border-right: 1px solid rgba(102, 126, 234, 0.3);
-  background: rgba(102, 126, 234, 0.15);
-  height: 100%;
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-  flex-shrink: 0;
-  min-width: 36px;
-}
-
-.phone-input-wrapper input {
-  border: none;
-  outline: none;
-  background: transparent;
-  padding-left: 12px;
-  padding-right: 12px;
-  flex: 1;
-  height: 100%;
-  font-size: 14px;
-  color: #333;
-}
-
-.phone-input-wrapper input::placeholder {
-  color: #888;
-  font-size: 14px;
-}
-
-/* ==================== */
-/* RESEND OTP COUNTDOWN */
-/* ==================== (CSS2 only) */
 
 .resend-otp-wrap {
   display: flex;
@@ -629,10 +660,6 @@ body {
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
-
-/* ==================== */
-/* RESEND CODE (CSS1)   */
-/* ==================== */
 
 .resend-code {
   text-align: center;
@@ -674,6 +701,7 @@ body {
   align-items: center;
   padding: 15px;
 }
+
 .verify-modal.show {
   display: flex;
 }
@@ -726,6 +754,7 @@ body {
   justify-content: center;
   border-radius: 50%;
 }
+
 .close-verify:hover {
   color: rgba(255, 255, 255, 0.9);
   background: rgba(255, 255, 255, 0.08);
@@ -742,6 +771,7 @@ body {
   font-size: 14px;
   line-height: 1.5;
 }
+
 .verify-text span {
   color: #a78bfa;
   font-weight: 600;
@@ -754,6 +784,7 @@ body {
 .code-input-wrapper {
   margin-bottom: 15px;
 }
+
 .code-input-wrapper input {
   width: 100%;
   padding: 15px;
@@ -769,14 +800,17 @@ body {
   font-weight: 600;
   font-family: monospace;
 }
+
 .code-input-wrapper input:focus {
   border-color: #667eea;
   box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
 }
+
 .code-input-wrapper input::placeholder {
   color: #ccc;
   letter-spacing: 6px;
 }
+
 .code-input-wrapper input.error {
   border-color: #ef4444;
   animation: shake 0.4s;
@@ -796,6 +830,7 @@ body {
   margin-top: 5px;
   letter-spacing: 0.5px;
 }
+
 .verify-submit-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
@@ -830,6 +865,7 @@ body {
   transition: color 0.25s ease;
   white-space: nowrap;
 }
+
 .site-footer a:hover {
   color: rgba(255, 255, 255, 0.9);
 }
@@ -841,8 +877,7 @@ body {
 }
 
 /* ==================== */
-/* TERMS / PRIVACY /    */
-/* CONTACT MODALS       */
+/* MODALS               */
 /* ==================== */
 
 .terms-modal,
@@ -862,6 +897,7 @@ body {
   align-items: flex-start;
   overflow-y: auto;
 }
+
 .terms-modal.show,
 .privacy-modal.show,
 .contact-modal.show {
@@ -873,7 +909,6 @@ body {
   align-items: center;
 }
 
-/* Terms content */
 .terms-content {
   background: rgba(12, 12, 22, 0.96);
   backdrop-filter: blur(20px);
@@ -905,7 +940,6 @@ body {
   color: rgba(255, 255, 255, 0.92);
 }
 
-/* CSS1 also has .close-privacy, .close-contact */
 .close-terms,
 .close-privacy,
 .close-contact {
@@ -917,6 +951,7 @@ body {
   padding: 2px 6px;
   border-radius: 6px;
 }
+
 .close-terms:hover,
 .close-privacy:hover,
 .close-contact:hover {
@@ -932,6 +967,7 @@ body {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
+
 .terms-body::-webkit-scrollbar {
   display: none;
 }
@@ -943,9 +979,11 @@ body {
   font-size: 15px;
   font-weight: 600;
 }
+
 .terms-body h3:first-child {
   margin-top: 0;
 }
+
 .terms-body p {
   line-height: 1.7;
   margin-bottom: 12px;
@@ -962,7 +1000,6 @@ body {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* CSS1 also includes .close-privacy-btn here */
 .accept-terms,
 .close-privacy-btn {
   padding: 11px 40px;
@@ -977,6 +1014,7 @@ body {
   width: 100%;
   max-width: 200px;
 }
+
 .accept-terms:hover,
 .close-privacy-btn:hover {
   transform: translateY(-2px);
@@ -985,7 +1023,7 @@ body {
 
 /* ==================== */
 /* CONTACT MODAL        */
-/* ==================== (CSS1 only) */
+/* ==================== */
 
 .contact-content {
   background: rgba(12, 12, 22, 0.96);
@@ -1017,9 +1055,11 @@ body {
   scrollbar-color: rgba(167, 139, 250, 0.4) transparent;
   -ms-overflow-style: none;
 }
+
 .contact-body::-webkit-scrollbar {
   width: 4px;
 }
+
 .contact-body::-webkit-scrollbar-thumb {
   background: rgba(167, 139, 250, 0.4);
   border-radius: 4px;
@@ -1044,6 +1084,7 @@ body {
   text-align: left;
   line-height: 1.4;
 }
+
 .topic-btn:hover {
   background: rgba(102, 126, 234, 0.15);
   border-color: rgba(102, 126, 234, 0.5);
@@ -1065,6 +1106,7 @@ body {
   gap: 4px;
   transition: color 0.2s;
 }
+
 .contact-back-btn:hover {
   color: #fff;
 }
@@ -1084,6 +1126,7 @@ body {
 .contact-form-group {
   margin-bottom: 18px;
 }
+
 .contact-form-group label {
   display: block;
   color: rgba(255, 255, 255, 0.65);
@@ -1098,6 +1141,7 @@ body {
   position: relative;
   width: 100%;
 }
+
 .contact-input-wrapper i {
   position: absolute;
   left: 14px;
@@ -1108,6 +1152,7 @@ body {
   pointer-events: none;
   z-index: 2;
 }
+
 .contact-input-wrapper .textarea-icon {
   top: 16px;
   transform: none;
@@ -1128,6 +1173,7 @@ body {
   resize: none;
   font-family: inherit;
 }
+
 .contact-input-wrapper input:focus,
 .contact-input-wrapper textarea:focus {
   border-color: #a78bfa;
@@ -1141,6 +1187,7 @@ body {
   display: none;
   font-weight: 500;
 }
+
 .contact-error.show {
   display: block;
 }
@@ -1164,10 +1211,12 @@ body {
   letter-spacing: 0.5px;
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35);
 }
+
 .send-message-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 28px rgba(102, 126, 234, 0.48);
 }
+
 .send-message-btn i {
   font-size: 18px;
   position: static;
@@ -1197,6 +1246,7 @@ body {
   margin-bottom: 20px;
   animation: popIn 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
+
 @keyframes popIn {
   from {
     opacity: 0;
@@ -1207,40 +1257,46 @@ body {
     transform: scale(1);
   }
 }
+
 .success-icon-wrap i {
   font-size: 40px;
   color: #10b981;
   position: static;
   transform: none;
 }
+
 .success-title {
   font-size: 24px;
   font-weight: 700;
   color: #fff;
   margin-bottom: 12px;
 }
+
 .success-msg {
   color: rgba(255, 255, 255, 0.65);
   font-size: 14.5px;
   line-height: 1.7;
   margin-bottom: 12px;
 }
+
 .success-msg strong {
   color: #c4b5fd;
 }
+
 .success-ref {
   color: rgba(255, 255, 255, 0.35);
   font-size: 12.5px;
 }
+
 .success-ref span {
   color: #a78bfa;
   font-weight: 600;
   font-family: monospace;
 }
 
-/* ============================================ */
-/* VERIFICATION PAGE                            */
-/* ============================================ */
+/* ==================== */
+/* VERIFICATION PAGE    */
+/* ==================== */
 
 .verification-section {
   display: none;
@@ -1256,7 +1312,6 @@ body {
   overflow-x: hidden;
 }
 
-/* CSS1 only — active state via class toggle */
 .verification-section.active {
   display: flex;
 }
@@ -1298,7 +1353,6 @@ body {
   font-size: 14px;
 }
 
-/* Avatar Upload */
 .avatar-upload-section {
   display: flex;
   flex-direction: column;
@@ -1332,8 +1386,6 @@ body {
   color: rgba(255, 255, 255, 0.3);
   position: static;
   transform: none;
-  left: auto;
-  top: auto;
 }
 
 .avatar-preview-img {
@@ -1367,8 +1419,6 @@ body {
   color: white;
   position: static;
   transform: none;
-  left: auto;
-  top: auto;
 }
 
 .avatar-overlay span {
@@ -1396,7 +1446,6 @@ body {
   letter-spacing: 0;
 }
 
-/* Form rows */
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1476,12 +1525,11 @@ body {
   box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
 }
 
-.verify-button {
+.verification-box .verify-button {
   margin-top: 20px;
   margin-bottom: 0;
 }
 
-/* Override for verify page button (more styled than base) */
 .verification-box .verify-button button {
   height: 50px;
   border-radius: 14px;
@@ -1493,6 +1541,7 @@ body {
   margin: 0;
   transition: all 0.3s ease;
 }
+
 .verification-box .verify-button button:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
@@ -1517,7 +1566,7 @@ body {
 
 /* ==================== */
 /* SUCCESS OVERLAY      */
-/* ==================== (CSS2 only — full animated card) */
+/* ==================== */
 
 .success-overlay {
   display: none;
@@ -1590,8 +1639,6 @@ body {
   color: #fff;
   position: static;
   transform: none;
-  left: auto;
-  top: auto;
 }
 
 .success-card h2 {
@@ -1652,7 +1699,7 @@ body {
 
 /* ==================== */
 /* SUCCESS NOTIFICATION */
-/* ==================== (CSS1 only — toast style) */
+/* ==================== */
 
 .success-notification {
   position: fixed;
@@ -1682,9 +1729,9 @@ body {
   font-size: 24px;
 }
 
-/* ============================== */
-/* FORGOT PASSWORD SECTION        */
-/* ============================== (CSS1 only) */
+/* ==================== */
+/* FORGOT PASSWORD      */
+/* ==================== */
 
 .forgot-section {
   display: flex;
@@ -1728,7 +1775,6 @@ body {
   font-weight: 600;
 }
 
-/* Forgot password input with verify button inline */
 .input-wrapper-verify {
   width: 100%;
   display: flex;
@@ -1744,7 +1790,6 @@ body {
   width: 100%;
 }
 
-/* Inline verify button used in forgot password flow */
 .verify-btn {
   height: 45px;
   padding: 0 25px;
@@ -1764,7 +1809,6 @@ body {
   box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
 }
 
-/* Confirm button (forgot password step 3) */
 .confirm-button button {
   width: 100%;
   height: 45px;
@@ -1791,6 +1835,8 @@ body {
 @media (max-width: 768px) {
   .login-box {
     width: 92%;
+    min-height: 480px; /* FIXED: Adjusted for mobile */
+    max-height: none;
     padding: 30px 22px;
   }
 
@@ -1802,6 +1848,11 @@ body {
   .logo-icon {
     width: 36px;
     height: 36px;
+  }
+
+  .input-box {
+    min-height: 68px; /* FIXED: Slightly smaller on mobile */
+    margin: 8px 0;
   }
 
   .verification-section {
@@ -1846,7 +1897,6 @@ body {
     padding: 10px 15px;
   }
 
-  /* Contact modal (CSS1) */
   .contact-content {
     width: 96%;
     max-height: 88vh;
@@ -1891,7 +1941,6 @@ body {
     padding: 14px 18px;
   }
 
-  /* Forgot password (CSS1) */
   .forgot-box {
     width: 90%;
     padding: 30px 25px;
@@ -1975,6 +2024,7 @@ body {
 
   .login-box {
     width: 95%;
+    min-height: 450px;
     padding: 25px 18px;
     border-radius: 16px;
   }
@@ -1982,7 +2032,10 @@ body {
   .box-head h1,
   .box-head-2 h1 {
     font-size: 26px;
-    margin-bottom: 22px;
+  }
+
+  .input-box {
+    min-height: 66px;
   }
 
   .input-box input {
@@ -2013,6 +2066,7 @@ body {
   }
 
   .login-box {
+    min-height: 420px;
     padding: 20px 14px;
   }
 
@@ -2032,6 +2086,10 @@ body {
 
   .verification-box .input-box label {
     font-size: 10px;
+  }
+
+  .input-box {
+    min-height: 64px;
   }
 }
 

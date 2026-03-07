@@ -85,14 +85,6 @@ const RegisterForm = ({
     }
   };
 
-  const handleEmailVerify = () => {
-    if (!validateEmail(email.trim())) {
-      setEmailError("Please enter a valid email first");
-      return;
-    }
-    onOpenVerifyModal("email", email);
-  };
-
   const handlePhoneVerify = () => {
     const cleanPhone = phone.replace(/\D/g, "");
     if (cleanPhone.length !== 10) {
@@ -105,7 +97,11 @@ const RegisterForm = ({
   return (
     <div>
       <div className="box-head-2">
-        <h1>Register</h1>
+        <button type="button" className="back-arrow" onClick={onSwitchToLogin}>
+          <i className="bx bx-arrow-back"></i>
+        </button>
+
+        <h1 className="register-title">Register</h1>
       </div>
       <form id="registerForm" onSubmit={handleSubmit}>
         {/* Username */}
@@ -129,30 +125,19 @@ const RegisterForm = ({
         </div>
 
         {/* Email */}
-        <div className="input-box verify-box">
-          <div className="input-wrapper-with-btn">
-            <div className="input-wrapper">
-              <i className="bx bx-envelope"></i>
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setEmailError("");
-                  if (emailVerified) resetVerification();
-                }}
-                className={emailError ? "error" : ""}
-              />
-            </div>
-
-            <button
-              type="button"
-              className={`verify-small-btn ${emailVerified ? "verified" : ""}`}
-              onClick={handleEmailVerify}
-            >
-              {emailVerified ? "Verified ✓" : "Verify"}
-            </button>
+        <div className="input-box">
+          <div className="input-wrapper">
+            <i className="bx bx-envelope"></i>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setEmailError("");
+              }}
+              className={emailError ? "error" : ""}
+            />
           </div>
 
           {emailError && <div className="error-message show">{emailError}</div>}
