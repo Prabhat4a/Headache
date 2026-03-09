@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 const RegisterForm = ({
   onSwitchToLogin,
   onShowTerms,
@@ -21,6 +22,7 @@ const RegisterForm = ({
   const [passwordError, setPasswordError] = useState("");
   const [termsError, setTermsError] = useState(false);
   const navigate = useNavigate();
+
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const validatePhone = (phone) => {
@@ -54,10 +56,7 @@ const RegisterForm = ({
       valid = false;
     }
 
-    if (!emailVerified) {
-      setEmailError("Please verify your email");
-      valid = false;
-    }
+    // email verification check removed
 
     if (!validatePhone(phone)) {
       setPhoneError("Invalid phone number");
@@ -95,14 +94,11 @@ const RegisterForm = ({
   };
 
   return (
-    <div>
-      <div className="box-head-2">
-        <button type="button" className="back-arrow" onClick={onSwitchToLogin}>
-          <i className="bx bx-arrow-back"></i>
-        </button>
-
-        <h1 className="register-title">Register</h1>
+    <div className="objects">
+      <div className="box-head">
+        <h1>Register</h1>
       </div>
+
       <form id="registerForm" onSubmit={handleSubmit}>
         {/* Username */}
         <div className="input-box">
@@ -139,14 +135,13 @@ const RegisterForm = ({
               className={emailError ? "error" : ""}
             />
           </div>
-
           {emailError && <div className="error-message show">{emailError}</div>}
         </div>
 
         {/* Phone */}
-        <div className="input-box verify-box">
+        <div className="input-box">
           <div className="input-wrapper-with-btn">
-            <div className="input-wrapper phone-input-wrapper">
+            <div className="phone-input-wrapper">
               <span className="country-code">+91</span>
               <input
                 type="tel"
@@ -162,7 +157,6 @@ const RegisterForm = ({
                 className={phoneError ? "error" : ""}
               />
             </div>
-
             <button
               type="button"
               className={`verify-small-btn ${phoneVerified ? "verified" : ""}`}
@@ -171,7 +165,6 @@ const RegisterForm = ({
               {phoneVerified ? "Verified ✓" : "Verify"}
             </button>
           </div>
-
           {phoneError && <div className="error-message show">{phoneError}</div>}
         </div>
 
@@ -194,14 +187,13 @@ const RegisterForm = ({
               onClick={() => setShowPassword(!showPassword)}
             ></i>
           </div>
-
           {passwordError && (
             <div className="error-message show">{passwordError}</div>
           )}
         </div>
 
         {/* Terms */}
-        <div className="remember">
+        <div className="remember-forgot">
           <label>
             <input
               type="checkbox"
@@ -210,11 +202,11 @@ const RegisterForm = ({
                 setTermsChecked(e.target.checked);
                 setTermsError(false);
               }}
-            />
+            />{" "}
             I agree with{" "}
             <a
               href="#"
-              className="auth-link"
+              className="creat-acc"
               onClick={(e) => {
                 e.preventDefault();
                 onShowTerms();
@@ -231,10 +223,28 @@ const RegisterForm = ({
           </div>
         )}
 
-        <div className="Register-button">
+        {/* Register Button */}
+        <div className="login-button">
           <button type="submit">Register</button>
         </div>
       </form>
+
+      {/* Already have account link */}
+      <div className="account">
+        <p>
+          Already have an account?{" "}
+          <a
+            href="#"
+            className="creat-acc"
+            onClick={(e) => {
+              e.preventDefault();
+              onSwitchToLogin();
+            }}
+          >
+            Login
+          </a>
+        </p>
+      </div>
     </div>
   );
 };
