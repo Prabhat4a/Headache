@@ -885,26 +885,6 @@ body {
   background: rgba(167, 139, 250, 0.2);
 }
 
-.notice-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.notice-edit-btn {
-  background: rgba(167, 139, 250, 0.1);
-  border: 1px solid rgba(167, 139, 250, 0.25);
-  border-radius: 8px;
-  color: #a78bfa;
-  font-size: 13px;
-  padding: 5px 8px;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: background 0.2s;
-}
-.notice-edit-btn:hover {
-  background: rgba(167, 139, 250, 0.2);
-}
-
 /* ═══════════════════════════════════════════════════════════
    EDIT MODAL
 ═══════════════════════════════════════════════════════════ */
@@ -1091,34 +1071,6 @@ body {
 }
 .card-edit-btn:hover {
   background: rgba(167, 139, 250, 0.25);
-  border-color: #a78bfa;
-}
-
-/* ── Per-notice edit button ── */
-.notice-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.notice-edit-btn {
-  flex-shrink: 0;
-  background: rgba(167, 139, 250, 0.1);
-  border: 1px solid rgba(167, 139, 250, 0.25);
-  border-radius: 8px;
-  color: #a78bfa;
-  font-size: 16px;
-  width: 34px;
-  height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition:
-    background 0.2s,
-    border-color 0.2s;
-}
-.notice-edit-btn:hover {
-  background: rgba(167, 139, 250, 0.2);
   border-color: #a78bfa;
 }
 
@@ -1640,4 +1592,155 @@ body {
 }
 .edit-section-btn i {
   font-size: 13px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CONFIRM DIALOG
+═══════════════════════════════════════════════════════════ */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  backdrop-filter: blur(8px);
+}
+.confirm-box {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 20px;
+  padding: 28px 24px 20px;
+  width: 100%;
+  max-width: 340px;
+  text-align: center;
+}
+.confirm-icon {
+  font-size: 40px;
+  color: #ef4444;
+  margin-bottom: 12px;
+  line-height: 1;
+}
+.confirm-msg {
+  font-size: 14px;
+  color: #ccc;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+}
+.confirm-ok {
+  flex: 1;
+  background: #ef4444;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  padding: 11px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.confirm-ok:hover {
+  opacity: 0.85;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TOAST WARNING
+═══════════════════════════════════════════════════════════ */
+.edit-toast {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1a1a;
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 20px;
+  z-index: 998;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.7);
+  animation: toastIn 0.25s ease;
+  max-width: 90vw;
+  white-space: normal;
+  text-align: center;
+}
+.edit-toast i {
+  font-size: 15px;
+  flex-shrink: 0;
+}
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Hint warning variant */
+.edit-hint-warn {
+  border-color: rgba(239, 68, 68, 0.4) !important;
+  background: rgba(239, 68, 68, 0.08) !important;
+  color: #ef4444 !important;
+}
+.edit-hint-warn i,
+.edit-hint-warn strong {
+  color: #ef4444 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   IMAGE UPLOAD FIELD
+═══════════════════════════════════════════════════════════ */
+.img-upload-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.img-upload-preview {
+  width: 100%;
+  height: 140px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+}
+.img-upload-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.img-upload-btn {
+  background: #1a1a1a;
+  border: 1.5px dashed #a78bfa;
+  color: #a78bfa;
+  border-radius: 10px;
+  padding: 11px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.2s;
+  width: 100%;
+}
+.img-upload-btn:hover {
+  background: rgba(167, 139, 250, 0.08);
+}
+.img-upload-btn i {
+  font-size: 18px;
 }
