@@ -1,8 +1,10 @@
 import React, { useState, forwardRef, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { useNavigate } from "react-router-dom"; // Add this import
 
 const LoginForm = forwardRef(
   ({ onSwitchToRegister, onForgotPassword }, ref) => {
+    const navigate = useNavigate(); // Add this hook
     const [activeTab, setActiveTab] = useState("email");
 
     const [email, setEmail] = useState("");
@@ -36,22 +38,30 @@ const LoginForm = forwardRef(
       return () => clearInterval(timer);
     }, [countdown]);
 
-    /* ── Success countdown → redirect to /home ── */
+    /* ── Success countdown → redirect to /explorer ── */
     useEffect(() => {
       if (!success) return;
+
       setSuccessCount(3);
+      let count = 3;
+
       const t = setInterval(() => {
-        setSuccessCount((p) => {
-          if (p <= 1) {
-            clearInterval(t);
-            window.location.href = "/home";
-            return 0;
-          }
-          return p - 1;
-        });
+        count -= 1;
+        setSuccessCount(count);
+
+        if (count <= 0) {
+          clearInterval(t);
+          // Store token
+          localStorage.setItem("token", "your-auth-token-here");
+          // Redirect to explorer - use setTimeout to avoid render-phase update
+          setTimeout(() => {
+            navigate("/explorer");
+          }, 0);
+        }
       }, 1000);
+
       return () => clearInterval(t);
-    }, [success]);
+    }, [success, navigate]); // Add navigate to dependencies
 
     // Reset otpSent whenever the phone number changes
     const handlePhoneChange = (e) => {
@@ -315,7 +325,7 @@ const LoginForm = forwardRef(
 
           <button type="button" className="google-login">
             <img
-              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              src="https://www.svgrepo.com/show/475656/google-color.svg "
               alt="Google"
               className="google-icon"
             />
