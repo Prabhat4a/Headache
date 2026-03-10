@@ -74,6 +74,9 @@ const Hero = () => {
       </div>
 
       <div className="hero-images-container">
+        {/* TOP FADE — hides the hard straight edge at the top of the image grid */}
+        <div className="hero-fade-top"></div>
+
         <div className="parallax-grid" ref={parallaxGridRef}>
           <div className="grid-column col-1" data-speed="0.3">
             {heroImages.col1.map((img, idx) => (
@@ -111,6 +114,8 @@ const Hero = () => {
             ))}
           </div>
         </div>
+
+        {/* BOTTOM FADE — already existed */}
         <div className="hero-fade"></div>
       </div>
 
