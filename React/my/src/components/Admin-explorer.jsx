@@ -115,7 +115,7 @@ const NAV_ITEMS = [
   { id: "profile", icon: "bx-user-circle", label: "Profile", isMore: false },
 ];
 
-let nextId = 100; // for generating new event/notice ids
+let nextId = 100;
 
 /* ═══════════════════════════════════════════════════════════
    CONFIRM DIALOG
@@ -151,7 +151,7 @@ function ImageUploadField({ value, onChange }) {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => onChange(ev.target.result); // base64 data URL
+    reader.onload = (ev) => onChange(ev.target.result);
     reader.readAsDataURL(file);
   };
 
@@ -182,7 +182,7 @@ function ImageUploadField({ value, onChange }) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   EDIT EVENTS PAGE
+   EDIT EVENTS PAGE  — renders as a fixed overlay
 ═══════════════════════════════════════════════════════════ */
 function EditEventsPage({ events, onSave, onBack }) {
   const [draft, setDraft] = useState(events);
@@ -196,17 +196,15 @@ function EditEventsPage({ events, onSave, onBack }) {
     badge: "",
     img: "",
   });
-  const [confirmId, setConfirmId] = useState(null); // id pending delete confirm
-  const [toast, setToast] = useState(null); // warning message
-
-  const isOdd = draft.length % 2 !== 0;
+  const [confirmId, setConfirmId] = useState(null);
+  const [toast, setToast] = useState(null);
 
   const showToast = (msg) => {
     setToast(msg);
     setTimeout(() => setToast(null), 3500);
   };
 
-  /* Delete — ask confirm first */
+  /* Delete */
   const handleDeleteClick = (id) => {
     if (draft.length <= 1) {
       showToast("You must have at least 1 event.");
@@ -216,14 +214,8 @@ function EditEventsPage({ events, onSave, onBack }) {
   };
 
   const confirmDelete = () => {
-    const updated = draft.filter((e) => e.id !== confirmId);
+    setDraft((prev) => prev.filter((e) => e.id !== confirmId));
     setConfirmId(null);
-    if (updated.length % 2 === 0) {
-      showToast(
-        `⚠️ You now have ${updated.length} events (even). Add or remove one more to keep it odd before saving.`,
-      );
-    }
-    setDraft(updated);
   };
 
   /* Update */
@@ -237,6 +229,7 @@ function EditEventsPage({ events, onSave, onBack }) {
       img: ev.img,
     });
   };
+
   const saveUpdate = () => {
     setDraft((prev) =>
       prev.map((e) =>
@@ -254,8 +247,8 @@ function EditEventsPage({ events, onSave, onBack }) {
       showToast("Title and Date are required.");
       return;
     }
-    const updated = [
-      ...draft,
+    setDraft((prev) => [
+      ...prev,
       {
         id: nextId++,
         img:
@@ -267,192 +260,160 @@ function EditEventsPage({ events, onSave, onBack }) {
         title: newForm.title,
         location: newForm.location,
       },
-    ];
-    if (updated.length % 2 === 0) {
-      showToast(
-        `⚠️ You now have ${updated.length} events (even). Add or remove one more to keep it odd before saving.`,
-      );
-    }
-    setDraft(updated);
+    ]);
     setNewForm({ title: "", date: "", location: "", badge: "", img: "" });
     setAddingNew(false);
   };
 
-  /* Save — block if even */
+  /* Save — no restrictions */
   const handleSave = () => {
-    if (draft.length % 2 === 0) {
-      showToast(
-        "⚠️ Cannot save — you have an even number of events. Add or remove one more.",
-      );
-      return;
-    }
     onSave(draft);
     onBack();
   };
 
+  const sheetOpen = updating !== null || addingNew;
+
   return (
-    <div className="edit-page">
-      {/* Confirm dialog */}
-      {confirmId !== null && (
-        <ConfirmDialog
-          message="Are you sure you want to delete this event? This cannot be undone."
-          onConfirm={confirmDelete}
-          onCancel={() => setConfirmId(null)}
-        />
-      )}
+    <div className="edit-overlay">
+      <div className="edit-page">
+        {confirmId !== null && (
+          <ConfirmDialog
+            message="Are you sure you want to delete this event? This cannot be undone."
+            onConfirm={confirmDelete}
+            onCancel={() => setConfirmId(null)}
+          />
+        )}
 
-      {/* Toast warning */}
-      {toast && (
-        <div className="edit-toast">
-          <i className="bx bx-error-circle" /> {toast}
+        {toast && (
+          <div className="edit-toast">
+            <i className="bx bx-error-circle" /> {toast}
+          </div>
+        )}
+
+        <div className="edit-page-header">
+          <button className="edit-back-btn" onClick={onBack}>
+            <i className="bx bx-arrow-back" />
+          </button>
+          <span className="edit-page-title">Edit Events</span>
+          <button className="edit-save-btn" onClick={handleSave}>
+            Save
+          </button>
         </div>
-      )}
 
-      {/* Header */}
-      <div className="edit-page-header">
-        <button className="edit-back-btn" onClick={onBack}>
-          <i className="bx bx-arrow-back" />
-        </button>
-        <span className="edit-page-title">Edit Events</span>
-        <button className="edit-save-btn" onClick={handleSave}>
-          Save
-        </button>
-      </div>
-
-      {/* Event list */}
-      <div className="edit-page-content">
-        <p className={`edit-hint${isOdd ? "" : " edit-hint-warn"}`}>
-          <i className={`bx ${isOdd ? "bx-info-circle" : "bx-error-circle"}`} />
-          Events must be an <strong>odd number</strong>. Currently:{" "}
-          <strong>{draft.length}</strong>
-          {!isOdd && " ← fix before saving"}
-        </p>
-
-        {draft.map((ev) => (
-          <div className="edit-event-row" key={ev.id}>
-            <div className="edit-event-thumb">
-              <img src={ev.img} alt={ev.title} />
-            </div>
-            <div className="edit-event-info">
-              <div className="edit-event-title">{ev.title}</div>
-              <div className="edit-event-date">{ev.date}</div>
-              <div className="edit-event-loc">
-                <i className="bx bx-map" /> {ev.location}
+        <div className="edit-page-content">
+          {draft.map((ev) => (
+            <div className="edit-event-row" key={ev.id}>
+              <div className="edit-event-thumb">
+                <img src={ev.img} alt={ev.title} />
+              </div>
+              <div className="edit-event-info">
+                <div className="edit-event-title">{ev.title}</div>
+                <div className="edit-event-date">{ev.date}</div>
+                <div className="edit-event-loc">
+                  <i className="bx bx-map" /> {ev.location}
+                </div>
+              </div>
+              <div className="edit-event-actions">
+                <button className="edit-update-btn" onClick={() => openUpdate(ev)}>
+                  <i className="bx bx-edit" /> Update
+                </button>
+                <button className="edit-delete-btn" onClick={() => handleDeleteClick(ev.id)}>
+                  <i className="bx bx-trash" /> Delete
+                </button>
               </div>
             </div>
-            <div className="edit-event-actions">
-              <button
-                className="edit-update-btn"
-                onClick={() => openUpdate(ev)}
-              >
-                <i className="bx bx-edit" /> Update
-              </button>
-              <button
-                className="edit-delete-btn"
-                onClick={() => handleDeleteClick(ev.id)}
-              >
-                <i className="bx bx-trash" /> Delete
-              </button>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
 
-        {/* Update inline form */}
-        {updating !== null && (
-          <div className="edit-inline-form">
-            <div className="edit-inline-form-title">
-              <i className="bx bx-edit-alt" /> Updating Event
-            </div>
-            {[
-              { key: "title", label: "Title" },
-              { key: "date", label: "Date & Time" },
-              { key: "location", label: "Location" },
-              { key: "badge", label: "Badge Text" },
-            ].map((f) => (
-              <div className="ef-field" key={f.key}>
-                <label className="ef-label">{f.label}</label>
-                <input
-                  className="ef-input"
-                  value={updateForm[f.key]}
-                  onChange={(e) =>
-                    setUpdateForm((v) => ({ ...v, [f.key]: e.target.value }))
-                  }
-                />
-              </div>
-            ))}
-            <div className="ef-field">
-              <label className="ef-label">Image</label>
-              <ImageUploadField
-                value={updateForm.img}
-                onChange={(val) => setUpdateForm((v) => ({ ...v, img: val }))}
-              />
-            </div>
-            <div className="ef-actions">
-              <button className="ef-cancel" onClick={() => setUpdating(null)}>
-                Cancel
-              </button>
-              <button className="ef-save" onClick={saveUpdate}>
-                Apply
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Add new event form */}
-        {addingNew && (
-          <div className="edit-inline-form">
-            <div className="edit-inline-form-title">
-              <i className="bx bx-plus-circle" /> New Event
-            </div>
-            {[
-              { key: "title", label: "Title *" },
-              { key: "date", label: "Date & Time *" },
-              { key: "location", label: "Location" },
-              { key: "badge", label: "Badge Text" },
-            ].map((f) => (
-              <div className="ef-field" key={f.key}>
-                <label className="ef-label">{f.label}</label>
-                <input
-                  className="ef-input"
-                  value={newForm[f.key]}
-                  onChange={(e) =>
-                    setNewForm((v) => ({ ...v, [f.key]: e.target.value }))
-                  }
-                />
-              </div>
-            ))}
-            <div className="ef-field">
-              <label className="ef-label">Image</label>
-              <ImageUploadField
-                value={newForm.img}
-                onChange={(val) => setNewForm((v) => ({ ...v, img: val }))}
-              />
-            </div>
-            <div className="ef-actions">
-              <button className="ef-cancel" onClick={() => setAddingNew(false)}>
-                Cancel
-              </button>
-              <button className="ef-save" onClick={handleAdd}>
-                Add Event
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {!addingNew && (
         <div className="edit-page-footer">
-          <button className="add-new-btn" onClick={() => setAddingNew(true)}>
+          <button className="add-new-btn" onClick={() => { setAddingNew(true); setUpdating(null); }}>
             <i className="bx bx-plus" /> Add New Event
           </button>
         </div>
-      )}
+
+        {/* ── Bottom-sheet overlay for Update / Add ── */}
+        <div
+          className={`form-sheet-backdrop${sheetOpen ? " active" : ""}`}
+          onClick={() => { setUpdating(null); setAddingNew(false); }}
+        />
+        <div className={`form-sheet${sheetOpen ? " active" : ""}`}>
+          <div className="form-sheet-handle" />
+
+          {updating !== null && (
+            <>
+              <div className="form-sheet-title">
+                <i className="bx bx-edit-alt" /> Update Event
+              </div>
+              {[
+                { key: "title", label: "Title" },
+                { key: "date", label: "Date & Time" },
+                { key: "location", label: "Location" },
+                { key: "badge", label: "Badge Text" },
+              ].map((f) => (
+                <div className="ef-field" key={f.key}>
+                  <label className="ef-label">{f.label}</label>
+                  <input
+                    className="ef-input"
+                    value={updateForm[f.key]}
+                    onChange={(e) => setUpdateForm((v) => ({ ...v, [f.key]: e.target.value }))}
+                  />
+                </div>
+              ))}
+              <div className="ef-field">
+                <label className="ef-label">Image</label>
+                <ImageUploadField
+                  value={updateForm.img}
+                  onChange={(val) => setUpdateForm((v) => ({ ...v, img: val }))}
+                />
+              </div>
+              <div className="ef-actions">
+                <button className="ef-cancel" onClick={() => setUpdating(null)}>Cancel</button>
+                <button className="ef-save" onClick={saveUpdate}>Apply</button>
+              </div>
+            </>
+          )}
+
+          {addingNew && (
+            <>
+              <div className="form-sheet-title">
+                <i className="bx bx-plus-circle" /> New Event
+              </div>
+              {[
+                { key: "title", label: "Title *" },
+                { key: "date", label: "Date & Time *" },
+                { key: "location", label: "Location" },
+                { key: "badge", label: "Badge Text" },
+              ].map((f) => (
+                <div className="ef-field" key={f.key}>
+                  <label className="ef-label">{f.label}</label>
+                  <input
+                    className="ef-input"
+                    value={newForm[f.key]}
+                    onChange={(e) => setNewForm((v) => ({ ...v, [f.key]: e.target.value }))}
+                  />
+                </div>
+              ))}
+              <div className="ef-field">
+                <label className="ef-label">Image</label>
+                <ImageUploadField
+                  value={newForm.img}
+                  onChange={(val) => setNewForm((v) => ({ ...v, img: val }))}
+                />
+              </div>
+              <div className="ef-actions">
+                <button className="ef-cancel" onClick={() => setAddingNew(false)}>Cancel</button>
+                <button className="ef-save" onClick={handleAdd}>Add Event</button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
 
 /* ═══════════════════════════════════════════════════════════
-   EDIT NOTICES PAGE
+   EDIT NOTICES PAGE  — renders as a fixed overlay
 ═══════════════════════════════════════════════════════════ */
 function EditNoticesPage({ notices, onSave, onBack }) {
   const [draft, setDraft] = useState(notices);
@@ -512,156 +473,147 @@ function EditNoticesPage({ notices, onSave, onBack }) {
   };
 
   return (
-    <div className="edit-page">
-      {confirmId !== null && (
-        <ConfirmDialog
-          message="Are you sure you want to delete this notice? This cannot be undone."
-          onConfirm={confirmDelete}
-          onCancel={() => setConfirmId(null)}
-        />
-      )}
+    <div className="edit-overlay">
+      <div className="edit-page">
+        {confirmId !== null && (
+          <ConfirmDialog
+            message="Are you sure you want to delete this notice? This cannot be undone."
+            onConfirm={confirmDelete}
+            onCancel={() => setConfirmId(null)}
+          />
+        )}
 
-      {toast && (
-        <div className="edit-toast">
-          <i className="bx bx-error-circle" /> {toast}
+        {toast && (
+          <div className="edit-toast">
+            <i className="bx bx-error-circle" /> {toast}
+          </div>
+        )}
+
+        <div className="edit-page-header">
+          <button className="edit-back-btn" onClick={onBack}>
+            <i className="bx bx-arrow-back" />
+          </button>
+          <span className="edit-page-title">Edit Notices</span>
+          <button
+            className="edit-save-btn"
+            onClick={() => {
+              onSave(draft);
+              onBack();
+            }}
+          >
+            Save
+          </button>
         </div>
-      )}
 
-      <div className="edit-page-header">
-        <button className="edit-back-btn" onClick={onBack}>
-          <i className="bx bx-arrow-back" />
-        </button>
-        <span className="edit-page-title">Edit Notices</span>
-        <button
-          className="edit-save-btn"
-          onClick={() => {
-            onSave(draft);
-            onBack();
-          }}
-        >
-          Save
-        </button>
-      </div>
-
-      <div className="edit-page-content">
-        {draft.map((n) => (
-          <div className="edit-notice-row" key={n.id}>
-            <div className="edit-notice-info">
-              <div className="edit-notice-title">{n.title}</div>
-              <div className="edit-notice-body">{n.body}</div>
-              <div className="edit-notice-time">{n.time}</div>
-            </div>
-            <div className="edit-event-actions">
-              <button className="edit-update-btn" onClick={() => openUpdate(n)}>
-                <i className="bx bx-edit" /> Update
-              </button>
-              <button
-                className="edit-delete-btn"
-                onClick={() => handleDeleteClick(n.id)}
-              >
-                <i className="bx bx-trash" /> Delete
-              </button>
-            </div>
-          </div>
-        ))}
-
-        {updating !== null && (
-          <div className="edit-inline-form">
-            <div className="edit-inline-form-title">
-              <i className="bx bx-edit-alt" /> Updating Notice
-            </div>
-            {[
-              { key: "title", label: "Title" },
-              { key: "body", label: "Body", multiline: true },
-              { key: "time", label: "Time" },
-            ].map((f) => (
-              <div className="ef-field" key={f.key}>
-                <label className="ef-label">{f.label}</label>
-                {f.multiline ? (
-                  <textarea
-                    className="ef-input ef-textarea"
-                    rows={3}
-                    value={updateForm[f.key]}
-                    onChange={(e) =>
-                      setUpdateForm((v) => ({ ...v, [f.key]: e.target.value }))
-                    }
-                  />
-                ) : (
-                  <input
-                    className="ef-input"
-                    value={updateForm[f.key]}
-                    onChange={(e) =>
-                      setUpdateForm((v) => ({ ...v, [f.key]: e.target.value }))
-                    }
-                  />
-                )}
+        <div className="edit-page-content">
+          {draft.map((n) => (
+            <div className="edit-notice-row" key={n.id}>
+              <div className="edit-notice-info">
+                <div className="edit-notice-title">{n.title}</div>
+                <div className="edit-notice-body">{n.body}</div>
+                <div className="edit-notice-time">{n.time}</div>
               </div>
-            ))}
-            <div className="ef-actions">
-              <button className="ef-cancel" onClick={() => setUpdating(null)}>
-                Cancel
-              </button>
-              <button className="ef-save" onClick={saveUpdate}>
-                Apply
-              </button>
-            </div>
-          </div>
-        )}
-
-        {addingNew && (
-          <div className="edit-inline-form">
-            <div className="edit-inline-form-title">
-              <i className="bx bx-plus-circle" /> New Notice
-            </div>
-            {[
-              { key: "title", label: "Title *" },
-              { key: "body", label: "Body", multiline: true },
-              { key: "time", label: "Time" },
-            ].map((f) => (
-              <div className="ef-field" key={f.key}>
-                <label className="ef-label">{f.label}</label>
-                {f.multiline ? (
-                  <textarea
-                    className="ef-input ef-textarea"
-                    rows={3}
-                    value={newForm[f.key]}
-                    onChange={(e) =>
-                      setNewForm((v) => ({ ...v, [f.key]: e.target.value }))
-                    }
-                  />
-                ) : (
-                  <input
-                    className="ef-input"
-                    value={newForm[f.key]}
-                    onChange={(e) =>
-                      setNewForm((v) => ({ ...v, [f.key]: e.target.value }))
-                    }
-                  />
-                )}
+              <div className="edit-event-actions">
+                <button className="edit-update-btn" onClick={() => openUpdate(n)}>
+                  <i className="bx bx-edit" /> Update
+                </button>
+                <button className="edit-delete-btn" onClick={() => handleDeleteClick(n.id)}>
+                  <i className="bx bx-trash" /> Delete
+                </button>
               </div>
-            ))}
-            <div className="ef-actions">
-              <button className="ef-cancel" onClick={() => setAddingNew(false)}>
-                Cancel
-              </button>
-              <button className="ef-save" onClick={handleAdd}>
-                Add Notice
-              </button>
             </div>
-          </div>
-        )}
-      </div>
+          ))}
+        </div>
 
-      {!addingNew && (
         <div className="edit-page-footer">
-          <button className="add-new-btn" onClick={() => setAddingNew(true)}>
+          <button className="add-new-btn" onClick={() => { setAddingNew(true); setUpdating(null); }}>
             <i className="bx bx-plus" /> Add New Notice
           </button>
         </div>
-      )}
+
+        {/* ── Bottom-sheet overlay for Update / Add ── */}
+        <div
+          className={`form-sheet-backdrop${(updating !== null || addingNew) ? " active" : ""}`}
+          onClick={() => { setUpdating(null); setAddingNew(false); }}
+        />
+        <div className={`form-sheet${(updating !== null || addingNew) ? " active" : ""}`}>
+          <div className="form-sheet-handle" />
+
+          {updating !== null && (
+            <>
+              <div className="form-sheet-title">
+                <i className="bx bx-edit-alt" /> Update Notice
+              </div>
+              {[
+                { key: "title", label: "Title" },
+                { key: "body", label: "Body", multiline: true },
+                { key: "time", label: "Time" },
+              ].map((f) => (
+                <div className="ef-field" key={f.key}>
+                  <label className="ef-label">{f.label}</label>
+                  {f.multiline ? (
+                    <textarea
+                      className="ef-input ef-textarea"
+                      rows={3}
+                      value={updateForm[f.key]}
+                      onChange={(e) => setUpdateForm((v) => ({ ...v, [f.key]: e.target.value }))}
+                    />
+                  ) : (
+                    <input
+                      className="ef-input"
+                      value={updateForm[f.key]}
+                      onChange={(e) => setUpdateForm((v) => ({ ...v, [f.key]: e.target.value }))}
+                    />
+                  )}
+                </div>
+              ))}
+              <div className="ef-actions">
+                <button className="ef-cancel" onClick={() => setUpdating(null)}>Cancel</button>
+                <button className="ef-save" onClick={saveUpdate}>Apply</button>
+              </div>
+            </>
+          )}
+
+          {addingNew && (
+            <>
+              <div className="form-sheet-title">
+                <i className="bx bx-plus-circle" /> New Notice
+              </div>
+              {[
+                { key: "title", label: "Title *" },
+                { key: "body", label: "Body", multiline: true },
+                { key: "time", label: "Time" },
+              ].map((f) => (
+                <div className="ef-field" key={f.key}>
+                  <label className="ef-label">{f.label}</label>
+                  {f.multiline ? (
+                    <textarea
+                      className="ef-input ef-textarea"
+                      rows={3}
+                      value={newForm[f.key]}
+                      onChange={(e) => setNewForm((v) => ({ ...v, [f.key]: e.target.value }))}
+                    />
+                  ) : (
+                    <input
+                      className="ef-input"
+                      value={newForm[f.key]}
+                      onChange={(e) => setNewForm((v) => ({ ...v, [f.key]: e.target.value }))}
+                    />
+                  )}
+                </div>
+              ))}
+              <div className="ef-actions">
+                <button className="ef-cancel" onClick={() => setAddingNew(false)}>Cancel</button>
+                <button className="ef-save" onClick={handleAdd}>Add Notice</button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
+
 /* ═══════════════════════════════════════════════════════════
    CAROUSEL HOOK
 ═══════════════════════════════════════════════════════════ */
@@ -702,7 +654,6 @@ function useCarousel(total) {
     [total, calcTx],
   );
 
-  // clamp current if total shrinks
   useEffect(() => {
     if (current >= total) setCurrent(Math.max(0, total - 1));
   }, [total, current]);
@@ -791,11 +742,12 @@ export default function Explorer() {
   const [bannerVisible, setBannerVisible] = useState(false);
   const [savedCards, setSavedCards] = useState({});
   const [loadedImgs, setLoadedImgs] = useState({});
-  // 'home' | 'editEvents' | 'editNotices'
-  const [page, setPage] = useState("home");
+  // null | 'editEvents' | 'editNotices'
+  const [page, setPage] = useState(null);
 
-  const total = events.length % 2 === 0 ? events.length - 1 : events.length;
-  const evList = events.slice(0, total);
+  // All events shown — no odd-number slicing
+  const evList = events;
+  const total = evList.length;
 
   const {
     current,
@@ -848,30 +800,25 @@ export default function Explorer() {
     else setActiveNav(item.id);
   };
 
-  /* ── Render edit pages ── */
-  if (page === "editEvents") {
-    return (
-      <EditEventsPage
-        events={events}
-        onSave={(updated) => setEvents(updated)}
-        onBack={() => setPage("home")}
-      />
-    );
-  }
-
-  if (page === "editNotices") {
-    return (
-      <EditNoticesPage
-        notices={notices}
-        onSave={(updated) => setNotices(updated)}
-        onBack={() => setPage("home")}
-      />
-    );
-  }
-
-  /* ── Main home page ── */
   return (
     <div className={`main-app${bannerVisible ? " banner-visible" : ""}`}>
+
+      {/* ══ EDIT OVERLAYS — fixed on top of the whole app ══ */}
+      {page === "editEvents" && (
+        <EditEventsPage
+          events={events}
+          onSave={(updated) => setEvents(updated)}
+          onBack={() => setPage(null)}
+        />
+      )}
+      {page === "editNotices" && (
+        <EditNoticesPage
+          notices={notices}
+          onSave={(updated) => setNotices(updated)}
+          onBack={() => setPage(null)}
+        />
+      )}
+
       {/* ══ HEADER ══ */}
       <div className="app-header">
         <div className="app-logo">STUVO5</div>
@@ -880,27 +827,14 @@ export default function Explorer() {
           <i className="bx bx-menu" onClick={(e) => togglePanel("menu", e)} />
         </div>
 
-        {/* Notification panel */}
         <div
           className={`notification-panel${openPanel === "notif" ? " active" : ""}`}
           onClick={(e) => e.stopPropagation()}
         >
           {[
-            {
-              icon: "bx-bus",
-              title: "Bus #101",
-              body: "Arriving in 5 minutes",
-            },
-            {
-              icon: "bx-calendar",
-              title: "New Event",
-              body: "Tech Fest starts tomorrow",
-            },
-            {
-              icon: "bx-book",
-              title: "Attendance Updated",
-              body: "Your attendance has been updated",
-            },
+            { icon: "bx-bus", title: "Bus #101", body: "Arriving in 5 minutes" },
+            { icon: "bx-calendar", title: "New Event", body: "Tech Fest starts tomorrow" },
+            { icon: "bx-book", title: "Attendance Updated", body: "Your attendance has been updated" },
           ].map((n, i) => (
             <div className="notification-item" key={i}>
               <i className={`bx ${n.icon}`} />
@@ -913,7 +847,6 @@ export default function Explorer() {
           <div className="notification-footer">View all notifications</div>
         </div>
 
-        {/* Menu panel */}
         <div
           className={`menu-panel${openPanel === "menu" ? " active" : ""}`}
           onClick={(e) => e.stopPropagation()}
@@ -963,10 +896,7 @@ export default function Explorer() {
                   ? "none"
                   : "transform 0.42s cubic-bezier(0.4,0,0.2,1)",
               }}
-              onMouseDown={(e) => {
-                onDragStart(e.clientX);
-                e.preventDefault();
-              }}
+              onMouseDown={(e) => { onDragStart(e.clientX); e.preventDefault(); }}
               onTouchStart={(e) => onDragStart(e.touches[0].clientX)}
               onTouchMove={(e) => onDragMove(e.touches[0].clientX)}
               onTouchEnd={onDragEnd}
@@ -1012,9 +942,7 @@ export default function Explorer() {
                       className={`bookmark-btn${savedCards[ev.id] ? " saved" : ""}`}
                       onClick={(e) => toggleBookmark(ev.id, e)}
                     >
-                      <i
-                        className={`bx ${savedCards[ev.id] ? "bxs-bookmark" : "bx-bookmark"}`}
-                      />
+                      <i className={`bx ${savedCards[ev.id] ? "bxs-bookmark" : "bx-bookmark"}`} />
                     </button>
                   </div>
                 </div>
@@ -1103,10 +1031,7 @@ export default function Explorer() {
         >
           Install
         </button>
-        <button
-          className="install-close"
-          onClick={() => setBannerVisible(false)}
-        >
+        <button className="install-close" onClick={() => setBannerVisible(false)}>
           <i className="bx bx-x" />
         </button>
       </div>

@@ -1744,3 +1744,106 @@ body {
 .img-upload-btn i {
   font-size: 18px;
 }
+.edit-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 700;
+  background: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.edit-overlay .edit-page {
+  height: 100%;
+  flex: 1;
+}
+/* ═══════════════════════════════════════════════════════════
+   EDIT OVERLAY WRAPPER
+   Add to Admin-explorer.css (before .edit-page rule)
+═══════════════════════════════════════════════════════════ */
+.edit-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 700;
+  background: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.edit-overlay .edit-page {
+  height: 100%;
+  flex: 1;
+  position: relative; /* needed so sheet positions inside */
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FORM BOTTOM SHEET  (update / add new)
+   Add to Admin-explorer.css (anywhere after .edit-page rules)
+═══════════════════════════════════════════════════════════ */
+
+/* Dim backdrop — covers the list behind the sheet */
+.form-sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0);
+  pointer-events: none;
+  transition: background 0.3s ease;
+  z-index: 10;
+}
+.form-sheet-backdrop.active {
+  background: rgba(0, 0, 0, 0.72);
+  pointer-events: auto;
+}
+
+/* The sliding sheet itself */
+.form-sheet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 11;
+  background: #141414;
+  border-top: 1px solid #2a2a2a;
+  border-radius: 20px 20px 0 0;
+  padding: 10px 18px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 88%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+
+  /* slide up animation */
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.form-sheet.active {
+  transform: translateY(0);
+}
+
+/* Drag handle pill */
+.form-sheet-handle {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: #333;
+  align-self: center;
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+
+/* Sheet title */
+.form-sheet-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #a78bfa;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #1e1e1e;
+  flex-shrink: 0;
+}
+.form-sheet-title i {
+  font-size: 16px;
+}
