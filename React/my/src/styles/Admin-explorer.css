@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   RESET
+   RESET  —  FIXED: Use dynamic viewport height
 ═══════════════════════════════════════════════════════════ */
 *,
 *::before,
@@ -12,6 +12,7 @@
 html,
 body {
   height: 100%;
+  height: 100dvh; /* FIXED: Dynamic viewport height */
   overflow: hidden;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background: #0a0a0a;
@@ -19,13 +20,16 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   APP SHELL
+   APP SHELL  —  FIXED: Use dvh and fixed positioning
 ═══════════════════════════════════════════════════════════ */
 .main-app {
-  height: 100vh;
+  height: 100vh; /* Fallback */
+  height: 100dvh; /* FIXED: Dynamic viewport height */
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: fixed; /* FIXED: Prevent toolbar push */
+  inset: 0;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -608,7 +612,7 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   BOTTOM NAVIGATION
+   BOTTOM NAVIGATION  —  FIXED: Better safe area handling
 ═══════════════════════════════════════════════════════════ */
 .bottom-nav {
   flex-shrink: 0;
@@ -617,8 +621,11 @@ body {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 8px 12px max(10px, env(safe-area-inset-bottom));
+  padding: 8px 12px calc(10px + env(safe-area-inset-bottom, 0px));
   z-index: 100;
+  position: relative;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .nav-item {
@@ -1217,10 +1224,11 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   EDIT PAGE (full screen)
+   EDIT PAGE (full screen)  —  FIXED: Use dvh
 ═══════════════════════════════════════════════════════════ */
 .edit-page {
-  height: 100vh;
+  height: 100vh; /* Fallback */
+  height: 100dvh; /* FIXED: Dynamic viewport height */
   display: flex;
   flex-direction: column;
   overflow: hidden;

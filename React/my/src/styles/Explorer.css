@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   RESET
+   RESET  —  FIXED: Use dynamic viewport height
 ═══════════════════════════════════════════════════════════ */
 *,
 *::before,
@@ -12,19 +12,24 @@
 html,
 body {
   height: 100%;
+  height: 100dvh;
   overflow: hidden;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background: #0a0a0a;
   color: #fff;
 }
+
 /* ═══════════════════════════════════════════════════════════
-   APP SHELL
+   APP SHELL  —  FIXED: Use dvh and fixed positioning
 ═══════════════════════════════════════════════════════════ */
 .main-app {
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: fixed;
+  inset: 0;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -184,7 +189,7 @@ body {
    PAGE CONTENT  (scrollable)
 ═══════════════════════════════════════════════════════════ */
 .page-content {
-  display: none; /* Changed from none to block */
+  display: none;
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
@@ -607,7 +612,7 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   BOTTOM NAVIGATION
+   BOTTOM NAVIGATION  —  FIXED: Better safe area handling
 ═══════════════════════════════════════════════════════════ */
 .bottom-nav {
   flex-shrink: 0;
@@ -616,8 +621,11 @@ body {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 8px 12px max(10px, env(safe-area-inset-bottom));
+  padding: 8px 12px calc(10px + env(safe-area-inset-bottom, 0px));
   z-index: 100;
+  position: relative;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .nav-item {
