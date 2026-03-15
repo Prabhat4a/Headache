@@ -1,10 +1,10 @@
 import React, { useState, forwardRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { useNavigate } from "react-router-dom"; // Add this import
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = forwardRef(
   ({ onSwitchToRegister, onForgotPassword }, ref) => {
-    const navigate = useNavigate(); // Add this hook
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState("email");
 
     const [email, setEmail] = useState("");
@@ -22,23 +22,19 @@ const LoginForm = forwardRef(
 
     const [countdown, setCountdown] = useState(0);
 
-    // ── NEW: tracks whether OTP has been sent ──
     const [otpSent, setOtpSent] = useState(false);
 
-    /* ── Success overlay ── */
     const [success, setSuccess] = useState(null);
     const [successCount, setSuccessCount] = useState(3);
 
     const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-    /* ── OTP send countdown ── */
     useEffect(() => {
       if (countdown === 0) return;
       const timer = setInterval(() => setCountdown((prev) => prev - 1), 1000);
       return () => clearInterval(timer);
     }, [countdown]);
 
-    /* ── Success countdown → redirect to /explorer ── */
     useEffect(() => {
       if (!success) return;
 
@@ -51,9 +47,7 @@ const LoginForm = forwardRef(
 
         if (count <= 0) {
           clearInterval(t);
-          // Store token
           localStorage.setItem("token", "your-auth-token-here");
-          // Redirect to explorer - use setTimeout to avoid render-phase update
           setTimeout(() => {
             navigate("/explorer");
           }, 0);
@@ -61,9 +55,8 @@ const LoginForm = forwardRef(
       }, 1000);
 
       return () => clearInterval(t);
-    }, [success, navigate]); // Add navigate to dependencies
+    }, [success, navigate]);
 
-    // Reset otpSent whenever the phone number changes
     const handlePhoneChange = (e) => {
       setPhone(e.target.value.replace(/[^0-9]/g, ""));
       setOtpSent(false);
@@ -79,7 +72,7 @@ const LoginForm = forwardRef(
         return;
       }
       setCountdown(20);
-      setOtpSent(true); // ── Mark OTP as sent
+      setOtpSent(true);
     };
 
     const handleEmailLogin = (e) => {
@@ -123,7 +116,6 @@ const LoginForm = forwardRef(
         valid = false;
       }
 
-      // ── NEW: block login if OTP was never sent ──
       if (!otpSent) {
         setOtpError("Please send the OTP first");
         valid = false;
@@ -143,8 +135,16 @@ const LoginForm = forwardRef(
       }
     };
 
-    /* ── Portalled to document.body so backdrop-filter on login-box
-          doesn't trap it inside the stacking context ── */
+    // ── NEW: Google login handler ──
+    const handleGoogleLogin = () => {
+      navigate("/link-account", {
+        state: {
+          email: "aryankumarrajjak281@gmail.com", // replace with real Google auth email later
+          username: "@Aryan809krk", // replace with real username from DB later
+        },
+      });
+    };
+
     const successOverlay = createPortal(
       <div className={`success-overlay${success ? " show" : ""}`}>
         <div className="success-card" key={success ? success.title : "hidden"}>
@@ -241,15 +241,12 @@ const LoginForm = forwardRef(
                 <label>
                   <input type="checkbox" /> Remember me
                 </label>
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (onForgotPassword) onForgotPassword();
-                  }}
-                >
-                  Forgot password?
-                </a>
+                href="#" onClick=
+                {(e) => {
+                  e.preventDefault();
+                  if (onForgotPassword) onForgotPassword();
+                }}
+                <a>Forgot password?</a>
               </div>
 
               <div className="login-button">
@@ -323,9 +320,14 @@ const LoginForm = forwardRef(
             <span>OR</span>
           </div>
 
-          <button type="button" className="google-login">
+          {/* ── onClick added here ── */}
+          <button
+            type="button"
+            className="google-login"
+            onClick={handleGoogleLogin}
+          >
             <img
-              src="https://www.svgrepo.com/show/475656/google-color.svg "
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
               alt="Google"
               className="google-icon"
             />
@@ -335,17 +337,12 @@ const LoginForm = forwardRef(
           {/* REGISTER LINK */}
           <div className="account">
             <p>
-              Don't have an account?
-              <a
-                href="#"
-                className="creat-acc"
-                onClick={(e) => {
-                  e.preventDefault();
-                  onSwitchToRegister();
-                }}
-              >
-                Create an account
-              </a>
+              Don't have an account? href="#" className="creat-acc" onClick=
+              {(e) => {
+                e.preventDefault();
+                onSwitchToRegister();
+              }}
+              <a>Create an account</a>
             </p>
           </div>
         </div>
