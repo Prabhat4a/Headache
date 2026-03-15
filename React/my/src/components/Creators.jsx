@@ -44,7 +44,7 @@ const creatorsData = [
     role: "Content Strategist",
     image: "Aryan.jpg",
     socials: {
-      instagram: "https://www.instagram.com/aryan_kumar_rajak/",
+      instagram: "https://www.instagram.com/aryankr_99?igsh=MW5qZWZ2anAwZmVuMA== ",
       github: "https://github.com/AryanKumarRajak",
       linkedin: "https://www.linkedin.com/in/aryan-kumar-rajak-702854363/",
       stuvo: "#",
