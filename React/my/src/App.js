@@ -5,7 +5,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-
+import AdminExplorer from "./components/Admin-explorer";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -15,7 +15,8 @@ import LinkAccount from "./pages/LinkAccount";
 import Layout from "./components/Layout";
 import Explorer from "./components/Explorer";
 import Profile from "./pages/Profile";
-
+import Bus from "./pages/Bus";
+import Chat from "./pages/Chat";
 // ADD THIS — paste in browser console to see which is broken
 console.log("Home:", Home);
 console.log("Login:", Login);
@@ -44,6 +45,9 @@ function App() {
         <Route element={<ProtectedLayout />}>
           <Route path="/explorer" element={<Explorer />} />
           <Route path="/profile" element={<Profile />} />
+            <Route path="/bus"      element={<Bus />} />
+  <Route path="/chat"     element={<Chat />} />
+  <Route path="/admin-explorer" element={<AdminExplorer />} />
         </Route>
       </Routes>
     </Router>
