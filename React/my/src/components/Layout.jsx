@@ -4,33 +4,56 @@ import "boxicons/css/boxicons.min.css";
 import "../styles/Explorer.css";
 
 const NAV_ITEMS = [
-  { id: "explorer", icon: "bx-compass",               label: "Explorer", path: "/explorer", isMore: false },
-  { id: "bus",      icon: "bx-bus",                   label: "Bus",      path: "/bus",      isMore: false },
-  { id: "more",     icon: "bx-dots-horizontal-rounded", label: "More",   isMore: true },
-  { id: "chat",     icon: "bx-message-rounded-dots",  label: "Chat",     path: "/chat",     isMore: false },
-  { id: "profile",  icon: "bx-user-circle",           label: "Profile",  path: "/profile",  isMore: false },
+  {
+    id: "explorer",
+    icon: "bx-compass",
+    label: "Explorer",
+    path: "/explorer",
+    isMore: false,
+  },
+  { id: "bus", icon: "bx-bus", label: "Bus", path: "/bus", isMore: false },
+  {
+    id: "more",
+    icon: "bx-dots-horizontal-rounded",
+    label: "More",
+    isMore: true,
+  },
+  {
+    id: "chat",
+    icon: "bx-message-rounded-dots",
+    label: "Chat",
+    path: "/chat",
+    isMore: false,
+  },
+  {
+    id: "profile",
+    icon: "bx-user-circle",
+    label: "Profile",
+    path: "/profile",
+    isMore: false,
+  },
 ];
 
 const BROWSE_ITEMS = [
   { icon: "bx-calendar-event", label: "Events" },
-  { icon: "bx-book-open",      label: "Courses" },
-  { icon: "bx-trophy",         label: "Sports" },
-  { icon: "bx-group",          label: "Clubs" },
-  { icon: "bx-briefcase",      label: "Placements" },
-  { icon: "bx-building",       label: "Facilities" },
-  { icon: "bx-bus",            label: "Transport" },
-  { icon: "bx-food-menu",      label: "Cafeteria" },
-  { icon: "bx-library",        label: "Library" },
+  { icon: "bx-book-open", label: "Courses" },
+  { icon: "bx-trophy", label: "Sports" },
+  { icon: "bx-group", label: "Clubs" },
+  { icon: "bx-briefcase", label: "Placements" },
+  { icon: "bx-building", label: "Facilities" },
+  { icon: "bx-bus", label: "Transport" },
+  { icon: "bx-food-menu", label: "Cafeteria" },
+  { icon: "bx-library", label: "Library" },
 ];
 
 export default function Layout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [openPanel,     setOpenPanel]     = useState(null);
-  const [explorerOpen,  setExplorerOpen]  = useState(false);
+  const [openPanel, setOpenPanel] = useState(null);
+  const [explorerOpen, setExplorerOpen] = useState(false);
   const [bannerVisible, setBannerVisible] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
-  const [logoutToast,       setLogoutToast]       = useState(false);
+  const [logoutToast, setLogoutToast] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setBannerVisible(true), 600);
@@ -71,8 +94,7 @@ export default function Layout() {
   const handleLogoutCancel = () => setLogoutConfirmOpen(false);
 
   return (
-    <div className={`main-app${bannerVisible ? " banner-visible" : ""}`}>
-
+    <div className="main-app">
       {/* ══ HEADER ══ */}
       <div className="app-header">
         <div className="app-logo">STUVO5</div>
@@ -81,14 +103,27 @@ export default function Layout() {
           <i className="bx bx-menu" onClick={(e) => togglePanel("menu", e)} />
         </div>
 
+        {/* Notification panel */}
         <div
           className={`notification-panel${openPanel === "notif" ? " active" : ""}`}
           onClick={(e) => e.stopPropagation()}
         >
           {[
-            { icon: "bx-bus",      title: "Bus #101",           body: "Arriving in 5 minutes" },
-            { icon: "bx-calendar", title: "New Event",          body: "Tech Fest starts tomorrow" },
-            { icon: "bx-book",     title: "Attendance Updated", body: "Your attendance has been updated" },
+            {
+              icon: "bx-bus",
+              title: "Bus #101",
+              body: "Arriving in 5 minutes",
+            },
+            {
+              icon: "bx-calendar",
+              title: "New Event",
+              body: "Tech Fest starts tomorrow",
+            },
+            {
+              icon: "bx-book",
+              title: "Attendance Updated",
+              body: "Your attendance has been updated",
+            },
           ].map((n, i) => (
             <div className="notification-item" key={i}>
               <i className={`bx ${n.icon}`} />
@@ -101,14 +136,15 @@ export default function Layout() {
           <div className="notification-footer">View all notifications</div>
         </div>
 
+        {/* Menu panel */}
         <div
           className={`menu-panel${openPanel === "menu" ? " active" : ""}`}
           onClick={(e) => e.stopPropagation()}
         >
           {[
-            { icon: "bx-cog",          label: "Settings" },
+            { icon: "bx-cog", label: "Settings" },
             { icon: "bx-message-dots", label: "Feedback" },
-            { icon: "bx-help-circle",  label: "Help" },
+            { icon: "bx-help-circle", label: "Help" },
           ].map((m, i) => (
             <div className="menu-item" key={i}>
               <i className={`bx ${m.icon}`} />
@@ -127,22 +163,29 @@ export default function Layout() {
         <Outlet />
       </div>
 
-      {/* ══ INSTALL BANNER ══ */}
-      <div className="install-banner">
-        <span className="install-text">Install this site as an app</span>
-        <button
-          className="install-btn"
-          onClick={() => {
-            alert("To install STUVO5:\n\n• Chrome/Edge: click ⊕ in address bar\n• Chrome Android: tap ⋮ → Add to Home Screen\n• Safari iPhone: tap Share ↑ → Add to Home Screen");
-            setBannerVisible(false);
-          }}
-        >
-          Install
-        </button>
-        <button className="install-close" onClick={() => setBannerVisible(false)}>
-          <i className="bx bx-x" />
-        </button>
-      </div>
+      {/* ══ INSTALL BANNER — positioned above bottom nav ══ */}
+      {bannerVisible && (
+        <div className="install-banner-wrap">
+          <span className="install-text">Install this site as an app</span>
+          <button
+            className="install-btn"
+            onClick={() => {
+              alert(
+                "To install STUVO5:\n\n• Chrome/Edge: click ⊕ in address bar\n• Chrome Android: tap ⋮ → Add to Home Screen\n• Safari iPhone: tap Share ↑ → Add to Home Screen",
+              );
+              setBannerVisible(false);
+            }}
+          >
+            Install
+          </button>
+          <button
+            className="install-close"
+            onClick={() => setBannerVisible(false)}
+          >
+            <i className="bx bx-x" />
+          </button>
+        </div>
+      )}
 
       {/* ══ BOTTOM NAV ══ */}
       <div className="bottom-nav">
@@ -151,8 +194,12 @@ export default function Layout() {
             key={item.id}
             className={`nav-item${
               item.isMore
-                ? explorerOpen ? " active" : ""
-                : location.pathname === item.path ? " active" : ""
+                ? explorerOpen
+                  ? " active"
+                  : ""
+                : location.pathname === item.path
+                  ? " active"
+                  : ""
             }`}
             onClick={() => handleNavClick(item)}
           >
@@ -167,12 +214,17 @@ export default function Layout() {
       {/* ══ MORE SHEET ══ */}
       <div
         className={`explorer-overlay${explorerOpen ? " active" : ""}`}
-        onClick={(e) => { if (e.target === e.currentTarget) setExplorerOpen(false); }}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) setExplorerOpen(false);
+        }}
       >
         <div className="explorer-sheet">
           <div className="explorer-sheet-header">
             <h2 className="browse-title">BROWSE BY</h2>
-            <i className="bx bx-x explorer-close" onClick={() => setExplorerOpen(false)} />
+            <i
+              className="bx bx-x explorer-close"
+              onClick={() => setExplorerOpen(false)}
+            />
           </div>
           <div className="browse-grid">
             {BROWSE_ITEMS.map((item, i) => (
@@ -188,15 +240,28 @@ export default function Layout() {
       {/* ══ LOGOUT CONFIRMATION MODAL ══ */}
       {logoutConfirmOpen && (
         <div className="layout-modal-overlay" onClick={handleLogoutCancel}>
-          <div className="layout-confirm-modal" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="layout-confirm-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="layout-confirm-icon">
               <i className="bx bx-log-out" />
             </div>
             <h3>Logout?</h3>
             <p>Are you sure you want to logout from STUVO5?</p>
             <div className="layout-confirm-actions">
-              <button className="layout-cancel-btn"  onClick={handleLogoutCancel}>Cancel</button>
-              <button className="layout-logout-btn"  onClick={handleLogoutConfirm}>Yes, Logout</button>
+              <button
+                className="layout-cancel-btn"
+                onClick={handleLogoutCancel}
+              >
+                Cancel
+              </button>
+              <button
+                className="layout-logout-btn"
+                onClick={handleLogoutConfirm}
+              >
+                Yes, Logout
+              </button>
             </div>
           </div>
         </div>
@@ -209,7 +274,6 @@ export default function Layout() {
           <span>Logged out successfully!</span>
         </div>
       )}
-
     </div>
   );
 }
