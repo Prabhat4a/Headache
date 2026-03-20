@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import "boxicons/css/boxicons.min.css";
 import "../styles/Explorer.css";
@@ -55,6 +55,9 @@ export default function Layout() {
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [logoutToast, setLogoutToast] = useState(false);
 
+  const menuButtonRef = useRef(null);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 });
+
   useEffect(() => {
     const t = setTimeout(() => setBannerVisible(true), 600);
     return () => clearTimeout(t);
@@ -65,6 +68,16 @@ export default function Layout() {
     document.addEventListener("click", handler);
     return () => document.removeEventListener("click", handler);
   }, []);
+
+  useEffect(() => {
+    if (openPanel === "menu" && menuButtonRef.current) {
+      const rect = menuButtonRef.current.getBoundingClientRect();
+      setMenuPosition({
+        top: rect.bottom + 8,
+        right: window.innerWidth - rect.right,
+      });
+    }
+  }, [openPanel]);
 
   const togglePanel = (name, e) => {
     e.stopPropagation();
@@ -100,7 +113,11 @@ export default function Layout() {
         <div className="app-logo">STUVO5</div>
         <div className="header-icons">
           <i className="bx bx-bell" onClick={(e) => togglePanel("notif", e)} />
-          <i className="bx bx-menu" onClick={(e) => togglePanel("menu", e)} />
+          <i
+            ref={menuButtonRef}
+            className="bx bx-menu"
+            onClick={(e) => togglePanel("menu", e)}
+          />
         </div>
 
         {/* Notification panel */}
@@ -136,10 +153,21 @@ export default function Layout() {
           <div className="notification-footer">View all notifications</div>
         </div>
 
-        {/* Menu panel */}
+        {/* Menu panel - positioned dynamically */}
         <div
           className={`menu-panel${openPanel === "menu" ? " active" : ""}`}
           onClick={(e) => e.stopPropagation()}
+          style={
+            window.innerWidth <= 480
+              ? {
+                  position: "fixed",
+                  top: `${menuPosition.top}px`,
+                  right: `${menuPosition.right}px`,
+                  left: "auto",
+                  width: "180px",
+                }
+              : {}
+          }
         >
           {[
             { icon: "bx-cog", label: "Settings" },

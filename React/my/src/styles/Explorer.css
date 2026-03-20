@@ -984,3 +984,93 @@ body {
     transform: scale(1) translateY(0);
   }
 }
+/* ═══════════════════════════════════════════════════════════
+   MENU PANEL - Compact dropdown on small screens
+═══════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .menu-panel {
+    position: fixed;
+    top: 60px;
+    right: 10px;
+    left: auto;
+    width: 180px;
+    max-width: 180px;
+    border-radius: 12px;
+    background: #161616;
+    border: 1px solid #2a2a2a;
+    z-index: 300;
+  }
+
+  .menu-item {
+    padding: 12px 14px;
+    font-size: 14px;
+    border-bottom: 1px solid #1e1e1e;
+  }
+
+  .menu-item:last-child {
+    border-bottom: none;
+  }
+
+  .menu-item i {
+    font-size: 18px;
+  }
+}
+/* ═══════════════════════════════════════════════════════════
+   MORE DROPDOWN STYLES (for Profile page)
+═══════════════════════════════════════════════════════════ */
+.more-dropdown {
+  background: #161616;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 6px;
+  min-width: 160px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+  animation: dropdownFadeIn 0.15s ease;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.more-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #ccc;
+  transition: background 0.15s;
+}
+
+.more-dropdown-item:hover {
+  background: #1e1e1e;
+}
+
+.more-dropdown-item i {
+  font-size: 16px;
+}
+
+.more-dropdown-item.block-item {
+  color: #ef4444;
+}
+
+.more-dropdown-item.block-item i {
+  color: #ef4444;
+}
+
+.more-dropdown-item.report-item {
+  color: #f59e0b;
+}
+
+.more-dropdown-item.report-item i {
+  color: #f59e0b;
+}
