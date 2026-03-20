@@ -1074,3 +1074,165 @@ body {
 .more-dropdown-item.report-item i {
   color: #f59e0b;
 }
+/* ═══════════════════════════════════════════════════════════
+   SKELETON LOADING — SHARED SHIMMER ANIMATION
+   Add this to the bottom of Explorer.css AND Profile.css
+═══════════════════════════════════════════════════════════ */
+
+@keyframes shimmer {
+  0% {
+    background-position: -600px 0;
+  }
+  100% {
+    background-position: 600px 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #1a1a1a 25%, #252525 50%, #1a1a1a 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 8px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   EXPLORER SKELETON — add to Explorer.css
+═══════════════════════════════════════════════════════════ */
+.explorer-skeleton {
+  padding-bottom: 20px;
+}
+
+.skeleton-section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 26px 20px 0;
+  margin-bottom: 20px;
+}
+
+.skeleton-line {
+  flex: 1;
+  height: 1.5px;
+  background: #1e1e1e;
+  border-radius: 2px;
+}
+
+.skeleton-title-block {
+  width: 140px;
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #1a1a1a 25%, #252525 50%, #1a1a1a 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+/* Carousel skeleton */
+.skeleton-carousel {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 14px 0 10px;
+  overflow: hidden;
+  justify-content: center;
+}
+
+.skeleton-card {
+  border-radius: 20px;
+  overflow: hidden;
+  background: linear-gradient(90deg, #1a1a1a 25%, #252525 50%, #1a1a1a 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite linear;
+  flex-shrink: 0;
+}
+
+.skeleton-card-main {
+  width: 300px;
+}
+
+.skeleton-card-side {
+  width: 260px;
+  height: 380px;
+  opacity: 0.4;
+  transform: scale(0.87);
+  transform-origin: top center;
+}
+
+.skeleton-card-img {
+  width: 100%;
+  height: 300px;
+  background: #1e1e1e;
+}
+
+.skeleton-card-info {
+  padding: 14px;
+}
+
+.skeleton-text {
+  background: linear-gradient(90deg, #1e1e1e 25%, #2a2a2a 50%, #1e1e1e 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.skeleton-text-sm {
+  height: 10px;
+  width: 60%;
+}
+.skeleton-text-md {
+  height: 12px;
+  width: 80%;
+}
+.skeleton-text-lg {
+  height: 14px;
+  width: 90%;
+}
+
+/* Dots */
+.skeleton-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 20px 0;
+}
+
+.skeleton-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #1e1e1e;
+}
+
+.skeleton-dot.active {
+  width: 22px;
+  border-radius: 4px;
+  background: #2a2a2a;
+}
+
+/* Notices */
+.skeleton-notices {
+  margin: 0 20px;
+  background: #111;
+  border: 1px solid #1e1e1e;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.skeleton-notice-item {
+  padding: 14px 16px;
+  border-bottom: 1px solid #1a1a1a;
+}
+.skeleton-notice-item:last-child {
+  border-bottom: none;
+}
+
+/* Quick access */
+.skeleton-quick-access {
+  height: 80px;
+  margin: 20px 20px 0;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #1a1a1a 25%, #252525 50%, #1a1a1a 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite linear;
+}

@@ -3,6 +3,52 @@ import "boxicons/css/boxicons.min.css";
 import "../styles/Profile.css";
 
 /* ═══════════════════════════════════════════════════════════
+   PROFILE SKELETON
+═══════════════════════════════════════════════════════════ */
+function ProfileSkeleton() {
+  return (
+    <div className="profile-skeleton">
+      {/* Cover */}
+      <div className="ps-cover" />
+
+      {/* Avatar overlapping cover */}
+      <div className="ps-avatar-wrap">
+        <div className="ps-avatar" />
+      </div>
+
+      {/* Name / username / bio */}
+      <div className="ps-info">
+        <div className="ps-text ps-name" />
+        <div className="ps-text ps-username" />
+        <div className="ps-text ps-bio" />
+        <div className="ps-text ps-bio-short" />
+        {/* Buttons */}
+        <div className="ps-buttons">
+          <div className="ps-btn ps-btn-main" />
+          <div className="ps-btn ps-btn-small" />
+        </div>
+      </div>
+
+      {/* Social links */}
+      <div className="ps-social">
+        <div className="ps-social-title" />
+        <div className="ps-social-card">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="ps-social-item">
+              <div className="ps-social-icon" />
+              <div className="ps-social-info">
+                <div className="ps-text ps-social-label" />
+                <div className="ps-text ps-social-value" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
    CROP MODAL - WITH DRAG FUNCTIONALITY
 ═══════════════════════════════════════════════════════════ */
 function CropModal({ isOpen, onClose, onApply, imageUrl, type }) {
@@ -27,8 +73,8 @@ function CropModal({ isOpen, onClose, onApply, imageUrl, type }) {
       ch = canvas.height;
     const baseScale = Math.max(cw / image.width, ch / image.height);
     const totalScale = baseScale * zoom;
-    const drawW = image.width * totalScale;
-    const drawH = image.height * totalScale;
+    const drawW = image.width * totalScale,
+      drawH = image.height * totalScale;
     const minX = cw - drawW,
       minY = ch - drawH;
     const clampedX = Math.min(0, Math.max(offsetX, minX));
@@ -87,7 +133,6 @@ function CropModal({ isOpen, onClose, onApply, imageUrl, type }) {
     if (isOpen) drawCrop();
   }, [zoom, isOpen, drawCrop]);
 
-  // DRAG HANDLERS
   const handleMouseDown = (e) => {
     e.preventDefault();
     setIsDragging(true);
@@ -127,7 +172,6 @@ function CropModal({ isOpen, onClose, onApply, imageUrl, type }) {
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
   }, []);
-
   const handleTouchEnd = useCallback(() => {
     setIsDragging(false);
   }, []);
@@ -225,7 +269,6 @@ function CropModal({ isOpen, onClose, onApply, imageUrl, type }) {
             />
           </div>
           <div
-            className="crop-hint"
             style={{
               textAlign: "center",
               color: "#888",
@@ -413,7 +456,6 @@ function ShareModal({ isOpen, onClose, onToast, profile }) {
   if (!isOpen) return null;
   const profileUrl = `https://stuvo.app/profile/${profile.username.replace("@", "")}`;
   const message = `Check out ${profile.name}'s profile on STUVO!`;
-
   const handleShare = (type) => {
     switch (type) {
       case "copy":
@@ -457,7 +499,6 @@ function ShareModal({ isOpen, onClose, onToast, profile }) {
         break;
     }
   };
-
   const options = [
     {
       type: "copy",
@@ -528,7 +569,6 @@ function ShareModal({ isOpen, onClose, onToast, profile }) {
       ),
     },
   ];
-
   return (
     <div
       className="share-modal-overlay active"
@@ -615,7 +655,6 @@ function ReportModal({ isOpen, onClose, onSubmit, name }) {
     }
   }, [isOpen]);
   if (!isOpen) return null;
-
   const reasons = [
     { key: "fake", icon: "bx-user-x", label: "Fake Profile" },
     {
@@ -627,11 +666,9 @@ function ReportModal({ isOpen, onClose, onSubmit, name }) {
     { key: "spam", icon: "bx-message-error", label: "Spam" },
     { key: "other", icon: "bx-question-mark", label: "Other" },
   ];
-
   const canSubmit =
     selectedReason &&
     (selectedReason !== "other" || otherText.trim().length > 0);
-
   return (
     <div
       className="action-modal-overlay active"
@@ -780,41 +817,25 @@ function FriendRequestPopup({ isOpen, name, initials, onAccept, onDecline }) {
 ═══════════════════════════════════════════════════════════ */
 function MoreDropdown({ isOpen, onBlock, onReport, buttonRef }) {
   const [position, setPosition] = useState({ top: 0, left: 0 });
-
   useEffect(() => {
     if (isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       const dropdownWidth = 160;
-      // Position above the button if not enough space below
-      const spaceBelow = window.innerHeight - rect.bottom;
       const dropdownHeight = 90;
-
+      const spaceBelow = window.innerHeight - rect.bottom;
       let top = rect.bottom + 8;
-      if (spaceBelow < dropdownHeight + 100) {
+      if (spaceBelow < dropdownHeight + 100)
         top = rect.top - dropdownHeight - 8;
-      }
-
-      // Align right edge of dropdown with right edge of button
       let left = rect.right - dropdownWidth;
-
-      // Prevent going off-screen left
       if (left < 10) left = 10;
-
       setPosition({ top, left });
     }
   }, [isOpen, buttonRef]);
-
   if (!isOpen) return null;
-
   return (
     <>
-      {/* Backdrop to close on outside click */}
       <div
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 999,
-        }}
+        style={{ position: "fixed", inset: 0, zIndex: 999 }}
         onClick={() => {}}
       />
       <div
@@ -841,7 +862,7 @@ function MoreDropdown({ isOpen, onBlock, onReport, buttonRef }) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   BLOCKED CARD - Shows instead of Connect With Me
+   BLOCKED CARD
 ═══════════════════════════════════════════════════════════ */
 function BlockedCard({ onUnblock }) {
   return (
@@ -856,14 +877,7 @@ function BlockedCard({ onUnblock }) {
         textAlign: "center",
       }}
     >
-      <div
-        className="blocked-icon"
-        style={{
-          fontSize: "48px",
-          color: "#666",
-          marginBottom: "16px",
-        }}
-      >
+      <div style={{ fontSize: "48px", color: "#666", marginBottom: "16px" }}>
         <i className="bx bx-block" />
       </div>
       <h3
@@ -898,10 +912,7 @@ function BlockedCard({ onUnblock }) {
           fontWeight: 600,
           fontSize: "14px",
           cursor: "pointer",
-          transition: "opacity 0.2s",
         }}
-        onMouseEnter={(e) => (e.target.style.opacity = "0.85")}
-        onMouseLeave={(e) => (e.target.style.opacity = "1")}
       >
         Unblock
       </button>
@@ -913,6 +924,7 @@ function BlockedCard({ onUnblock }) {
    MAIN PROFILE COMPONENT
 ═══════════════════════════════════════════════════════════ */
 export default function Profile() {
+  const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState({
     name: "Prabhat Behera",
     username: "@Prabhat4a",
@@ -927,8 +939,6 @@ export default function Profile() {
     github: "",
     email: "",
   });
-
-  // Modal states
   const [cropModal, setCropModal] = useState({
     open: false,
     type: null,
@@ -938,8 +948,6 @@ export default function Profile() {
   const [socialModal, setSocialModal] = useState({ open: false, type: null });
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [photoViewerOpen, setPhotoViewerOpen] = useState(false);
-
-  // Backend-related states
   const [viewingOwnProfile, setViewingOwnProfile] = useState(true);
   const [isFriends, setIsFriends] = useState(false);
   const [requestPending, setRequestPending] = useState(false);
@@ -949,22 +957,23 @@ export default function Profile() {
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [moreDropdownOpen, setMoreDropdownOpen] = useState(false);
   const [friendRequestPopupOpen, setFriendRequestPopupOpen] = useState(false);
-
   const [toast, setToast] = useState(null);
   const coverFileRef = useRef(null);
   const avatarFileRef = useRef(null);
   const moreButtonRef = useRef(null);
   const toastKey = useRef(0);
 
-  // Load blocked state from localStorage on mount
+  /* Show skeleton for 1.5s — replace with real API call when backend is ready */
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 1500);
+    return () => clearTimeout(t);
+  }, []);
+
   useEffect(() => {
     const blockedUsers = JSON.parse(
       localStorage.getItem("blockedUsers") || "[]",
     );
-    // Check if current profile user is blocked (using username as ID)
-    if (blockedUsers.includes(profile.username)) {
-      setIsBlocked(true);
-    }
+    if (blockedUsers.includes(profile.username)) setIsBlocked(true);
   }, [profile.username]);
 
   const showToast = (msg) => {
@@ -972,37 +981,30 @@ export default function Profile() {
     setToast({ msg, key: toastKey.current });
   };
 
-  // Save blocked state to localStorage
   const saveBlockedState = (blocked) => {
     const blockedUsers = JSON.parse(
       localStorage.getItem("blockedUsers") || "[]",
     );
     if (blocked) {
-      if (!blockedUsers.includes(profile.username)) {
+      if (!blockedUsers.includes(profile.username))
         blockedUsers.push(profile.username);
-      }
     } else {
-      const index = blockedUsers.indexOf(profile.username);
-      if (index > -1) {
-        blockedUsers.splice(index, 1);
-      }
+      const i = blockedUsers.indexOf(profile.username);
+      if (i > -1) blockedUsers.splice(i, 1);
     }
     localStorage.setItem("blockedUsers", JSON.stringify(blockedUsers));
   };
 
-  // Close more dropdown on outside click
   useEffect(() => {
     if (!moreDropdownOpen) return;
     const handler = (e) => {
-      if (!moreButtonRef.current?.contains(e.target)) {
+      if (!moreButtonRef.current?.contains(e.target))
         setMoreDropdownOpen(false);
-      }
     };
     document.addEventListener("click", handler);
     return () => document.removeEventListener("click", handler);
   }, [moreDropdownOpen]);
 
-  // Demo auto-popup
   useEffect(() => {
     if (!viewingOwnProfile) {
       const t = setTimeout(() => {
@@ -1013,10 +1015,10 @@ export default function Profile() {
   }, [requestPending, viewingOwnProfile]);
 
   const handleFileRead = (file, type) => {
-    const reader = new FileReader();
-    reader.onload = (e) =>
+    const r = new FileReader();
+    r.onload = (e) =>
       setCropModal({ open: true, type, imageUrl: e.target.result });
-    reader.readAsDataURL(file);
+    r.readAsDataURL(file);
   };
   const handleCoverFile = (e) => {
     if (e.target.files[0]) handleFileRead(e.target.files[0], "cover");
@@ -1040,7 +1042,6 @@ export default function Profile() {
     setSocialModal({ open: false, type: null });
     showToast("Link saved!");
   };
-
   const handleAddFriend = () => {
     if (isFriends) {
       if (window.confirm(`Unfriend ${profile.name}?`)) {
@@ -1055,7 +1056,6 @@ export default function Profile() {
     showToast("Friend request sent!");
     setTimeout(() => setFriendRequestPopupOpen(true), 3000);
   };
-
   const handleAcceptFriend = () => {
     setIsFriends(true);
     setRequestPending(false);
@@ -1067,7 +1067,6 @@ export default function Profile() {
     setRequestPending(false);
     setFriendRequestPopupOpen(false);
   };
-
   const handleConfirmBlock = () => {
     setIsBlocked(true);
     saveBlockedState(true);
@@ -1080,7 +1079,6 @@ export default function Profile() {
     saveBlockedState(false);
     showToast("User unblocked");
   };
-
   const handleSubmitReport = () => {
     setHasReported(true);
     setReportModalOpen(false);
@@ -1093,7 +1091,6 @@ export default function Profile() {
     .join("")
     .slice(0, 2)
     .toUpperCase();
-
   const socialMeta = [
     {
       key: "instagram",
@@ -1115,9 +1112,11 @@ export default function Profile() {
     },
   ];
 
+  /* Show skeleton while loading */
+  if (loading) return <ProfileSkeleton />;
+
   return (
     <div className="profile-page">
-      {/* Hidden file inputs */}
       <input
         ref={coverFileRef}
         type="file"
@@ -1146,7 +1145,6 @@ export default function Profile() {
         <button
           onClick={() => {
             setViewingOwnProfile(!viewingOwnProfile);
-            // Don't reset block state - it persists
             setIsFriends(false);
             setRequestPending(false);
           }}
@@ -1195,8 +1193,6 @@ export default function Profile() {
             </div>
           )}
         </div>
-
-        {/* AVATAR */}
         <div className="profile-avatar-wrapper">
           <div
             className="profile-avatar-ring"
@@ -1246,7 +1242,6 @@ export default function Profile() {
           </button>
         </div>
 
-        {/* OWN PROFILE BUTTONS */}
         {viewingOwnProfile && (
           <div className="profile-buttons">
             <button
@@ -1264,7 +1259,6 @@ export default function Profile() {
           </div>
         )}
 
-        {/* OTHER PROFILE BUTTONS */}
         {!viewingOwnProfile && (
           <div className="profile-buttons">
             <button
@@ -1311,7 +1305,7 @@ export default function Profile() {
         )}
       </div>
 
-      {/* SOCIAL LINKS - HIDDEN WHEN BLOCKED (viewing others only) */}
+      {/* SOCIAL LINKS */}
       {!viewingOwnProfile && isBlocked ? (
         <BlockedCard onUnblock={handleUnblock} />
       ) : (
@@ -1351,8 +1345,6 @@ export default function Profile() {
                 )}
               </div>
             ))}
-
-            {/* Email */}
             <div className="social-link-item">
               <div
                 className="social-icon-wrap"
@@ -1415,7 +1407,6 @@ export default function Profile() {
         </div>
       )}
 
-      {/* MORE DROPDOWN - Positioned near 3-dot button */}
       <MoreDropdown
         isOpen={moreDropdownOpen}
         onBlock={() => {
@@ -1433,8 +1424,6 @@ export default function Profile() {
         }}
         buttonRef={moreButtonRef}
       />
-
-      {/* FRIEND REQUEST POPUP */}
       <FriendRequestPopup
         isOpen={friendRequestPopupOpen}
         name={profile.name}
@@ -1443,7 +1432,6 @@ export default function Profile() {
         onDecline={handleDeclineFriend}
       />
 
-      {/* ALL MODALS */}
       <CropModal
         isOpen={cropModal.open}
         type={cropModal.type}
@@ -1491,7 +1479,6 @@ export default function Profile() {
         initials={initials}
       />
 
-      {/* TOAST */}
       {toast && (
         <Toast
           key={toast.key}

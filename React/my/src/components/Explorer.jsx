@@ -90,6 +90,51 @@ const NOTICES = [
   },
 ];
 
+/* ─── Skeleton ───────────────────────────────────────────── */
+function ExplorerSkeleton() {
+  return (
+    <div className="explorer-skeleton">
+      <div className="skeleton-section-header">
+        <div className="skeleton-line" />
+        <div className="skeleton-title-block" />
+        <div className="skeleton-line" />
+      </div>
+      <div className="skeleton-carousel">
+        <div className="skeleton-card skeleton-card-side" />
+        <div className="skeleton-card skeleton-card-main">
+          <div className="skeleton-card-img" />
+          <div className="skeleton-card-info">
+            <div className="skeleton-text skeleton-text-sm" />
+            <div className="skeleton-text skeleton-text-lg" />
+            <div className="skeleton-text skeleton-text-md" />
+          </div>
+        </div>
+        <div className="skeleton-card skeleton-card-side" />
+      </div>
+      <div className="skeleton-dots">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className={`skeleton-dot${i === 2 ? " active" : ""}`} />
+        ))}
+      </div>
+      <div className="skeleton-section-header" style={{ marginTop: 32 }}>
+        <div className="skeleton-line" />
+        <div className="skeleton-title-block" />
+        <div className="skeleton-line" />
+      </div>
+      <div className="skeleton-notices">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="skeleton-notice-item">
+            <div className="skeleton-text skeleton-text-lg" />
+            <div className="skeleton-text skeleton-text-md" />
+            <div className="skeleton-text skeleton-text-sm" />
+          </div>
+        ))}
+      </div>
+      <div className="skeleton-quick-access" />
+    </div>
+  );
+}
+
 /* ─── Carousel Hook ─────────────────────────────────────── */
 function useCarousel(total) {
   const [current, setCurrent] = useState(Math.floor(total / 2));
@@ -130,7 +175,12 @@ function useCarousel(total) {
 
   useEffect(() => {
     const apply = () => setTx(calcTx(current));
-    requestAnimationFrame(() => requestAnimationFrame(apply));
+    // Fire multiple times to ensure correct position after layout
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(apply);
+      });
+    });
     window.addEventListener("resize", apply);
     return () => window.removeEventListener("resize", apply);
   }, [current, calcTx]);
@@ -200,8 +250,8 @@ function useCarousel(total) {
   };
 }
 
-/* ─── Component ─────────────────────────────────────────── */
-export default function Explorer() {
+/* ─── Explorer Content (separate component so carousel mounts fresh) ── */
+function ExplorerContent() {
   const [savedCards, setSavedCards] = useState({});
   const [loadedImgs, setLoadedImgs] = useState({});
 
@@ -378,4 +428,20 @@ export default function Explorer() {
       </div>
     </>
   );
+}
+
+/* ─── Main Export ────────────────────────────────────────── */
+export default function Explorer() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 1500);
+    return () => clearTimeout(t);
+  }, []);
+
+  /* Key trick: when loading switches to false, ExplorerContent
+     mounts as a brand new component with fresh refs and correct
+     layout dimensions — no glitch possible */
+  if (loading) return <ExplorerSkeleton />;
+  return <ExplorerContent />;
 }
