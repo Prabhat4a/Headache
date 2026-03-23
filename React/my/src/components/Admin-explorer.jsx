@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import "boxicons/css/boxicons.min.css";
 import "../styles/Admin-explorer.css";
 
@@ -79,7 +80,7 @@ const INITIAL_NOTICES = [
   {
     id: 1,
     title: "Campus WiFi Maintenance",
-    body: "WiFi will be unavailable in Block A on March 10th, 10 AM – 2 PM.",
+    body: "WiFi will be unavailable in Block A on March 10th, 10 AM - 2 PM.",
     time: "5 hours ago",
   },
   {
@@ -92,7 +93,6 @@ const INITIAL_NOTICES = [
 
 let nextId = 100;
 
-/* ─── Helpers ───────────────────────────────────────────── */
 const MONTHS = [
   "January",
   "February",
@@ -131,7 +131,7 @@ function formatDisplay(iso) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   TIME SPINNER  — arrows + scroll wheel + direct type
+   TIME SPINNER
 ═══════════════════════════════════════════════════════════ */
 function TimeSpinner({ value, min, max, step, onChange }) {
   const [editing, setEditing] = useState(false);
@@ -143,10 +143,8 @@ function TimeSpinner({ value, min, max, step, onChange }) {
     if (v > max) return min + (v - max - 1);
     return v;
   };
-
   const inc = () => onChange(wrap(value + step));
   const dec = () => onChange(wrap(value - step));
-
   const handleWheel = (e) => {
     e.preventDefault();
     if (e.deltaY < 0) inc();
@@ -158,13 +156,11 @@ function TimeSpinner({ value, min, max, step, onChange }) {
     setEditing(true);
     setTimeout(() => inputRef.current?.select(), 0);
   };
-
   const commitEdit = () => {
     const n = parseInt(raw, 10);
     if (!isNaN(n)) onChange(Math.min(max, Math.max(min, n)));
     setEditing(false);
   };
-
   const handleKey = (e) => {
     if (e.key === "Enter" || e.key === "Tab") {
       e.preventDefault();
@@ -213,11 +209,10 @@ function TimeSpinner({ value, min, max, step, onChange }) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   CALENDAR PANEL  (inner content, no portal logic here)
+   CALENDAR PANEL
 ═══════════════════════════════════════════════════════════ */
 function CalendarPanel({ value, onConfirm, onClose }) {
   const initDate = value ? new Date(value) : null;
-
   const [viewYear, setViewYear] = useState(() =>
     (initDate || new Date()).getFullYear(),
   );
@@ -238,7 +233,6 @@ function CalendarPanel({ value, onConfirm, onClose }) {
   const [yearRaw, setYearRaw] = useState("");
   const yearInputRef = useRef(null);
 
-  /* Year edit */
   const openYearEdit = () => {
     setYearRaw(String(viewYear));
     setYearEdit(true);
@@ -257,7 +251,6 @@ function CalendarPanel({ value, onConfirm, onClose }) {
     if (e.key === "Escape") setYearEdit(false);
   };
 
-  /* Month nav */
   const prevMonth = () =>
     viewMonth === 0
       ? (setViewMonth(11), setViewYear((y) => y - 1))
@@ -267,15 +260,8 @@ function CalendarPanel({ value, onConfirm, onClose }) {
       ? (setViewMonth(0), setViewYear((y) => y + 1))
       : setViewMonth((m) => m + 1);
 
-  /* Day select */
   const selectDay = (day) => setSelected(new Date(viewYear, viewMonth, day));
-
-  /* Time handlers */
-  const onHourChange = (h) => setHour(h);
-  const onMinChange = (m) => setMinute(m);
   const toggleAmpm = () => setAmpm((ap) => (ap === "AM" ? "PM" : "AM"));
-
-  /* Confirm */
   const handleConfirm = () => {
     if (!selected) return;
     onConfirm(buildISO(selected, hour, minute, ampm));
@@ -290,7 +276,6 @@ function CalendarPanel({ value, onConfirm, onClose }) {
 
   return (
     <div className="dtp-popup-card" onClick={(e) => e.stopPropagation()}>
-      {/* ── Header ── */}
       <div className="dtp-popup-header">
         <span className="dtp-popup-title">
           <i className="bx bx-calendar" /> Pick Date &amp; Time
@@ -300,7 +285,6 @@ function CalendarPanel({ value, onConfirm, onClose }) {
         </button>
       </div>
 
-      {/* ── Calendar ── */}
       <div className="dtp-cal">
         {/* Year row */}
         <div className="dtp-nav-row">
@@ -379,10 +363,8 @@ function CalendarPanel({ value, onConfirm, onClose }) {
         </div>
       </div>
 
-      {/* ── Divider ── */}
       <div className="dtp-divider" />
 
-      {/* ── Time ── */}
       <div className="dtp-time-row">
         <div className="dtp-time-label">
           <i className="bx bx-time-five" />
@@ -394,7 +376,7 @@ function CalendarPanel({ value, onConfirm, onClose }) {
             min={1}
             max={12}
             step={1}
-            onChange={onHourChange}
+            onChange={setHour}
           />
           <span className="dtp-colon">:</span>
           <TimeSpinner
@@ -402,7 +384,7 @@ function CalendarPanel({ value, onConfirm, onClose }) {
             min={0}
             max={59}
             step={5}
-            onChange={onMinChange}
+            onChange={setMinute}
           />
           <button className="dtp-ampm" onClick={toggleAmpm}>
             {ampm}
@@ -410,7 +392,6 @@ function CalendarPanel({ value, onConfirm, onClose }) {
         </div>
       </div>
 
-      {/* ── Footer ── */}
       <div className="dtp-popup-footer">
         {preview && (
           <span className="dtp-preview-text">
@@ -435,7 +416,9 @@ function CalendarPanel({ value, onConfirm, onClose }) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   DATE-TIME PICKER  — trigger input + popup overlay
+   DATE-TIME PICKER
+   Uses createPortal so the overlay renders at document.body —
+   escaping any CSS transform stacking context from form-sheet.
 ═══════════════════════════════════════════════════════════ */
 function DateTimePicker({ value, onChange, currentLabel }) {
   const [open, setOpen] = useState(false);
@@ -447,7 +430,6 @@ function DateTimePicker({ value, onChange, currentLabel }) {
 
   return (
     <>
-      {/* Trigger — looks identical to .ef-input */}
       <button className="dtp-trigger" onClick={() => setOpen(true)}>
         <i className="bx bx-calendar dtp-trigger-icon" />
         <span className={value ? "dtp-trigger-val" : "dtp-trigger-placeholder"}>
@@ -456,24 +438,25 @@ function DateTimePicker({ value, onChange, currentLabel }) {
         <i className="bx bx-calendar-edit dtp-trigger-caret" />
       </button>
 
-      {/* Current value hint when no new selection yet */}
       {!value && currentLabel && (
         <span className="ef-current-val">
           <i className="bx bx-time" /> Current: {currentLabel}
         </span>
       )}
 
-      {/* Popup overlay */}
-      {open && (
-        <div className="dtp-overlay" onClick={() => setOpen(false)}>
-          <CalendarPanel
-            key={value || "empty"}
-            value={value}
-            onConfirm={handleConfirm}
-            onClose={() => setOpen(false)}
-          />
-        </div>
-      )}
+      {/* Portal to document.body so fixed overlay is never trapped by parent transforms */}
+      {open &&
+        createPortal(
+          <div className="dtp-overlay" onClick={() => setOpen(false)}>
+            <CalendarPanel
+              key={value || "empty"}
+              value={value}
+              onConfirm={handleConfirm}
+              onClose={() => setOpen(false)}
+            />
+          </div>,
+          document.body,
+        )}
     </>
   );
 }
@@ -576,6 +559,7 @@ function EditEventsPage({ events, onSave, onBack }) {
   };
 
   const openUpdate = (ev) => {
+    setAddingNew(false);
     setUpdating(ev.id);
     setUpdateForm({
       title: ev.title,
@@ -695,8 +679,16 @@ function EditEventsPage({ events, onSave, onBack }) {
           <button
             className="add-new-btn"
             onClick={() => {
-              setAddingNew(true);
               setUpdating(null);
+              setNewForm({
+                title: "",
+                date: "",
+                dateRaw: "",
+                location: "",
+                badge: "",
+                img: "",
+              });
+              setAddingNew(true);
             }}
           >
             <i className="bx bx-plus" /> Add New Event
@@ -713,8 +705,7 @@ function EditEventsPage({ events, onSave, onBack }) {
         <div className={`form-sheet${sheetOpen ? " active" : ""}`}>
           <div className="form-sheet-handle" />
 
-          {/* UPDATE */}
-          {updating !== null && (
+          {updating !== null && !addingNew && (
             <>
               <div className="form-sheet-title">
                 <i className="bx bx-edit-alt" /> Update Event
@@ -772,7 +763,6 @@ function EditEventsPage({ events, onSave, onBack }) {
             </>
           )}
 
-          {/* ADD NEW */}
           {addingNew && (
             <>
               <div className="form-sheet-title">
@@ -842,12 +832,7 @@ function EditNoticesPage({ notices, onSave, onBack }) {
   const [updating, setUpdating] = useState(null);
   const [updateForm, setUpdateForm] = useState({});
   const [addingNew, setAddingNew] = useState(false);
-  const [newForm, setNewForm] = useState({
-    title: "",
-    body: "",
-    time: "",
-    timeRaw: "",
-  });
+  const [newForm, setNewForm] = useState({ title: "", body: "", time: "" });
   const [confirmId, setConfirmId] = useState(null);
   const [toast, setToast] = useState(null);
 
@@ -866,10 +851,10 @@ function EditNoticesPage({ notices, onSave, onBack }) {
     }
     setConfirmId(id);
   };
-
   const openUpdate = (n) => {
+    setAddingNew(false);
     setUpdating(n.id);
-    setUpdateForm({ title: n.title, body: n.body, time: n.time, timeRaw: "" });
+    setUpdateForm({ title: n.title, body: n.body, time: n.time });
   };
   const saveUpdate = () => {
     setDraft((p) =>
@@ -891,7 +876,7 @@ function EditNoticesPage({ notices, onSave, onBack }) {
         time: newForm.time || "Just now",
       },
     ]);
-    setNewForm({ title: "", body: "", time: "", timeRaw: "" });
+    setNewForm({ title: "", body: "", time: "" });
     setAddingNew(false);
   };
 
@@ -959,8 +944,9 @@ function EditNoticesPage({ notices, onSave, onBack }) {
           <button
             className="add-new-btn"
             onClick={() => {
-              setAddingNew(true);
               setUpdating(null);
+              setNewForm({ title: "", body: "", time: "" });
+              setAddingNew(true);
             }}
           >
             <i className="bx bx-plus" /> Add New Notice
@@ -977,60 +963,40 @@ function EditNoticesPage({ notices, onSave, onBack }) {
         <div className={`form-sheet${sheetOpen ? " active" : ""}`}>
           <div className="form-sheet-handle" />
 
-          {/* UPDATE */}
-          {updating !== null && (
+          {updating !== null && !addingNew && (
             <>
               <div className="form-sheet-title">
                 <i className="bx bx-edit-alt" /> Update Notice
               </div>
-              {[
-                { key: "title", label: "Title" },
-                { key: "body", label: "Body", multiline: true },
-              ].map((f) => (
-                <div className="ef-field" key={f.key}>
-                  <label className="ef-label">{f.label}</label>
-                  {f.multiline ? (
-                    <textarea
-                      className="ef-input ef-textarea"
-                      rows={3}
-                      value={updateForm[f.key] || ""}
-                      onChange={(e) =>
-                        setUpdateForm((v) => ({
-                          ...v,
-                          [f.key]: e.target.value,
-                        }))
-                      }
-                    />
-                  ) : (
-                    <input
-                      className="ef-input"
-                      value={updateForm[f.key] || ""}
-                      onChange={(e) =>
-                        setUpdateForm((v) => ({
-                          ...v,
-                          [f.key]: e.target.value,
-                        }))
-                      }
-                    />
-                  )}
-                </div>
-              ))}
               <div className="ef-field">
-                <label className="ef-label">Date &amp; Time</label>
-                <DateTimePicker
-                  key={`upd-notice-${updating}`}
-                  value={updateForm.timeRaw || ""}
-                  currentLabel={
-                    updateForm.time && !updateForm.timeRaw
-                      ? updateForm.time
-                      : null
+                <label className="ef-label">Title</label>
+                <input
+                  className="ef-input"
+                  value={updateForm.title || ""}
+                  onChange={(e) =>
+                    setUpdateForm((v) => ({ ...v, title: e.target.value }))
                   }
-                  onChange={(raw) =>
-                    setUpdateForm((v) => ({
-                      ...v,
-                      timeRaw: raw,
-                      time: formatDisplay(raw),
-                    }))
+                />
+              </div>
+              <div className="ef-field">
+                <label className="ef-label">Body</label>
+                <textarea
+                  className="ef-input ef-textarea"
+                  rows={3}
+                  value={updateForm.body || ""}
+                  onChange={(e) =>
+                    setUpdateForm((v) => ({ ...v, body: e.target.value }))
+                  }
+                />
+              </div>
+              <div className="ef-field">
+                <label className="ef-label">Time (e.g. "2 hours ago")</label>
+                <input
+                  className="ef-input"
+                  placeholder="e.g. 2 hours ago, Just now"
+                  value={updateForm.time || ""}
+                  onChange={(e) =>
+                    setUpdateForm((v) => ({ ...v, time: e.target.value }))
                   }
                 />
               </div>
@@ -1045,49 +1011,40 @@ function EditNoticesPage({ notices, onSave, onBack }) {
             </>
           )}
 
-          {/* ADD NEW */}
           {addingNew && (
             <>
               <div className="form-sheet-title">
                 <i className="bx bx-plus-circle" /> New Notice
               </div>
-              {[
-                { key: "title", label: "Title *" },
-                { key: "body", label: "Body", multiline: true },
-              ].map((f) => (
-                <div className="ef-field" key={f.key}>
-                  <label className="ef-label">{f.label}</label>
-                  {f.multiline ? (
-                    <textarea
-                      className="ef-input ef-textarea"
-                      rows={3}
-                      value={newForm[f.key] || ""}
-                      onChange={(e) =>
-                        setNewForm((v) => ({ ...v, [f.key]: e.target.value }))
-                      }
-                    />
-                  ) : (
-                    <input
-                      className="ef-input"
-                      value={newForm[f.key] || ""}
-                      onChange={(e) =>
-                        setNewForm((v) => ({ ...v, [f.key]: e.target.value }))
-                      }
-                    />
-                  )}
-                </div>
-              ))}
               <div className="ef-field">
-                <label className="ef-label">Date &amp; Time</label>
-                <DateTimePicker
-                  key="new-notice"
-                  value={newForm.timeRaw || ""}
-                  onChange={(raw) =>
-                    setNewForm((v) => ({
-                      ...v,
-                      timeRaw: raw,
-                      time: formatDisplay(raw),
-                    }))
+                <label className="ef-label">Title *</label>
+                <input
+                  className="ef-input"
+                  value={newForm.title || ""}
+                  onChange={(e) =>
+                    setNewForm((v) => ({ ...v, title: e.target.value }))
+                  }
+                />
+              </div>
+              <div className="ef-field">
+                <label className="ef-label">Body</label>
+                <textarea
+                  className="ef-input ef-textarea"
+                  rows={3}
+                  value={newForm.body || ""}
+                  onChange={(e) =>
+                    setNewForm((v) => ({ ...v, body: e.target.value }))
+                  }
+                />
+              </div>
+              <div className="ef-field">
+                <label className="ef-label">Time (e.g. "Just now")</label>
+                <input
+                  className="ef-input"
+                  placeholder="e.g. Just now, 1 hour ago"
+                  value={newForm.time || ""}
+                  onChange={(e) =>
+                    setNewForm((v) => ({ ...v, time: e.target.value }))
                   }
                 />
               </div>
@@ -1289,6 +1246,7 @@ export default function AdminExplorer() {
             onClick={() => setPage("editEvents")}
           >
             <i className="bx bx-edit" />
+            <span>Edit</span>
           </button>
         </div>
         <div className="events-carousel" ref={carouselRef}>
@@ -1397,6 +1355,7 @@ export default function AdminExplorer() {
             onClick={() => setPage("editNotices")}
           >
             <i className="bx bx-edit" />
+            <span>Edit</span>
           </button>
         </div>
         <div className="notices-list">
