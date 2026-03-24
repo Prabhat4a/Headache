@@ -85,8 +85,16 @@ export default function Layout() {
   };
 
   const handleNavClick = (item) => {
-    if (item.isMore) setExplorerOpen(true);
-    else navigate(item.path);
+    if (item.isMore) {
+      setExplorerOpen((prev) => !prev);
+    } else {
+      setExplorerOpen(false);
+      navigate(item.path);
+    }
+  };
+
+  const handleBrowseCardClick = () => {
+    setExplorerOpen(false);
   };
 
   const handleLogoutClick = () => {
@@ -106,6 +114,14 @@ export default function Layout() {
 
   const handleLogoutCancel = () => setLogoutConfirmOpen(false);
 
+  // FIX: Each nav item is active ONLY when its path matches.
+  // "More" button is active only when the sheet is open — never bleeds onto other tabs.
+  const isNavActive = (item) => {
+    if (item.isMore) return explorerOpen;
+    // When sheet is open, only highlight the current page — never the More button's "previous" page
+    return location.pathname === item.path;
+  };
+
   return (
     <div className="main-app">
       {/* ══ HEADER ══ */}
@@ -120,7 +136,6 @@ export default function Layout() {
           />
         </div>
 
-        {/* Notification panel */}
         <div
           className={`notification-panel${openPanel === "notif" ? " active" : ""}`}
           onClick={(e) => e.stopPropagation()}
@@ -153,7 +168,6 @@ export default function Layout() {
           <div className="notification-footer">View all notifications</div>
         </div>
 
-        {/* Menu panel - positioned dynamically */}
         <div
           className={`menu-panel${openPanel === "menu" ? " active" : ""}`}
           onClick={(e) => e.stopPropagation()}
@@ -187,11 +201,13 @@ export default function Layout() {
       </div>
 
       {/* ══ PAGE CONTENT ══ */}
-      <div className="page-content active">
+      <div
+        className={`page-content active${explorerOpen ? " content-blurred" : ""}`}
+      >
         <Outlet />
       </div>
 
-      {/* ══ INSTALL BANNER — positioned above bottom nav ══ */}
+      {/* ══ INSTALL BANNER ══ */}
       {bannerVisible && (
         <div className="install-banner-wrap">
           <span className="install-text">Install this site as an app</span>
@@ -215,54 +231,57 @@ export default function Layout() {
         </div>
       )}
 
-      {/* ══ BOTTOM NAV ══ */}
-      <div className="bottom-nav">
-        {NAV_ITEMS.map((item) => (
-          <div
-            key={item.id}
-            className={`nav-item${
-              item.isMore
-                ? explorerOpen
-                  ? " active"
-                  : ""
-                : location.pathname === item.path
-                  ? " active"
-                  : ""
-            }`}
-            onClick={() => handleNavClick(item)}
-          >
-            <div className="nav-icon-wrap">
-              <i className={`bx ${item.icon}`} />
-            </div>
-            <span>{item.label}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* ══ MORE SHEET ══ */}
+      {/* ══ MORE SHEET OVERLAY ══ */}
       <div
         className={`explorer-overlay${explorerOpen ? " active" : ""}`}
-        onClick={(e) => {
-          if (e.target === e.currentTarget) setExplorerOpen(false);
-        }}
+        onClick={() => setExplorerOpen(false)}
       >
-        <div className="explorer-sheet">
+        <div className="explorer-sheet" onClick={(e) => e.stopPropagation()}>
           <div className="explorer-sheet-header">
             <h2 className="browse-title">BROWSE BY</h2>
-            <i
-              className="bx bx-x explorer-close"
-              onClick={() => setExplorerOpen(false)}
-            />
           </div>
           <div className="browse-grid">
             {BROWSE_ITEMS.map((item, i) => (
-              <div className="browse-card" key={i}>
+              <div
+                className="browse-card"
+                key={i}
+                onClick={handleBrowseCardClick}
+              >
                 <i className={`bx ${item.icon}`} />
                 <span>{item.label}</span>
               </div>
             ))}
           </div>
         </div>
+      </div>
+
+      {/* ══ BOTTOM NAV ══ */}
+      <div className="bottom-nav">
+        {NAV_ITEMS.map((item) => (
+          <div
+            key={item.id}
+            className={`nav-item${isNavActive(item) ? " active" : ""}`}
+            onClick={() => handleNavClick(item)}
+          >
+            <div className="nav-icon-wrap">
+              {item.isMore ? (
+                <i
+                  className={`bx ${explorerOpen ? "bx-x" : "bx-dots-horizontal-rounded"}`}
+                  style={{
+                    display: "inline-block",
+                    transition: "transform 0.25s ease",
+                    transform: explorerOpen ? "rotate(90deg)" : "rotate(0deg)",
+                  }}
+                />
+              ) : (
+                <i className={`bx ${item.icon}`} />
+              )}
+            </div>
+            <span>
+              {item.isMore ? (explorerOpen ? "Close" : "More") : item.label}
+            </span>
+          </div>
+        ))}
       </div>
 
       {/* ══ LOGOUT CONFIRMATION MODAL ══ */}
@@ -295,7 +314,6 @@ export default function Layout() {
         </div>
       )}
 
-      {/* ══ LOGOUT SUCCESS TOAST ══ */}
       {logoutToast && (
         <div className="layout-toast">
           <i className="bx bx-check-circle" />
