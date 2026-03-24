@@ -1242,7 +1242,7 @@ export default function AdminExplorer() {
           <h2 className="section-title">In The Spotlight</h2>
           <div className="header-line" />
           <button
-            className="edit-corner-btn"
+            className="edit-corner-btn admin"
             onClick={() => setPage("editEvents")}
           >
             <i className="bx bx-edit" />
@@ -1351,7 +1351,7 @@ export default function AdminExplorer() {
           <h2 className="section-title">Notices</h2>
           <div className="header-line" />
           <button
-            className="edit-corner-btn"
+            className="edit-corner-btn admin"
             onClick={() => setPage("editNotices")}
           >
             <i className="bx bx-edit" />

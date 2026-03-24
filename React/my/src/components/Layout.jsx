@@ -3,6 +3,9 @@ import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import "boxicons/css/boxicons.min.css";
 import "../styles/Explorer.css";
 
+// ── Set this to false for regular users ──
+const IS_ADMIN = true;
+
 const NAV_ITEMS = [
   {
     id: "explorer",
@@ -114,11 +117,8 @@ export default function Layout() {
 
   const handleLogoutCancel = () => setLogoutConfirmOpen(false);
 
-  // FIX: Each nav item is active ONLY when its path matches.
-  // "More" button is active only when the sheet is open — never bleeds onto other tabs.
   const isNavActive = (item) => {
     if (item.isMore) return explorerOpen;
-    // When sheet is open, only highlight the current page — never the More button's "previous" page
     return location.pathname === item.path;
   };
 
@@ -126,8 +126,17 @@ export default function Layout() {
     <div className="main-app">
       {/* ══ HEADER ══ */}
       <div className="app-header">
-        <div className="app-logo">STUVO5</div>
+        <div className="app-logo">
+          STUVO5
+          {IS_ADMIN && location.pathname === "/admin-explorer" && (
+            <span className="admin-badge">Admin</span>
+          )}
+        </div>
         <div className="header-icons">
+          <i
+            className="bx bx-search"
+            onClick={(e) => togglePanel("search", e)}
+          />
           <i className="bx bx-bell" onClick={(e) => togglePanel("notif", e)} />
           <i
             ref={menuButtonRef}
@@ -204,7 +213,7 @@ export default function Layout() {
       <div
         className={`page-content active${explorerOpen ? " content-blurred" : ""}`}
       >
-        <Outlet />
+        <Outlet context={{ isAdmin: IS_ADMIN }} />
       </div>
 
       {/* ══ INSTALL BANNER ══ */}

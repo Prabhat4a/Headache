@@ -1196,3 +1196,50 @@ body {
   span {
   color: #444;
 }
+/* ═══════════════════════════════════════════════════════════
+   ADMIN BADGE  (appended to Explorer.css)
+═══════════════════════════════════════════════════════════ */
+
+/* Red "Admin" pill beside the STUVO5 logo */
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 8px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  border-radius: 20px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: #ef4444;
+  text-transform: uppercase;
+  margin-left: 2px;
+  /* subtle pulse so it reads as a role indicator, not just decoration */
+  animation: adminPulse 3s ease-in-out infinite;
+}
+
+@keyframes adminPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+  50% {
+    box-shadow: 0 0 6px 2px rgba(239, 68, 68, 0.18);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ADMIN-VARIANT EDIT BUTTON  (red instead of purple)
+   Add class  .admin  to .edit-corner-btn in AdminExplorer
+═══════════════════════════════════════════════════════════ */
+.edit-corner-btn.admin {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #ef4444;
+}
+.edit-corner-btn.admin:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.25);
+}
