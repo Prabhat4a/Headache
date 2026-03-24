@@ -2362,3 +2362,32 @@ body {
   height: 12px;
   width: 65%;
 }
+/* ═══════════════════════════════════════════════════════════
+   BRANCH & YEAR CHIPS  (append to Profile.css)
+═══════════════════════════════════════════════════════════ */
+.profile-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 5px 0 8px;
+}
+
+.profile-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border: 1px solid #2a2a2a;
+  border-radius: 20px;
+  background: #1a1a1a;
+  color: #aaa;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
+.profile-chip i {
+  font-size: 12px;
+  color: #a78bfa;
+}

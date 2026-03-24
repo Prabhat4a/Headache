@@ -8,28 +8,20 @@ import "../styles/Profile.css";
 function ProfileSkeleton() {
   return (
     <div className="profile-skeleton">
-      {/* Cover */}
       <div className="ps-cover" />
-
-      {/* Avatar overlapping cover */}
       <div className="ps-avatar-wrap">
         <div className="ps-avatar" />
       </div>
-
-      {/* Name / username / bio */}
       <div className="ps-info">
         <div className="ps-text ps-name" />
         <div className="ps-text ps-username" />
         <div className="ps-text ps-bio" />
         <div className="ps-text ps-bio-short" />
-        {/* Buttons */}
         <div className="ps-buttons">
           <div className="ps-btn ps-btn-main" />
           <div className="ps-btn ps-btn-small" />
         </div>
       </div>
-
-      {/* Social links */}
       <div className="ps-social">
         <div className="ps-social-title" />
         <div className="ps-social-card">
@@ -49,7 +41,7 @@ function ProfileSkeleton() {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   CROP MODAL - WITH DRAG FUNCTIONALITY
+   CROP MODAL
 ═══════════════════════════════════════════════════════════ */
 function CropModal({ isOpen, onClose, onApply, imageUrl, type }) {
   const canvasRef = useRef(null);
@@ -139,14 +131,12 @@ function CropModal({ isOpen, onClose, onApply, imageUrl, type }) {
     stateRef.current.startX = e.clientX - stateRef.current.offsetX;
     stateRef.current.startY = e.clientY - stateRef.current.offsetY;
   };
-
   const handleTouchStart = (e) => {
     const touch = e.touches[0];
     setIsDragging(true);
     stateRef.current.startX = touch.clientX - stateRef.current.offsetX;
     stateRef.current.startY = touch.clientY - stateRef.current.offsetY;
   };
-
   const handleMouseMove = useCallback(
     (e) => {
       if (!isDragging) return;
@@ -157,7 +147,6 @@ function CropModal({ isOpen, onClose, onApply, imageUrl, type }) {
     },
     [isDragging, drawCrop],
   );
-
   const handleTouchMove = useCallback(
     (e) => {
       if (!isDragging) return;
@@ -168,13 +157,8 @@ function CropModal({ isOpen, onClose, onApply, imageUrl, type }) {
     },
     [isDragging, drawCrop],
   );
-
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-  }, []);
-  const handleTouchEnd = useCallback(() => {
-    setIsDragging(false);
-  }, []);
+  const handleMouseUp = useCallback(() => setIsDragging(false), []);
+  const handleTouchEnd = useCallback(() => setIsDragging(false), []);
 
   useEffect(() => {
     if (isDragging) {
@@ -378,18 +362,27 @@ function SocialModal({ isOpen, type, value, onClose, onSave }) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   EDIT PROFILE MODAL
+   EDIT PROFILE MODAL  ← now includes Branch & Year fields
 ═══════════════════════════════════════════════════════════ */
 function EditProfileModal({ isOpen, onClose, profile, onSave }) {
   const [name, setName] = useState(profile.name);
   const [username, setUsername] = useState(profile.username);
   const [bio, setBio] = useState(profile.bio);
+  const [branch, setBranch] = useState(profile.branch || "");
+  const [year, setYear] = useState(profile.year || "");
+
   useEffect(() => {
     setName(profile.name);
     setUsername(profile.username);
     setBio(profile.bio);
+    setBranch(profile.branch || "");
+    setYear(profile.year || "");
   }, [profile, isOpen]);
+
   if (!isOpen) return null;
+
+  const YEAR_OPTIONS = ["1st year", "2nd year", "3rd year", "4th year"];
+
   return (
     <div
       className="edit-modal active"
@@ -425,6 +418,42 @@ function EditProfileModal({ isOpen, onClose, profile, onSave }) {
           />
         </div>
         <div className="form-group">
+          <label>Branch / Course</label>
+          <input
+            type="text"
+            value={branch}
+            onChange={(e) => setBranch(e.target.value)}
+            placeholder="e.g. BCA, B.Tech CSE, MBA…"
+          />
+        </div>
+        <div className="form-group">
+          <label>Year</label>
+          <select
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+            style={{
+              background: "#1a1a1a",
+              border: "1px solid #2a2a2a",
+              borderRadius: 10,
+              padding: "10px 13px",
+              color: year ? "#fff" : "#555",
+              fontSize: 13,
+              outline: "none",
+              fontFamily: "inherit",
+              width: "100%",
+            }}
+          >
+            <option value="" disabled>
+              Select year
+            </option>
+            {YEAR_OPTIONS.map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="form-group">
           <label>Bio</label>
           <textarea
             rows={3}
@@ -439,7 +468,7 @@ function EditProfileModal({ isOpen, onClose, profile, onSave }) {
           </button>
           <button
             className="save-btn"
-            onClick={() => onSave({ name, username, bio })}
+            onClick={() => onSave({ name, username, bio, branch, year })}
           >
             Save Changes
           </button>
@@ -744,7 +773,6 @@ function PhotoViewer({ isOpen, onClose, avatarUrl, initials }) {
       <div className="photo-viewer-content">
         {avatarUrl ? (
           <img
-            id="photoViewerImg"
             src={avatarUrl}
             alt="Profile"
             style={{
@@ -757,7 +785,6 @@ function PhotoViewer({ isOpen, onClose, avatarUrl, initials }) {
           />
         ) : (
           <div
-            id="photoViewerAvatar"
             style={{
               width: "100%",
               height: "100%",
@@ -813,15 +840,15 @@ function FriendRequestPopup({ isOpen, name, initials, onAccept, onDecline }) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   MORE DROPDOWN - POSITIONED NEAR 3-DOT BUTTON
+   MORE DROPDOWN
 ═══════════════════════════════════════════════════════════ */
 function MoreDropdown({ isOpen, onBlock, onReport, buttonRef }) {
   const [position, setPosition] = useState({ top: 0, left: 0 });
   useEffect(() => {
     if (isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      const dropdownWidth = 160;
-      const dropdownHeight = 90;
+      const dropdownWidth = 160,
+        dropdownHeight = 90;
       const spaceBelow = window.innerHeight - rect.bottom;
       let top = rect.bottom + 8;
       if (spaceBelow < dropdownHeight + 100)
@@ -929,6 +956,8 @@ export default function Profile() {
     name: "Prabhat Behera",
     username: "@Prabhat4a",
     bio: "Computer Science Student | Tech Enthusiast | Coffee Lover ☕",
+    branch: "BCA",
+    year: "3rd year",
   });
   const [coverUrl, setCoverUrl] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState(null);
@@ -963,7 +992,6 @@ export default function Profile() {
   const moreButtonRef = useRef(null);
   const toastKey = useRef(0);
 
-  /* Show skeleton for 1.5s — replace with real API call when backend is ready */
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 1500);
     return () => clearTimeout(t);
@@ -1042,6 +1070,7 @@ export default function Profile() {
     setSocialModal({ open: false, type: null });
     showToast("Link saved!");
   };
+
   const handleAddFriend = () => {
     if (isFriends) {
       if (window.confirm(`Unfriend ${profile.name}?`)) {
@@ -1112,7 +1141,6 @@ export default function Profile() {
     },
   ];
 
-  /* Show skeleton while loading */
   if (loading) return <ProfileSkeleton />;
 
   return (
@@ -1162,12 +1190,11 @@ export default function Profile() {
         </button>
       </div>
 
-      {/* COVER PHOTO */}
+      {/* ── COVER PHOTO ──
+          FIX: removed onClick from the container div.
+          Only the explicit button triggers the file picker. */}
       <div className="cover-photo-section">
-        <div
-          className="cover-photo-container"
-          onClick={() => viewingOwnProfile && coverFileRef.current.click()}
-        >
+        <div className="cover-photo-container">
           {!coverUrl && (
             <div className="cover-photo-placeholder">
               <i className="bx bx-image-add" />
@@ -1182,10 +1209,7 @@ export default function Profile() {
             <div className="cover-photo-overlay">
               <button
                 className="cover-photo-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  coverFileRef.current.click();
-                }}
+                onClick={() => coverFileRef.current.click()}
               >
                 <i className="bx bx-camera" />{" "}
                 {coverUrl ? "Change Cover" : "Add Cover Photo"}
@@ -1193,6 +1217,7 @@ export default function Profile() {
             </div>
           )}
         </div>
+
         <div className="profile-avatar-wrapper">
           <div
             className="profile-avatar-ring"
@@ -1225,11 +1250,30 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* PROFILE INFO */}
+      {/* ── PROFILE INFO ── */}
       <div className="profile-header-section">
         <div className="profile-info">
           <h2 className="profile-name-main">{profile.name}</h2>
           <p className="profile-username">{profile.username}</p>
+
+          {/* ── Branch & Year chips ── */}
+          {(profile.branch || profile.year) && (
+            <div className="profile-chips">
+              {profile.branch && (
+                <span className="profile-chip">
+                  <i className="bx bx-book-alt" />
+                  {profile.branch}
+                </span>
+              )}
+              {profile.year && (
+                <span className="profile-chip">
+                  <i className="bx bx-calendar" />
+                  {profile.year}
+                </span>
+              )}
+            </div>
+          )}
+
           <p className={`profile-bio${bioExpanded ? " expanded" : ""}`}>
             {profile.bio}
           </p>
@@ -1305,7 +1349,7 @@ export default function Profile() {
         )}
       </div>
 
-      {/* SOCIAL LINKS */}
+      {/* ── SOCIAL LINKS ── */}
       {!viewingOwnProfile && isBlocked ? (
         <BlockedCard onUnblock={handleUnblock} />
       ) : (
@@ -1345,6 +1389,7 @@ export default function Profile() {
                 )}
               </div>
             ))}
+            {/* Email row */}
             <div className="social-link-item">
               <div
                 className="social-icon-wrap"
