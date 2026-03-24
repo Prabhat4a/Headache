@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import "boxicons/css/boxicons.min.css";
 import "../styles/Explorer.css";
-
 // ── Set this to false for regular users ──
 const IS_ADMIN = true;
 
@@ -133,10 +132,7 @@ export default function Layout() {
           )}
         </div>
         <div className="header-icons">
-          <i
-            className="bx bx-search"
-            onClick={(e) => togglePanel("search", e)}
-          />
+          <i className="bx bx-search" onClick={() => navigate("/search")} />
           <i className="bx bx-bell" onClick={(e) => togglePanel("notif", e)} />
           <i
             ref={menuButtonRef}
