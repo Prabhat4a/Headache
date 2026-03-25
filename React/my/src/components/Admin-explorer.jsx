@@ -96,29 +96,71 @@ let nextId = 100;
    INJECT STYLES ONCE
 ═══════════════════════════════════════════════════════════ */
 const STYLES = `
+/* ── Section header ──
+   Layout: [ae-header-inner (flex:1): line + TITLE + line] [Edit btn]
+   The edit button is a plain flex sibling OUTSIDE the inner wrapper,
+   so it sits cleanly to the right of the decorative lines.
+*/
 .ae-section-header {
-  display: flex; align-items: center; gap: 12px;
-  padding: 26px 20px 0; margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 26px 20px 0;
+  margin-bottom: 20px;
 }
+
+/* Inner wrapper owns the lines + title only */
+.ae-header-inner {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
 .ae-header-line {
-  flex: 1; height: 1.5px;
+  flex: 1;
+  height: 1.5px;
   background: linear-gradient(to right, transparent, #a78bfa55, transparent);
 }
+
 .ae-section-title {
-  flex-shrink: 0; font-size: 13px; font-weight: 800;
-  letter-spacing: 4px; color: #a78bfa; text-transform: uppercase;
-  white-space: nowrap; text-shadow: 0 0 18px rgba(167,139,250,0.6);
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: #a78bfa;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-shadow: 0 0 18px rgba(167,139,250,0.6);
 }
+
+/* Edit button — sits outside the lines, red themed */
 .ae-edit-btn {
-  flex-shrink: 0; height: 28px; padding: 0 10px;
-  background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.3);
-  border-radius: 8px; color: #a78bfa; display: flex; align-items: center;
-  gap: 5px; font-size: 11px; font-weight: 700; cursor: pointer;
-  white-space: nowrap; font-family: inherit;
+  flex-shrink: 0;
+  height: 28px;
+  padding: 0 10px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 8px;
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
   transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 .ae-edit-btn i { font-size: 13px; }
-.ae-edit-btn:hover { background: rgba(167,139,250,0.22); border-color: #a78bfa; box-shadow: 0 0 10px rgba(167,139,250,0.25); }
+.ae-edit-btn:hover {
+  background: rgba(239, 68, 68, 0.22);
+  border-color: #ef4444;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.25);
+}
+
 .ae-section-heading { padding: 0 20px; margin: 4px 0 14px; font-size: 17px; font-weight: 600; color: #fff; }
 
 .ae-spotlight { margin-bottom: 32px; }
@@ -170,58 +212,23 @@ const STYLES = `
 .ae-notice-time { font-size: 10px; color: #444; font-weight: 500; }
 .ae-bus-card { background: #111; border-radius: 14px; padding: 20px; margin: 0 20px 20px; border: 1px solid #1e1e1e; }
 
-/* ── EDIT PAGE ROOT ──
-   createPortal puts this directly on document.body.
-   position:fixed + inset:0 covers 100% of the viewport
-   with no parent to clip or transform-trap it.
-   z-index:9999 beats everything including the bottom nav.
-*/
 .ep-root {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  z-index: 9999;
-  background: #0a0a0a;
+  z-index: 9999; background: #0a0a0a;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  color: #fff;
-  display: flex; flex-direction: column;
-  overflow: hidden;
+  color: #fff; display: flex; flex-direction: column; overflow: hidden;
 }
-.ep-header {
-  flex-shrink: 0; background: #000; padding: 15px 20px;
-  display: flex; align-items: center; gap: 14px;
-  border-bottom: 1px solid #1a1a1a;
-}
-.ep-back {
-  background: #1a1a1a; border: 1px solid #2a2a2a; color: #aaa;
-  width: 36px; height: 36px; border-radius: 10px; display: flex;
-  align-items: center; justify-content: center; cursor: pointer;
-  font-size: 18px; flex-shrink: 0; transition: all 0.2s;
-}
+.ep-header { flex-shrink: 0; background: #000; padding: 15px 20px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid #1a1a1a; }
+.ep-back { background: #1a1a1a; border: 1px solid #2a2a2a; color: #aaa; width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; flex-shrink: 0; transition: all 0.2s; }
 .ep-back:hover { border-color: #a78bfa; color: #a78bfa; }
 .ep-title { flex: 1; font-size: 17px; font-weight: 700; color: #fff; }
-.ep-save {
-  background: #a78bfa; border: none; color: #000; padding: 8px 20px;
-  border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer;
-  flex-shrink: 0; font-family: inherit; transition: opacity 0.2s;
-}
+.ep-save { background: #a78bfa; border: none; color: #000; padding: 8px 20px; border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer; flex-shrink: 0; font-family: inherit; transition: opacity 0.2s; }
 .ep-save:hover { opacity: 0.85; }
-.ep-content {
-  flex: 1; overflow-y: auto; overflow-x: hidden;
-  -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
-  padding: 16px 16px 12px; display: flex; flex-direction: column; gap: 12px;
-}
-.ep-footer {
-  flex-shrink: 0; padding: 14px 16px;
-  background: #0a0a0a; border-top: 1px solid #1a1a1a;
-}
-.ep-add-btn {
-  width: 100%; background: #111; border: 1.5px dashed #a78bfa;
-  color: #a78bfa; border-radius: 14px; padding: 14px; font-size: 14px;
-  font-weight: 700; cursor: pointer; display: flex; align-items: center;
-  justify-content: center; gap: 8px; font-family: inherit; transition: background 0.2s;
-}
+.ep-content { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 16px 16px 12px; display: flex; flex-direction: column; gap: 12px; }
+.ep-footer { flex-shrink: 0; padding: 14px 16px; background: #0a0a0a; border-top: 1px solid #1a1a1a; }
+.ep-add-btn { width: 100%; background: #111; border: 1.5px dashed #a78bfa; color: #a78bfa; border-radius: 14px; padding: 14px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; transition: background 0.2s; }
 .ep-add-btn:hover { background: rgba(167,139,250,0.08); }
 .ep-add-btn i { font-size: 18px; }
-
 .ep-event-row { background: #111; border: 1px solid #1e1e1e; border-radius: 14px; padding: 12px; display: flex; align-items: center; gap: 12px; }
 .ep-thumb { width: 64px; height: 64px; border-radius: 10px; overflow: hidden; flex-shrink: 0; background: #1a1a1a; }
 .ep-thumb img { width: 100%; height: 100%; object-fit: cover; }
@@ -230,58 +237,39 @@ const STYLES = `
 .ep-info-date { font-size: 11px; color: #555; margin-bottom: 2px; }
 .ep-info-loc { font-size: 11px; color: #555; display: flex; align-items: center; gap: 3px; }
 .ep-info-loc i { color: #a78bfa; font-size: 12px; }
-
 .ep-notice-row { background: #111; border: 1px solid #1e1e1e; border-radius: 14px; padding: 14px; display: flex; align-items: flex-start; gap: 12px; }
 .ep-notice-info { flex: 1; min-width: 0; }
 .ep-notice-title { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; }
 .ep-notice-body { font-size: 12px; color: #666; line-height: 1.4; margin-bottom: 4px; }
 .ep-notice-time { font-size: 10px; color: #444; }
-
 .ep-row-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
 .ep-update-btn { background: rgba(167,139,250,0.12); border: 1px solid rgba(167,139,250,0.3); color: #a78bfa; border-radius: 8px; padding: 6px 10px; font-size: 11px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; white-space: nowrap; font-family: inherit; transition: background 0.2s; }
 .ep-update-btn:hover { background: rgba(167,139,250,0.22); }
 .ep-delete-btn { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; border-radius: 8px; padding: 6px 10px; font-size: 11px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; white-space: nowrap; font-family: inherit; transition: background 0.2s; }
 .ep-delete-btn:hover { background: rgba(239,68,68,0.2); }
-
-/* ── Bottom sheet ──
-   Also portalled to document.body.
-   z-index 10000 puts it above .ep-root (9999).
-   The sheet is a flex column: body scrolls, buttons never do.
-*/
 .ep-backdrop { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10000; background: rgba(0,0,0,0.75); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
-.ep-sheet {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 10001;
-  background: #161616; border-top: 1px solid #2a2a2a; border-radius: 22px 22px 0 0;
-  display: flex; flex-direction: column;
-  max-height: 88vh; max-height: 88dvh;
-  animation: epSheetUp 0.32s cubic-bezier(0.32,0.72,0,1);
-}
+.ep-sheet { position: fixed; bottom: 0; left: 0; right: 0; z-index: 10001; background: #161616; border-top: 1px solid #2a2a2a; border-radius: 22px 22px 0 0; display: flex; flex-direction: column; max-height: 88vh; max-height: 88dvh; animation: epSheetUp 0.32s cubic-bezier(0.32,0.72,0,1); }
 @keyframes epSheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 .ep-sheet-handle { width: 40px; height: 4px; border-radius: 2px; background: #333; align-self: center; margin: 12px 0 4px; flex-shrink: 0; }
 .ep-sheet-title { font-size: 14px; font-weight: 700; color: #a78bfa; display: flex; align-items: center; gap: 7px; padding: 0 20px 12px; border-bottom: 1px solid #1e1e1e; flex-shrink: 0; }
 .ep-sheet-title i { font-size: 16px; }
 .ep-sheet-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 16px 20px 0; display: flex; flex-direction: column; gap: 12px; }
-/* Last flex child — structurally impossible to hide */
 .ep-sheet-actions { flex-shrink: 0; display: flex; gap: 10px; padding: 14px 20px 24px; border-top: 1px solid #1e1e1e; background: #161616; }
 .ep-sheet-cancel { flex: 1; background: #1e1e1e; border: 1px solid #2a2a2a; border-radius: 10px; color: #888; padding: 13px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: background 0.2s; }
 .ep-sheet-cancel:hover { background: #252525; }
 .ep-sheet-apply { flex: 1; background: #a78bfa; border: none; border-radius: 10px; color: #000; padding: 13px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.2s; }
 .ep-sheet-apply:hover { opacity: 0.88; }
-
 .ep-field { display: flex; flex-direction: column; gap: 5px; }
 .ep-label { font-size: 10px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 0.8px; }
 .ep-input { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 11px 13px; color: #fff; font-size: 13px; outline: none; font-family: inherit; width: 100%; transition: border-color 0.2s; }
 .ep-input:focus { border-color: #a78bfa; }
 .ep-textarea { resize: vertical; min-height: 80px; }
-
 .ep-img-wrap { display: flex; flex-direction: column; gap: 10px; }
 .ep-img-preview { width: 100%; height: 140px; border-radius: 10px; overflow: hidden; background: #1a1a1a; border: 1px solid #2a2a2a; }
 .ep-img-preview img { width: 100%; height: 100%; object-fit: cover; }
 .ep-img-btn { background: #1a1a1a; border: 1.5px dashed #a78bfa; color: #a78bfa; border-radius: 10px; padding: 11px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; font-family: inherit; transition: background 0.2s; }
 .ep-img-btn:hover { background: rgba(167,139,250,0.08); }
 .ep-img-btn i { font-size: 18px; }
-
-/* Confirm dialog */
 .ep-confirm-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10002; background: rgba(0,0,0,0.88); display: flex; align-items: center; justify-content: center; padding: 24px; backdrop-filter: blur(8px); }
 .ep-confirm-box { background: #141414; border: 1px solid #2a2a2a; border-radius: 20px; padding: 28px 24px 20px; width: 100%; max-width: 340px; text-align: center; }
 .ep-confirm-icon { font-size: 40px; color: #ef4444; margin-bottom: 12px; line-height: 1; }
@@ -290,8 +278,6 @@ const STYLES = `
 .ep-confirm-cancel { flex: 1; background: #1e1e1e; border: 1px solid #2a2a2a; border-radius: 10px; color: #888; padding: 11px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
 .ep-confirm-ok { flex: 1; background: #ef4444; border: none; border-radius: 10px; color: #fff; padding: 11px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.2s; }
 .ep-confirm-ok:hover { opacity: 0.85; }
-
-/* Toast */
 .ep-toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%); background: #1a1a1a; border: 1px solid #ef4444; color: #ef4444; font-size: 12px; font-weight: 600; padding: 10px 18px; border-radius: 20px; z-index: 10003; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 24px rgba(0,0,0,0.7); max-width: 90vw; text-align: center; white-space: normal; animation: epToastIn 0.25s ease; }
 .ep-toast i { font-size: 15px; flex-shrink: 0; }
 @keyframes epToastIn { from { opacity: 0; transform: translateX(-50%) translateY(-8px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
@@ -357,7 +343,6 @@ function BottomSheet({ title, icon, children, onClose, onApply, applyLabel }) {
           {title}
         </div>
         <div className="ep-sheet-body">{children}</div>
-        {/* Last flex child — always visible */}
         <div className="ep-sheet-actions">
           <button className="ep-sheet-cancel" onClick={onClose}>
             Cancel
@@ -407,7 +392,7 @@ function Toast({ msg }) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   EDIT EVENTS PAGE — portalled to document.body
+   EDIT EVENTS PAGE
 ═══════════════════════════════════════════════════════════ */
 function EditEventsPage({ events, onSave, onBack }) {
   const [draft, setDraft] = useState(events);
@@ -496,7 +481,6 @@ function EditEventsPage({ events, onSave, onBack }) {
           Save
         </button>
       </div>
-
       <div className="ep-content">
         {draft.map((ev) => (
           <div className="ep-event-row" key={ev.id}>
@@ -527,14 +511,12 @@ function EditEventsPage({ events, onSave, onBack }) {
           </div>
         ))}
       </div>
-
       <div className="ep-footer">
         <button className="ep-add-btn" onClick={openAdd}>
           <i className="bx bx-plus" />
           Add New Event
         </button>
       </div>
-
       {sheet && (
         <BottomSheet
           title={sheet.mode === "add" ? "New Event" : "Update Event"}
@@ -570,7 +552,6 @@ function EditEventsPage({ events, onSave, onBack }) {
           </div>
         </BottomSheet>
       )}
-
       {confirmId !== null && (
         <ConfirmDialog
           message="Delete this event? This cannot be undone."
@@ -581,7 +562,6 @@ function EditEventsPage({ events, onSave, onBack }) {
           onCancel={() => setConfirmId(null)}
         />
       )}
-
       {toast && <Toast msg={toast} />}
     </div>,
     document.body,
@@ -589,7 +569,7 @@ function EditEventsPage({ events, onSave, onBack }) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   EDIT NOTICES PAGE — portalled to document.body
+   EDIT NOTICES PAGE
 ═══════════════════════════════════════════════════════════ */
 function EditNoticesPage({ notices, onSave, onBack }) {
   const [draft, setDraft] = useState(notices);
@@ -660,7 +640,6 @@ function EditNoticesPage({ notices, onSave, onBack }) {
           Save
         </button>
       </div>
-
       <div className="ep-content">
         {draft.map((n) => (
           <div className="ep-notice-row" key={n.id}>
@@ -685,14 +664,12 @@ function EditNoticesPage({ notices, onSave, onBack }) {
           </div>
         ))}
       </div>
-
       <div className="ep-footer">
         <button className="ep-add-btn" onClick={openAdd}>
           <i className="bx bx-plus" />
           Add New Notice
         </button>
       </div>
-
       {sheet && (
         <BottomSheet
           title={sheet.mode === "add" ? "New Notice" : "Update Notice"}
@@ -731,7 +708,6 @@ function EditNoticesPage({ notices, onSave, onBack }) {
           </div>
         </BottomSheet>
       )}
-
       {confirmId !== null && (
         <ConfirmDialog
           message="Delete this notice? This cannot be undone."
@@ -742,7 +718,6 @@ function EditNoticesPage({ notices, onSave, onBack }) {
           onCancel={() => setConfirmId(null)}
         />
       )}
-
       {toast && <Toast msg={toast} />}
     </div>,
     document.body,
@@ -917,17 +892,25 @@ export default function AdminExplorer() {
         />
       )}
 
-      {/* IN THE SPOTLIGHT */}
+      {/* ── IN THE SPOTLIGHT ── */}
       <div className="ae-spotlight">
+        {/*
+          .ae-section-header = flex row
+            .ae-header-inner (flex:1) = [line] [TITLE] [line]   ← decorative lines live here
+            .ae-edit-btn                                          ← outside the lines
+        */}
         <div className="ae-section-header">
-          <div className="ae-header-line" />
-          <h2 className="ae-section-title">In The Spotlight</h2>
+          <div className="ae-header-inner">
+            <div className="ae-header-line" />
+            <h2 className="ae-section-title">In The Spotlight</h2>
+            <div className="ae-header-line" />
+          </div>
           <button className="ae-edit-btn" onClick={() => setPage("editEvents")}>
             <i className="bx bx-edit" />
             <span>Edit</span>
           </button>
-          <div className="ae-header-line" />
         </div>
+
         <div className="ae-carousel" ref={carouselRef}>
           <div
             ref={trackRef}
@@ -996,6 +979,7 @@ export default function AdminExplorer() {
             ))}
           </div>
         </div>
+
         <div className="ae-controls">
           <button
             className="ae-arrow"
@@ -1023,11 +1007,14 @@ export default function AdminExplorer() {
         </div>
       </div>
 
-      {/* NOTICES */}
+      {/* ── NOTICES ── */}
       <div className="ae-notices-section">
         <div className="ae-section-header">
-          <div className="ae-header-line" />
-          <h2 className="ae-section-title">Notices</h2>
+          <div className="ae-header-inner">
+            <div className="ae-header-line" />
+            <h2 className="ae-section-title">Notices</h2>
+            <div className="ae-header-line" />
+          </div>
           <button
             className="ae-edit-btn"
             onClick={() => setPage("editNotices")}
@@ -1035,7 +1022,6 @@ export default function AdminExplorer() {
             <i className="bx bx-edit" />
             <span>Edit</span>
           </button>
-          <div className="ae-header-line" />
         </div>
         <div className="ae-notices-list">
           {notices.map((n) => (
@@ -1048,7 +1034,7 @@ export default function AdminExplorer() {
         </div>
       </div>
 
-      {/* QUICK ACCESS */}
+      {/* ── QUICK ACCESS ── */}
       <h2 className="ae-section-heading">Quick Access</h2>
       <div className="ae-bus-card">
         <h3 style={{ color: "#a78bfa", marginBottom: 10 }}>Admin Panel 👋</h3>
