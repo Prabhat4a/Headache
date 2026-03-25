@@ -17,7 +17,6 @@ import Explorer from "./components/Explorer";
 import Profile from "./pages/Profile"; // ✅ was ./components/pages/Profile
 import Bus from "./pages/Bus"; // ✅ was ./components/pages/Bus
 import Chat from "./pages/Chat"; // ✅ was ./components/pages/Chat
-import SearchPage from "./pages/SearchPage"; // ✅ was ./components/pages/SearchPage
 import FacultyProfile from "./pages/FacultyProfile";
 
 const isAuthenticated = () => localStorage.getItem("token") !== null;
@@ -40,7 +39,7 @@ function App() {
           <Route path="/bus" element={<Bus />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/admin-explorer" element={<AdminExplorer />} />
-          <Route path="/search" element={<SearchPage />} />
+
           <Route path="/faculty-profile" element={<FacultyProfile />} />
         </Route>
       </Routes>

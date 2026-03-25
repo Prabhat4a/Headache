@@ -24,14 +24,14 @@
 
 .se-wrapper {
   background: #0a0a0a;
-  min-height: 100vh;
+  min-height: 100%; /* ← was 100vh, changed so it works inside the sheet */
   display: flex;
   flex-direction: column;
   font-family: "Segoe UI", system-ui, sans-serif;
   color: #f0f0f0;
 }
 
-/* ─── Inner container (centers + caps width on large screens) ────────────── */
+/* ─── Inner container ────────────────────────────────────────────────────── */
 
 .se-inner {
   width: 100%;
@@ -84,11 +84,9 @@
     box-shadow 0.2s;
   outline: none;
 }
-
 .se-search-input::placeholder {
   color: #444;
 }
-
 .se-search-input:focus {
   border-color: #a78bfa;
   box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.12);
@@ -112,7 +110,6 @@
   justify-content: center;
   transition: background 0.15s;
 }
-
 .se-clear-btn:hover {
   background: #3a3a3a;
 }
@@ -127,7 +124,6 @@
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
-
 .se-tabs::-webkit-scrollbar {
   display: none;
 }
@@ -148,11 +144,10 @@
 
 .se-body {
   flex: 1;
-  padding: 16px 16px 80px;
+  padding: 16px 16px 20px;
   overflow-y: auto;
 }
 
-/* On large screens show cards in a 2-column grid */
 .se-results-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -168,12 +163,10 @@
   margin-bottom: 14px;
   animation: fadeUp 0.25s ease;
 }
-
 .se-results-line {
   height: 1px;
   flex: 1;
 }
-
 .se-results-count {
   font-size: 10px;
   font-weight: 800;
@@ -197,7 +190,6 @@
     border-color 0.2s,
     background 0.2s;
 }
-
 .se-card:hover {
   border-color: #2e2e2e;
   background: #171717;
@@ -213,7 +205,6 @@
   flex: 1;
   min-width: 0;
 }
-
 .se-card-name {
   font-weight: 700;
   font-size: 14px;
@@ -223,13 +214,11 @@
   text-overflow: ellipsis;
   margin-bottom: 2px;
 }
-
 .se-card-username {
   font-size: 11px;
   font-weight: 600;
   margin-bottom: 6px;
 }
-
 .se-card-desc {
   font-size: 12px;
   color: #666;
@@ -239,14 +228,12 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
 .se-card-desc--chat {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
 }
-
 .se-card-chips {
   display: flex;
   gap: 5px;
@@ -259,7 +246,6 @@
   gap: 10px;
   width: 100%;
 }
-
 .se-card-notice-body {
   font-size: 12px;
   color: #666;
@@ -279,14 +265,12 @@
   font-weight: 800;
   font-size: 15px;
 }
-
 .se-avatar--circle {
   border-radius: 50%;
 }
 .se-avatar--rounded {
   border-radius: 13px;
 }
-
 .se-avatar--sm {
   width: 38px;
   height: 38px;
@@ -318,16 +302,13 @@
   font-family: inherit;
   transition: opacity 0.15s;
 }
-
 .se-btn:hover {
   opacity: 0.85;
 }
-
 .se-btn--solid {
   border: none;
   color: #000;
 }
-
 .se-btn--outline {
   background: transparent;
   transition: background 0.15s;
@@ -345,7 +326,6 @@
   border: 1px solid #1e1e1e;
   margin-bottom: 10px;
 }
-
 .se-skeleton-block {
   background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%);
   background-size: 600px 100%;
@@ -353,14 +333,12 @@
   border-radius: 6px;
   flex-shrink: 0;
 }
-
 .se-skeleton-meta {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 7px;
 }
-
 .se-skeleton-chips {
   display: flex;
   gap: 6px;
@@ -373,11 +351,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 80px 20px;
+  padding: 60px 20px;
   animation: fadeUp 0.3s ease;
   text-align: center;
 }
-
 .se-empty-icon {
   width: 72px;
   height: 72px;
@@ -389,14 +366,12 @@
   justify-content: center;
   margin-bottom: 20px;
 }
-
 .se-empty-title {
   font-size: 15px;
   font-weight: 700;
   color: #f0f0f0;
   margin-bottom: 8px;
 }
-
 .se-empty-sub {
   font-size: 13px;
   color: #444;
@@ -406,7 +381,6 @@
 
 /* ─── Responsive ─────────────────────────────────────────────────────────── */
 
-/* Tablet: slightly larger padding */
 @media (min-width: 600px) {
   .se-search-wrap {
     padding: 20px 20px 14px;
@@ -422,7 +396,7 @@
     gap: 10px;
   }
   .se-body {
-    padding: 20px 20px 80px;
+    padding: 20px 20px 20px;
   }
   .se-search-input {
     font-size: 15px;
@@ -437,7 +411,6 @@
   }
 }
 
-/* Desktop: 2-column card grid + wider header */
 @media (min-width: 900px) {
   .se-search-wrap {
     padding: 24px 28px 16px;
@@ -453,30 +426,25 @@
     gap: 10px;
   }
   .se-body {
-    padding: 24px 28px 80px;
+    padding: 24px 28px 20px;
   }
   .se-search-input {
     font-size: 15px;
     padding: 14px 52px 14px 56px;
     border-radius: 16px;
   }
-
   .se-results-grid {
     grid-template-columns: 1fr 1fr;
     gap: 10px;
   }
-
-  /* Notice cards span both columns on desktop */
   .se-results-grid .se-card--notice {
     grid-column: span 2;
   }
-
   .se-card {
     margin-bottom: 0;
   }
 }
 
-/* Large desktop: cap and center nicely */
 @media (min-width: 1200px) {
   .se-inner {
     max-width: 900px;

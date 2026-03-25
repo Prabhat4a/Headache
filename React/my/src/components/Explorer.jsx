@@ -175,7 +175,6 @@ function useCarousel(total) {
 
   useEffect(() => {
     const apply = () => setTx(calcTx(current));
-    // Fire multiple times to ensure correct position after layout
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         requestAnimationFrame(apply);
@@ -250,7 +249,7 @@ function useCarousel(total) {
   };
 }
 
-/* ─── Explorer Content (separate component so carousel mounts fresh) ── */
+/* ─── Explorer Content ──────────────────────────────────── */
 function ExplorerContent() {
   const [savedCards, setSavedCards] = useState({});
   const [loadedImgs, setLoadedImgs] = useState({});
@@ -430,18 +429,15 @@ function ExplorerContent() {
   );
 }
 
-/* ─── Main Export ────────────────────────────────────────── */
+/* ─── Default Export ────────────────────────────────────── */
 export default function Explorer() {
-  const [loading, setLoading] = useState(true);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 1500);
+    // Show skeleton briefly, then render real content
+    const t = setTimeout(() => setReady(true), 400);
     return () => clearTimeout(t);
   }, []);
 
-  /* Key trick: when loading switches to false, ExplorerContent
-     mounts as a brand new component with fresh refs and correct
-     layout dimensions — no glitch possible */
-  if (loading) return <ExplorerSkeleton />;
-  return <ExplorerContent />;
+  return ready ? <ExplorerContent /> : <ExplorerSkeleton />;
 }

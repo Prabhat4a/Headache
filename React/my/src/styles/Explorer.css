@@ -45,7 +45,6 @@ body {
   position: relative;
   z-index: 200;
 }
-
 .app-logo {
   font-size: 22px;
   font-weight: 700;
@@ -55,13 +54,6 @@ body {
   align-items: center;
   gap: 10px;
 }
-.header-logo-icon {
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
-  filter: brightness(0) invert(1);
-}
-
 .header-icons {
   display: flex;
   gap: 20px;
@@ -74,6 +66,19 @@ body {
 }
 .header-icons i:hover {
   color: #a78bfa;
+}
+
+/* ── Search icon animated toggle ── */
+.search-toggle-icon {
+  display: inline-block;
+  transition:
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    color 0.2s ease;
+  transform-origin: center;
+}
+.search-toggle-icon--open {
+  transform: rotate(90deg) scale(1.15);
+  color: #a78bfa !important;
 }
 
 /* ── Dropdown panels ── */
@@ -143,7 +148,6 @@ body {
   color: #777;
   line-height: 1.4;
 }
-
 .notification-footer {
   padding: 12px 16px;
   text-align: center;
@@ -251,18 +255,16 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   SPOTLIGHT / CAROUSEL
+   CAROUSEL
 ═══════════════════════════════════════════════════════════ */
 .spotlight-section {
   margin-bottom: 32px;
 }
-
 .events-carousel {
   width: 100%;
   overflow: hidden;
   padding: 14px 0 10px;
 }
-
 .events-track {
   display: flex;
   align-items: flex-start;
@@ -342,7 +344,6 @@ body {
   );
   pointer-events: none;
 }
-
 .event-badge {
   position: absolute;
   top: 14px;
@@ -507,9 +508,6 @@ body {
 .notice-item:hover {
   background: #141414;
 }
-.notice-content {
-  min-width: 0;
-}
 .notice-content h4 {
   font-size: 13px;
   font-weight: 600;
@@ -608,7 +606,7 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   BOTTOM NAVIGATION
+   BOTTOM NAV
 ═══════════════════════════════════════════════════════════ */
 .bottom-nav {
   flex-shrink: 0;
@@ -670,13 +668,12 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   MORE / EXPLORER SHEET
-   Sits between header and bottom-nav. Both navbars stay visible.
+   MORE / EXPLORER SHEET  (bottom sheet)
 ═══════════════════════════════════════════════════════════ */
 .explorer-overlay {
   position: absolute;
-  top: 56px; /* must match .app-header height */
-  bottom: 60px; /* must match .bottom-nav height */
+  top: 56px;
+  bottom: 60px;
   left: 0;
   right: 0;
   z-index: 100;
@@ -759,6 +756,75 @@ body {
   color: #888;
   font-weight: 500;
   text-align: center;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SEARCH OVERLAY
+   Uses position:absolute (same as explorer-overlay) so the
+   header and bottom-nav stay fully visible.
+═══════════════════════════════════════════════════════════ */
+.search-overlay {
+  position: absolute;
+  top: 56px; /* same as .explorer-overlay — below header */
+  bottom: 60px; /* same as .explorer-overlay — above bottom nav */
+  left: 0;
+  right: 0;
+  z-index: 150;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.search-overlay--open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* The white box holding SearchExplore */
+.search-overlay-box {
+  width: 100%;
+  height: 100%;
+  background: #0a0a0a;
+  overflow-y: auto;
+  transform: translateY(-16px);
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  display: flex;
+  flex-direction: column;
+}
+.search-overlay--open .search-overlay-box {
+  transform: translateY(0);
+}
+
+/* ── Desktop: floating centered card ── */
+@media (min-width: 700px) {
+  .search-overlay {
+    padding: 16px 24px;
+    align-items: flex-start;
+  }
+  .search-overlay-box {
+    width: 100%;
+    max-width: 680px;
+    height: auto;
+    max-height: 100%;
+    border-radius: 20px;
+    border: 1px solid #2a2a2a;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.8);
+    transform: translateY(-16px) scale(0.97);
+  }
+  .search-overlay--open .search-overlay-box {
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Make SearchExplore fill the box properly */
+.search-overlay-box .se-wrapper {
+  min-height: 0;
+  flex: 1;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -913,7 +979,7 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   MENU PANEL — small screens
+   MENU PANEL small screens
 ═══════════════════════════════════════════════════════════ */
 @media (max-width: 480px) {
   .menu-panel {
@@ -1180,27 +1246,10 @@ body {
     gap: 28px;
   }
 }
-/* When More sheet is open, kill active highlight on all nav items except More button */
-.explorer-overlay.active
-  ~ .bottom-nav
-  .nav-item.active:not(:nth-child(3))
-  .nav-icon-wrap {
-  background: transparent;
-}
-.explorer-overlay.active ~ .bottom-nav .nav-item.active:not(:nth-child(3)) i {
-  color: #444;
-}
-.explorer-overlay.active
-  ~ .bottom-nav
-  .nav-item.active:not(:nth-child(3))
-  span {
-  color: #444;
-}
-/* ═══════════════════════════════════════════════════════════
-   ADMIN BADGE  (appended to Explorer.css)
-═══════════════════════════════════════════════════════════ */
 
-/* Red "Admin" pill beside the STUVO5 logo */
+/* ═══════════════════════════════════════════════════════════
+   ADMIN BADGE
+═══════════════════════════════════════════════════════════ */
 .admin-badge {
   display: inline-flex;
   align-items: center;
@@ -1215,10 +1264,8 @@ body {
   color: #ef4444;
   text-transform: uppercase;
   margin-left: 2px;
-  /* subtle pulse so it reads as a role indicator, not just decoration */
   animation: adminPulse 3s ease-in-out infinite;
 }
-
 @keyframes adminPulse {
   0%,
   100% {
@@ -1228,11 +1275,6 @@ body {
     box-shadow: 0 0 6px 2px rgba(239, 68, 68, 0.18);
   }
 }
-
-/* ═══════════════════════════════════════════════════════════
-   ADMIN-VARIANT EDIT BUTTON  (red instead of purple)
-   Add class  .admin  to .edit-corner-btn in AdminExplorer
-═══════════════════════════════════════════════════════════ */
 .edit-corner-btn.admin {
   background: rgba(239, 68, 68, 0.1);
   border-color: rgba(239, 68, 68, 0.35);

@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import "boxicons/css/boxicons.min.css";
 import "../styles/Explorer.css";
+import SearchExplore from "../pages/SearchPage";
+
 // ── Set this to false for regular users ──
 const IS_ADMIN = true;
 
@@ -51,8 +53,10 @@ const BROWSE_ITEMS = [
 export default function Layout() {
   const navigate = useNavigate();
   const location = useLocation();
+
   const [openPanel, setOpenPanel] = useState(null);
   const [explorerOpen, setExplorerOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [bannerVisible, setBannerVisible] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [logoutToast, setLogoutToast] = useState(false);
@@ -81,6 +85,11 @@ export default function Layout() {
     }
   }, [openPanel]);
 
+  // Close search on route change
+  useEffect(() => {
+    setSearchOpen(false);
+  }, [location.pathname]);
+
   const togglePanel = (name, e) => {
     e.stopPropagation();
     setOpenPanel((p) => (p === name ? null : name));
@@ -93,10 +102,6 @@ export default function Layout() {
       setExplorerOpen(false);
       navigate(item.path);
     }
-  };
-
-  const handleBrowseCardClick = () => {
-    setExplorerOpen(false);
   };
 
   const handleLogoutClick = () => {
@@ -114,8 +119,6 @@ export default function Layout() {
     }, 2000);
   };
 
-  const handleLogoutCancel = () => setLogoutConfirmOpen(false);
-
   const isNavActive = (item) => {
     if (item.isMore) return explorerOpen;
     return location.pathname === item.path;
@@ -131,8 +134,13 @@ export default function Layout() {
             <span className="admin-badge">Admin</span>
           )}
         </div>
+
         <div className="header-icons">
-          <i className="bx bx-search" onClick={() => navigate("/search")} />
+          {/* Animated search ↔ X */}
+          <i
+            className={`bx ${searchOpen ? "bx-x" : "bx-search"} search-toggle-icon${searchOpen ? " search-toggle-icon--open" : ""}`}
+            onClick={() => setSearchOpen((p) => !p)}
+          />
           <i className="bx bx-bell" onClick={(e) => togglePanel("notif", e)} />
           <i
             ref={menuButtonRef}
@@ -141,6 +149,7 @@ export default function Layout() {
           />
         </div>
 
+        {/* Notification panel */}
         <div
           className={`notification-panel${openPanel === "notif" ? " active" : ""}`}
           onClick={(e) => e.stopPropagation()}
@@ -173,6 +182,7 @@ export default function Layout() {
           <div className="notification-footer">View all notifications</div>
         </div>
 
+        {/* Menu panel */}
         <div
           className={`menu-panel${openPanel === "menu" ? " active" : ""}`}
           onClick={(e) => e.stopPropagation()}
@@ -205,11 +215,11 @@ export default function Layout() {
         </div>
       </div>
 
-      {/* ══ PAGE CONTENT ══ */}
+      {/* ══ PAGE CONTENT — Outlet renders the matched route ══ */}
       <div
-        className={`page-content active${explorerOpen ? " content-blurred" : ""}`}
+        className={`page-content active${explorerOpen || searchOpen ? " content-blurred" : ""}`}
       >
-        <Outlet context={{ isAdmin: IS_ADMIN }} />
+        <Outlet />
       </div>
 
       {/* ══ INSTALL BANNER ══ */}
@@ -250,13 +260,26 @@ export default function Layout() {
               <div
                 className="browse-card"
                 key={i}
-                onClick={handleBrowseCardClick}
+                onClick={() => setExplorerOpen(false)}
               >
                 <i className={`bx ${item.icon}`} />
                 <span>{item.label}</span>
               </div>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* ══ SEARCH OVERLAY ══ */}
+      <div
+        className={`search-overlay${searchOpen ? " search-overlay--open" : ""}`}
+        onClick={() => setSearchOpen(false)}
+      >
+        <div
+          className="search-overlay-box"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <SearchExplore onClose={() => setSearchOpen(false)} />
         </div>
       </div>
 
@@ -289,9 +312,12 @@ export default function Layout() {
         ))}
       </div>
 
-      {/* ══ LOGOUT CONFIRMATION MODAL ══ */}
+      {/* ══ LOGOUT MODAL ══ */}
       {logoutConfirmOpen && (
-        <div className="layout-modal-overlay" onClick={handleLogoutCancel}>
+        <div
+          className="layout-modal-overlay"
+          onClick={() => setLogoutConfirmOpen(false)}
+        >
           <div
             className="layout-confirm-modal"
             onClick={(e) => e.stopPropagation()}
@@ -304,7 +330,7 @@ export default function Layout() {
             <div className="layout-confirm-actions">
               <button
                 className="layout-cancel-btn"
-                onClick={handleLogoutCancel}
+                onClick={() => setLogoutConfirmOpen(false)}
               >
                 Cancel
               </button>
