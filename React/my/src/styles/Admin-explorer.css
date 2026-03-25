@@ -1142,6 +1142,12 @@ body {
   pointer-events: auto;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   FIX — Buttons hidden behind bottom nav bar
+   Add these to Admin-explorer.css (replace matching selectors)
+═══════════════════════════════════════════════════════════ */
+
+/* 1. Form sheet — account for bottom nav (~70px) + safe area */
 .form-sheet {
   position: absolute;
   bottom: 0;
@@ -1151,13 +1157,15 @@ body {
   background: #141414;
   border-top: 1px solid #2a2a2a;
   border-radius: 20px 20px 0 0;
-  padding: 10px 18px 32px;
+  padding: 10px 18px 0; /* ← remove bottom padding here */
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: 88%;
+  max-height: 80%;
+  max-height: 80dvh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   transform: translateY(100%);
   transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
 }
@@ -1165,76 +1173,31 @@ body {
   transform: translateY(0);
 }
 
-.form-sheet-handle {
-  width: 40px;
-  height: 4px;
-  border-radius: 2px;
-  background: #333;
-  align-self: center;
-  margin-bottom: 4px;
-  flex-shrink: 0;
-}
-
-.form-sheet-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: #a78bfa;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding-bottom: 4px;
-  border-bottom: 1px solid #1e1e1e;
-  flex-shrink: 0;
-}
-.form-sheet-title i {
-  font-size: 16px;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   FORM FIELDS
-═══════════════════════════════════════════════════════════ */
-.ef-field {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.ef-label {
-  font-size: 10px;
-  font-weight: 700;
-  color: #555;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-}
-.ef-input {
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
-  border-radius: 10px;
-  padding: 10px 13px;
-  color: #fff;
-  font-size: 13px;
-  outline: none;
-  font-family: inherit;
-  width: 100%;
-  transition: border-color 0.2s;
-}
-.ef-input:focus {
-  border-color: #a78bfa;
-}
-.ef-textarea {
-  resize: vertical;
-}
+/* 2. The action buttons row — sticky at the bottom of the sheet,
+      always visible above the nav bar */
 .ef-actions {
   display: flex;
   gap: 10px;
+  /* Stick to the bottom of the scrollable sheet */
+  position: sticky;
+  bottom: 0;
+  background: #141414;
+  /* Push above the bottom nav (≈70px) + safe area */
+  padding: 12px 0 calc(72px + env(safe-area-inset-bottom, 0px));
   margin-top: 4px;
+  /* Prevent the sticky block from being clipped */
+  z-index: 2;
+  flex-shrink: 0;
 }
+
+/* 3. Ensure cancel / save fill the sticky row correctly */
 .ef-cancel {
   flex: 1;
   background: #1e1e1e;
   border: 1px solid #2a2a2a;
   border-radius: 10px;
   color: #888;
-  padding: 10px;
+  padding: 12px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -1243,13 +1206,14 @@ body {
 .ef-cancel:hover {
   background: #252525;
 }
+
 .ef-save {
   flex: 1;
   background: #a78bfa;
   border: none;
   border-radius: 10px;
   color: #000;
-  padding: 10px;
+  padding: 12px;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
@@ -1259,111 +1223,12 @@ body {
   opacity: 0.88;
 }
 
-.ef-current-val {
-  font-size: 10px;
-  color: #555;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: 2px;
-}
-.ef-current-val i {
-  font-size: 12px;
-  color: #a78bfa;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   CONFIRM DIALOG
-═══════════════════════════════════════════════════════════ */
-.confirm-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.88);
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  backdrop-filter: blur(8px);
-}
-.confirm-box {
-  background: #141414;
-  border: 1px solid #2a2a2a;
-  border-radius: 20px;
-  padding: 28px 24px 20px;
-  width: 100%;
-  max-width: 340px;
-  text-align: center;
-}
-.confirm-icon {
-  font-size: 40px;
-  color: #ef4444;
-  margin-bottom: 12px;
-  line-height: 1;
-}
-.confirm-msg {
-  font-size: 14px;
-  color: #ccc;
-  line-height: 1.6;
-  margin-bottom: 20px;
-}
-.confirm-actions {
-  display: flex;
-  gap: 10px;
-}
-.confirm-ok {
-  flex: 1;
-  background: #ef4444;
-  border: none;
-  border-radius: 10px;
-  color: #fff;
-  padding: 11px;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-.confirm-ok:hover {
-  opacity: 0.85;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   TOAST
-═══════════════════════════════════════════════════════════ */
-.edit-toast {
-  position: fixed;
-  top: 70px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #1a1a1a;
-  border: 1px solid #ef4444;
-  color: #ef4444;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 10px 18px;
-  border-radius: 20px;
-  z-index: 998;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: normal;
-  text-align: center;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.7);
-  animation: toastIn 0.25s ease;
-  max-width: 90vw;
-}
-.edit-toast i {
-  font-size: 15px;
-  flex-shrink: 0;
-}
-@keyframes toastIn {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
+/* 4. Also fix the form-sheet max-height so it never get clipped
+      by the bottom nav on short screens */
+@media (max-width: 480px) {
+  .form-sheet {
+    /* Leave room for the nav bar at the bottom */
+    max-height: calc(88dvh - 70px);
   }
 }
 
@@ -2592,4 +2457,159 @@ body {
   .dtp-popup-footer {
     padding-bottom: max(14px, env(safe-area-inset-bottom, 14px));
   }
+}
+/* ═══════════════════════════════════════════════════════════
+   PASTE THESE into adminExplore.css — replace matching blocks
+═══════════════════════════════════════════════════════════ */
+
+/* 1. edit-overlay — must be above the bottom nav (z-index 100) */
+.edit-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 700; /* already above nav — good, keep it */
+  background: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.edit-overlay .edit-page {
+  height: 100%;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 2. edit-page — full height column, nothing overflows */
+.edit-page {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #0a0a0a;
+  color: #fff;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 3. Scrollable content — contains scroll, doesn't bleed */
+.edit-page-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px 16px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* 4. Footer — always visible, never scrolls away */
+.edit-page-footer {
+  flex-shrink: 0;
+  padding: 14px 16px;
+  background: #0a0a0a;
+  border-top: 1px solid #1a1a1a;
+}
+
+/* 5. Form sheet — slides up inside edit-page,
+      capped so it never reaches above the header */
+.form-sheet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 11;
+  background: #141414;
+  border-top: 1px solid #2a2a2a;
+  border-radius: 20px 20px 0 0;
+  /* 
+     No bottom padding here — handled by .ef-actions below.
+     This prevents the sheet itself from adding dead space.
+  */
+  padding: 10px 18px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 82%;
+  max-height: 82dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.form-sheet.active {
+  transform: translateY(0);
+}
+
+/* 6. Action buttons row — sticky at sheet bottom,
+      padded to float above the bottom nav bar (~68px) */
+.ef-actions {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 10px;
+  background: #141414;
+  /* 
+     68px  ≈ bottom nav height
+     env() covers iPhone home bar
+     Extra 8px breathing room
+  */
+  padding: 12px 0 calc(68px + env(safe-area-inset-bottom, 0px) + 8px);
+  margin-top: 4px;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+/* 7. Keep cancel/save filling the row */
+.ef-cancel {
+  flex: 1;
+  background: #1e1e1e;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  color: #888;
+  padding: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+.ef-cancel:hover {
+  background: #252525;
+}
+
+.ef-save {
+  flex: 1;
+  background: #a78bfa;
+  border: none;
+  border-radius: 10px;
+  color: #000;
+  padding: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.2s;
+}
+.ef-save:hover {
+  opacity: 0.88;
+}
+
+/* 8. Backdrop — block touch/scroll pass-through to list behind */
+.form-sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0);
+  pointer-events: none;
+  transition: background 0.3s ease;
+  z-index: 10;
+  touch-action: none;
+}
+.form-sheet-backdrop.active {
+  background: rgba(0, 0, 0, 0.72);
+  pointer-events: auto;
 }

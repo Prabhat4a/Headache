@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import "boxicons/css/boxicons.min.css";
-import "../styles/Admin-explorer.css";
 
 /* ─── Initial Data ──────────────────────────────────────── */
 const INITIAL_EVENTS = [
@@ -80,7 +79,7 @@ const INITIAL_NOTICES = [
   {
     id: 1,
     title: "Campus WiFi Maintenance",
-    body: "WiFi will be unavailable in Block A on March 10th, 10 AM - 2 PM.",
+    body: "WiFi will be unavailable in Block A on March 10th, 10 AM – 2 PM.",
     time: "5 hours ago",
   },
   {
@@ -93,403 +92,226 @@ const INITIAL_NOTICES = [
 
 let nextId = 100;
 
-const MONTHS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-const DAYS_SHORT = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-const pad = (n) => String(n).padStart(2, "0");
-
-function buildISO(date, h, m, ap) {
-  if (!date) return "";
-  const d = new Date(date);
-  let hours = h % 12;
-  if (ap === "PM") hours += 12;
-  d.setHours(hours, m, 0, 0);
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
-
-function formatDisplay(iso) {
-  if (!iso) return "";
-  return new Date(iso).toLocaleString("en-US", {
-    weekday: "short",
-    day: "2-digit",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
 /* ═══════════════════════════════════════════════════════════
-   TIME SPINNER
+   INJECT STYLES ONCE
 ═══════════════════════════════════════════════════════════ */
-function TimeSpinner({ value, min, max, step, onChange }) {
-  const [editing, setEditing] = useState(false);
-  const [raw, setRaw] = useState("");
-  const inputRef = useRef(null);
+const STYLES = `
+.ae-section-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 26px 20px 0; margin-bottom: 20px;
+}
+.ae-header-line {
+  flex: 1; height: 1.5px;
+  background: linear-gradient(to right, transparent, #a78bfa55, transparent);
+}
+.ae-section-title {
+  flex-shrink: 0; font-size: 13px; font-weight: 800;
+  letter-spacing: 4px; color: #a78bfa; text-transform: uppercase;
+  white-space: nowrap; text-shadow: 0 0 18px rgba(167,139,250,0.6);
+}
+.ae-edit-btn {
+  flex-shrink: 0; height: 28px; padding: 0 10px;
+  background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.3);
+  border-radius: 8px; color: #a78bfa; display: flex; align-items: center;
+  gap: 5px; font-size: 11px; font-weight: 700; cursor: pointer;
+  white-space: nowrap; font-family: inherit;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.ae-edit-btn i { font-size: 13px; }
+.ae-edit-btn:hover { background: rgba(167,139,250,0.22); border-color: #a78bfa; box-shadow: 0 0 10px rgba(167,139,250,0.25); }
+.ae-section-heading { padding: 0 20px; margin: 4px 0 14px; font-size: 17px; font-weight: 600; color: #fff; }
 
-  const wrap = (v) => {
-    if (v < min) return max - (min - v - 1);
-    if (v > max) return min + (v - max - 1);
-    return v;
-  };
-  const inc = () => onChange(wrap(value + step));
-  const dec = () => onChange(wrap(value - step));
-  const handleWheel = (e) => {
-    e.preventDefault();
-    if (e.deltaY < 0) inc();
-    else dec();
-  };
+.ae-spotlight { margin-bottom: 32px; }
+.ae-carousel { width: 100%; overflow: hidden; padding: 14px 0 10px; }
+.ae-track {
+  display: flex; align-items: flex-start; gap: 16px; will-change: transform;
+  cursor: grab; user-select: none; -webkit-user-select: none; touch-action: pan-y;
+}
+.ae-track.dragging { cursor: grabbing; }
+.ae-card {
+  flex: 0 0 auto; width: 340px; background: #141414; border-radius: 20px;
+  overflow: hidden; border: 1px solid #2a2a2a; transform-origin: top center;
+  transform: scale(0.87); opacity: 0.5; filter: brightness(0.6);
+  transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s cubic-bezier(0.4,0,0.2,1),
+              filter 0.4s cubic-bezier(0.4,0,0.2,1), border-color 0.4s ease, box-shadow 0.4s ease;
+  -webkit-user-select: none; user-select: none;
+}
+.ae-card.active { transform: scale(1); opacity: 1; filter: brightness(1); border-color: #a78bfa; box-shadow: 0 12px 48px rgba(167,139,250,0.2); }
+.ae-card-img { position: relative; width: 100%; height: 320px; overflow: hidden; background: #0d0d0d; }
+.ae-card-img img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; -webkit-user-drag: none; opacity: 0; transform: scale(1); transition: opacity 0.5s ease, transform 0.5s ease; }
+.ae-card-img img.loaded { opacity: 1; }
+.ae-card.active .ae-card-img img { transform: scale(1.04); }
+.ae-overlay { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.3) 50%, transparent 100%); }
+.ae-badge { position: absolute; top: 14px; left: 14px; background: #a78bfa; color: #000; padding: 5px 12px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
+.ae-badge.promo { background: rgba(255,255,255,0.9); top: auto; bottom: 90px; left: 14px; right: 14px; text-align: center; border-radius: 8px; }
+.ae-card-info { padding: 14px; position: relative; min-height: 96px; }
+.ae-card-date { font-size: 11px; color: #555; margin-bottom: 6px; font-weight: 500; }
+.ae-card-title { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 8px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ae-card-loc { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #555; }
+.ae-card-loc i { color: #a78bfa; font-size: 14px; }
+.ae-bookmark { position: absolute; bottom: 12px; right: 12px; width: 32px; height: 32px; border-radius: 50%; background: #1e1e1e; border: 1px solid #2a2a2a; color: #888; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 15px; transition: all 0.2s ease; }
+.ae-bookmark:hover { background: #2a2a2a; color: #fff; }
+.ae-bookmark.saved { background: #a78bfa; border-color: #a78bfa; color: #000; }
+.ae-controls { display: flex; align-items: center; justify-content: center; gap: 14px; padding: 14px 20px 0; }
+.ae-arrow { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: transparent; border: 1.5px solid #333; color: #666; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 19px; outline: none; transition: all 0.2s ease; }
+.ae-arrow:hover:not(:disabled) { border-color: #a78bfa; color: #a78bfa; background: rgba(167,139,250,0.08); }
+.ae-arrow:disabled { opacity: 0.2; cursor: not-allowed; pointer-events: none; }
+.ae-dots { display: flex; align-items: center; gap: 6px; }
+.ae-dot { width: 7px; height: 7px; border-radius: 50%; background: #2a2a2a; cursor: pointer; transition: all 0.3s ease; flex-shrink: 0; }
+.ae-dot.active { background: #a78bfa; width: 22px; border-radius: 4px; }
 
-  const startEdit = () => {
-    setRaw(pad(value));
-    setEditing(true);
-    setTimeout(() => inputRef.current?.select(), 0);
-  };
-  const commitEdit = () => {
-    const n = parseInt(raw, 10);
-    if (!isNaN(n)) onChange(Math.min(max, Math.max(min, n)));
-    setEditing(false);
-  };
-  const handleKey = (e) => {
-    if (e.key === "Enter" || e.key === "Tab") {
-      e.preventDefault();
-      commitEdit();
-    }
-    if (e.key === "Escape") setEditing(false);
-    if (e.key === "ArrowUp") {
-      e.preventDefault();
-      inc();
-    }
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      dec();
-    }
-  };
+.ae-notices-section { padding: 0 20px; margin-bottom: 32px; }
+.ae-notices-list { background: #111; border: 1px solid #1e1e1e; border-radius: 14px; overflow: hidden; }
+.ae-notice-item { padding: 14px 16px; border-bottom: 1px solid #1a1a1a; transition: background 0.15s; }
+.ae-notice-item:last-child { border-bottom: none; }
+.ae-notice-item:hover { background: #141414; }
+.ae-notice-item h4 { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+.ae-notice-item p { font-size: 12px; color: #666; line-height: 1.5; margin-bottom: 5px; }
+.ae-notice-time { font-size: 10px; color: #444; font-weight: 500; }
+.ae-bus-card { background: #111; border-radius: 14px; padding: 20px; margin: 0 20px 20px; border: 1px solid #1e1e1e; }
 
-  return (
-    <div className="dtp-spinner" onWheel={handleWheel}>
-      <button className="dtp-spin-btn" onClick={inc} tabIndex={-1}>
-        <i className="bx bx-chevron-up" />
-      </button>
-      {editing ? (
-        <input
-          ref={inputRef}
-          className="dtp-spin-input"
-          value={raw}
-          onChange={(e) => setRaw(e.target.value)}
-          onBlur={commitEdit}
-          onKeyDown={handleKey}
-          maxLength={2}
-        />
-      ) : (
-        <span
-          className="dtp-spin-val"
-          onClick={startEdit}
-          title="Click to type"
-        >
-          {pad(value)}
-        </span>
-      )}
-      <button className="dtp-spin-btn" onClick={dec} tabIndex={-1}>
-        <i className="bx bx-chevron-down" />
-      </button>
-    </div>
-  );
+/* ── EDIT PAGE ROOT ──
+   createPortal puts this directly on document.body.
+   position:fixed + inset:0 covers 100% of the viewport
+   with no parent to clip or transform-trap it.
+   z-index:9999 beats everything including the bottom nav.
+*/
+.ep-root {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 9999;
+  background: #0a0a0a;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #fff;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.ep-header {
+  flex-shrink: 0; background: #000; padding: 15px 20px;
+  display: flex; align-items: center; gap: 14px;
+  border-bottom: 1px solid #1a1a1a;
+}
+.ep-back {
+  background: #1a1a1a; border: 1px solid #2a2a2a; color: #aaa;
+  width: 36px; height: 36px; border-radius: 10px; display: flex;
+  align-items: center; justify-content: center; cursor: pointer;
+  font-size: 18px; flex-shrink: 0; transition: all 0.2s;
+}
+.ep-back:hover { border-color: #a78bfa; color: #a78bfa; }
+.ep-title { flex: 1; font-size: 17px; font-weight: 700; color: #fff; }
+.ep-save {
+  background: #a78bfa; border: none; color: #000; padding: 8px 20px;
+  border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer;
+  flex-shrink: 0; font-family: inherit; transition: opacity 0.2s;
+}
+.ep-save:hover { opacity: 0.85; }
+.ep-content {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+  padding: 16px 16px 12px; display: flex; flex-direction: column; gap: 12px;
+}
+.ep-footer {
+  flex-shrink: 0; padding: 14px 16px;
+  background: #0a0a0a; border-top: 1px solid #1a1a1a;
+}
+.ep-add-btn {
+  width: 100%; background: #111; border: 1.5px dashed #a78bfa;
+  color: #a78bfa; border-radius: 14px; padding: 14px; font-size: 14px;
+  font-weight: 700; cursor: pointer; display: flex; align-items: center;
+  justify-content: center; gap: 8px; font-family: inherit; transition: background 0.2s;
+}
+.ep-add-btn:hover { background: rgba(167,139,250,0.08); }
+.ep-add-btn i { font-size: 18px; }
+
+.ep-event-row { background: #111; border: 1px solid #1e1e1e; border-radius: 14px; padding: 12px; display: flex; align-items: center; gap: 12px; }
+.ep-thumb { width: 64px; height: 64px; border-radius: 10px; overflow: hidden; flex-shrink: 0; background: #1a1a1a; }
+.ep-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.ep-info { flex: 1; min-width: 0; }
+.ep-info-title { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ep-info-date { font-size: 11px; color: #555; margin-bottom: 2px; }
+.ep-info-loc { font-size: 11px; color: #555; display: flex; align-items: center; gap: 3px; }
+.ep-info-loc i { color: #a78bfa; font-size: 12px; }
+
+.ep-notice-row { background: #111; border: 1px solid #1e1e1e; border-radius: 14px; padding: 14px; display: flex; align-items: flex-start; gap: 12px; }
+.ep-notice-info { flex: 1; min-width: 0; }
+.ep-notice-title { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+.ep-notice-body { font-size: 12px; color: #666; line-height: 1.4; margin-bottom: 4px; }
+.ep-notice-time { font-size: 10px; color: #444; }
+
+.ep-row-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+.ep-update-btn { background: rgba(167,139,250,0.12); border: 1px solid rgba(167,139,250,0.3); color: #a78bfa; border-radius: 8px; padding: 6px 10px; font-size: 11px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; white-space: nowrap; font-family: inherit; transition: background 0.2s; }
+.ep-update-btn:hover { background: rgba(167,139,250,0.22); }
+.ep-delete-btn { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; border-radius: 8px; padding: 6px 10px; font-size: 11px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; white-space: nowrap; font-family: inherit; transition: background 0.2s; }
+.ep-delete-btn:hover { background: rgba(239,68,68,0.2); }
+
+/* ── Bottom sheet ──
+   Also portalled to document.body.
+   z-index 10000 puts it above .ep-root (9999).
+   The sheet is a flex column: body scrolls, buttons never do.
+*/
+.ep-backdrop { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10000; background: rgba(0,0,0,0.75); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+.ep-sheet {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 10001;
+  background: #161616; border-top: 1px solid #2a2a2a; border-radius: 22px 22px 0 0;
+  display: flex; flex-direction: column;
+  max-height: 88vh; max-height: 88dvh;
+  animation: epSheetUp 0.32s cubic-bezier(0.32,0.72,0,1);
+}
+@keyframes epSheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.ep-sheet-handle { width: 40px; height: 4px; border-radius: 2px; background: #333; align-self: center; margin: 12px 0 4px; flex-shrink: 0; }
+.ep-sheet-title { font-size: 14px; font-weight: 700; color: #a78bfa; display: flex; align-items: center; gap: 7px; padding: 0 20px 12px; border-bottom: 1px solid #1e1e1e; flex-shrink: 0; }
+.ep-sheet-title i { font-size: 16px; }
+.ep-sheet-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 16px 20px 0; display: flex; flex-direction: column; gap: 12px; }
+/* Last flex child — structurally impossible to hide */
+.ep-sheet-actions { flex-shrink: 0; display: flex; gap: 10px; padding: 14px 20px 24px; border-top: 1px solid #1e1e1e; background: #161616; }
+.ep-sheet-cancel { flex: 1; background: #1e1e1e; border: 1px solid #2a2a2a; border-radius: 10px; color: #888; padding: 13px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: background 0.2s; }
+.ep-sheet-cancel:hover { background: #252525; }
+.ep-sheet-apply { flex: 1; background: #a78bfa; border: none; border-radius: 10px; color: #000; padding: 13px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.2s; }
+.ep-sheet-apply:hover { opacity: 0.88; }
+
+.ep-field { display: flex; flex-direction: column; gap: 5px; }
+.ep-label { font-size: 10px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 0.8px; }
+.ep-input { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 11px 13px; color: #fff; font-size: 13px; outline: none; font-family: inherit; width: 100%; transition: border-color 0.2s; }
+.ep-input:focus { border-color: #a78bfa; }
+.ep-textarea { resize: vertical; min-height: 80px; }
+
+.ep-img-wrap { display: flex; flex-direction: column; gap: 10px; }
+.ep-img-preview { width: 100%; height: 140px; border-radius: 10px; overflow: hidden; background: #1a1a1a; border: 1px solid #2a2a2a; }
+.ep-img-preview img { width: 100%; height: 100%; object-fit: cover; }
+.ep-img-btn { background: #1a1a1a; border: 1.5px dashed #a78bfa; color: #a78bfa; border-radius: 10px; padding: 11px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; font-family: inherit; transition: background 0.2s; }
+.ep-img-btn:hover { background: rgba(167,139,250,0.08); }
+.ep-img-btn i { font-size: 18px; }
+
+/* Confirm dialog */
+.ep-confirm-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10002; background: rgba(0,0,0,0.88); display: flex; align-items: center; justify-content: center; padding: 24px; backdrop-filter: blur(8px); }
+.ep-confirm-box { background: #141414; border: 1px solid #2a2a2a; border-radius: 20px; padding: 28px 24px 20px; width: 100%; max-width: 340px; text-align: center; }
+.ep-confirm-icon { font-size: 40px; color: #ef4444; margin-bottom: 12px; line-height: 1; }
+.ep-confirm-msg { font-size: 14px; color: #ccc; line-height: 1.6; margin-bottom: 20px; }
+.ep-confirm-actions { display: flex; gap: 10px; }
+.ep-confirm-cancel { flex: 1; background: #1e1e1e; border: 1px solid #2a2a2a; border-radius: 10px; color: #888; padding: 11px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+.ep-confirm-ok { flex: 1; background: #ef4444; border: none; border-radius: 10px; color: #fff; padding: 11px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.2s; }
+.ep-confirm-ok:hover { opacity: 0.85; }
+
+/* Toast */
+.ep-toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%); background: #1a1a1a; border: 1px solid #ef4444; color: #ef4444; font-size: 12px; font-weight: 600; padding: 10px 18px; border-radius: 20px; z-index: 10003; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 24px rgba(0,0,0,0.7); max-width: 90vw; text-align: center; white-space: normal; animation: epToastIn 0.25s ease; }
+.ep-toast i { font-size: 15px; flex-shrink: 0; }
+@keyframes epToastIn { from { opacity: 0; transform: translateX(-50%) translateY(-8px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+@media (max-width: 480px) { .ae-card { width: 300px; } .ae-card-img { height: 290px; } .ae-track { gap: 12px; } .ep-sheet { max-height: 92vh; max-height: 92dvh; } }
+@media (min-width: 481px) and (max-width: 767px) { .ae-card { width: 340px; } .ae-card-img { height: 310px; } }
+@media (min-width: 768px) { .ae-card { width: 400px; } .ae-card-img { height: 340px; } .ae-track { gap: 20px; } }
+@media (min-width: 1024px) { .ae-card { width: 460px; } .ae-card-img { height: 360px; } .ae-track { gap: 28px; } }
+`;
+
+if (!document.getElementById("ae-styles")) {
+  const tag = document.createElement("style");
+  tag.id = "ae-styles";
+  tag.textContent = STYLES;
+  document.head.appendChild(tag);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   CALENDAR PANEL
-═══════════════════════════════════════════════════════════ */
-function CalendarPanel({ value, onConfirm, onClose }) {
-  const initDate = value ? new Date(value) : null;
-  const [viewYear, setViewYear] = useState(() =>
-    (initDate || new Date()).getFullYear(),
-  );
-  const [viewMonth, setViewMonth] = useState(() =>
-    (initDate || new Date()).getMonth(),
-  );
-  const [selected, setSelected] = useState(initDate);
-  const [hour, setHour] = useState(() =>
-    initDate ? initDate.getHours() % 12 || 12 : 10,
-  );
-  const [minute, setMinute] = useState(() =>
-    initDate ? initDate.getMinutes() : 0,
-  );
-  const [ampm, setAmpm] = useState(() =>
-    initDate ? (initDate.getHours() >= 12 ? "PM" : "AM") : "AM",
-  );
-  const [yearEdit, setYearEdit] = useState(false);
-  const [yearRaw, setYearRaw] = useState("");
-  const yearInputRef = useRef(null);
-
-  const openYearEdit = () => {
-    setYearRaw(String(viewYear));
-    setYearEdit(true);
-    setTimeout(() => yearInputRef.current?.select(), 0);
-  };
-  const commitYear = () => {
-    const y = parseInt(yearRaw, 10);
-    if (!isNaN(y) && y > 1900 && y < 2200) setViewYear(y);
-    setYearEdit(false);
-  };
-  const yearKey = (e) => {
-    if (e.key === "Enter" || e.key === "Tab") {
-      e.preventDefault();
-      commitYear();
-    }
-    if (e.key === "Escape") setYearEdit(false);
-  };
-
-  const prevMonth = () =>
-    viewMonth === 0
-      ? (setViewMonth(11), setViewYear((y) => y - 1))
-      : setViewMonth((m) => m - 1);
-  const nextMonth = () =>
-    viewMonth === 11
-      ? (setViewMonth(0), setViewYear((y) => y + 1))
-      : setViewMonth((m) => m + 1);
-
-  const selectDay = (day) => setSelected(new Date(viewYear, viewMonth, day));
-  const toggleAmpm = () => setAmpm((ap) => (ap === "AM" ? "PM" : "AM"));
-  const handleConfirm = () => {
-    if (!selected) return;
-    onConfirm(buildISO(selected, hour, minute, ampm));
-  };
-
-  const firstDay = new Date(viewYear, viewMonth, 1).getDay();
-  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
-  const today = new Date();
-  const preview = selected
-    ? formatDisplay(buildISO(selected, hour, minute, ampm))
-    : null;
-
-  return (
-    <div className="dtp-popup-card" onClick={(e) => e.stopPropagation()}>
-      <div className="dtp-popup-header">
-        <span className="dtp-popup-title">
-          <i className="bx bx-calendar" /> Pick Date &amp; Time
-        </span>
-        <button className="dtp-popup-close" onClick={onClose}>
-          <i className="bx bx-x" />
-        </button>
-      </div>
-
-      <div className="dtp-cal">
-        {/* Year row */}
-        <div className="dtp-nav-row">
-          <button className="dtp-nav" onClick={() => setViewYear((y) => y - 1)}>
-            <i className="bx bx-chevron-left" />
-          </button>
-          {yearEdit ? (
-            <input
-              ref={yearInputRef}
-              className="dtp-year-input"
-              value={yearRaw}
-              onChange={(e) => setYearRaw(e.target.value)}
-              onBlur={commitYear}
-              onKeyDown={yearKey}
-              maxLength={4}
-            />
-          ) : (
-            <button
-              className="dtp-year-btn"
-              onClick={openYearEdit}
-              title="Click to edit year"
-            >
-              {viewYear}
-            </button>
-          )}
-          <button className="dtp-nav" onClick={() => setViewYear((y) => y + 1)}>
-            <i className="bx bx-chevron-right" />
-          </button>
-        </div>
-
-        {/* Month row */}
-        <div className="dtp-nav-row dtp-month-row">
-          <button className="dtp-nav" onClick={prevMonth}>
-            <i className="bx bx-chevron-left" />
-          </button>
-          <span className="dtp-month-label">{MONTHS[viewMonth]}</span>
-          <button className="dtp-nav" onClick={nextMonth}>
-            <i className="bx bx-chevron-right" />
-          </button>
-        </div>
-
-        {/* Day names */}
-        <div className="dtp-day-names">
-          {DAYS_SHORT.map((d) => (
-            <span key={d}>{d}</span>
-          ))}
-        </div>
-
-        {/* Day grid */}
-        <div className="dtp-grid">
-          {Array.from({ length: firstDay }).map((_, i) => (
-            <span key={`b${i}`} />
-          ))}
-          {Array.from({ length: daysInMonth }).map((_, i) => {
-            const day = i + 1;
-            const date = new Date(viewYear, viewMonth, day);
-            const isToday = date.toDateString() === today.toDateString();
-            const isSelected =
-              selected && date.toDateString() === selected.toDateString();
-            return (
-              <button
-                key={day}
-                onClick={() => selectDay(day)}
-                className={[
-                  "dtp-day",
-                  isToday ? "dtp-today" : "",
-                  isSelected ? "dtp-selected" : "",
-                ]
-                  .filter(Boolean)
-                  .join(" ")}
-              >
-                {day}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="dtp-divider" />
-
-      <div className="dtp-time-row">
-        <div className="dtp-time-label">
-          <i className="bx bx-time-five" />
-          <span>Time</span>
-        </div>
-        <div className="dtp-time-controls">
-          <TimeSpinner
-            value={hour}
-            min={1}
-            max={12}
-            step={1}
-            onChange={setHour}
-          />
-          <span className="dtp-colon">:</span>
-          <TimeSpinner
-            value={minute}
-            min={0}
-            max={59}
-            step={5}
-            onChange={setMinute}
-          />
-          <button className="dtp-ampm" onClick={toggleAmpm}>
-            {ampm}
-          </button>
-        </div>
-      </div>
-
-      <div className="dtp-popup-footer">
-        {preview && (
-          <span className="dtp-preview-text">
-            <i className="bx bx-calendar-check" /> {preview}
-          </span>
-        )}
-        <div className="dtp-footer-actions">
-          <button className="dtp-cancel-btn" onClick={onClose}>
-            Cancel
-          </button>
-          <button
-            className="dtp-confirm-btn"
-            onClick={handleConfirm}
-            disabled={!selected}
-          >
-            <i className="bx bx-check" /> Confirm
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════
-   DATE-TIME PICKER
-   Uses createPortal so the overlay renders at document.body —
-   escaping any CSS transform stacking context from form-sheet.
-═══════════════════════════════════════════════════════════ */
-function DateTimePicker({ value, onChange, currentLabel }) {
-  const [open, setOpen] = useState(false);
-
-  const handleConfirm = (iso) => {
-    onChange(iso);
-    setOpen(false);
-  };
-
-  return (
-    <>
-      <button className="dtp-trigger" onClick={() => setOpen(true)}>
-        <i className="bx bx-calendar dtp-trigger-icon" />
-        <span className={value ? "dtp-trigger-val" : "dtp-trigger-placeholder"}>
-          {value ? formatDisplay(value) : "Select date & time…"}
-        </span>
-        <i className="bx bx-calendar-edit dtp-trigger-caret" />
-      </button>
-
-      {!value && currentLabel && (
-        <span className="ef-current-val">
-          <i className="bx bx-time" /> Current: {currentLabel}
-        </span>
-      )}
-
-      {/* Portal to document.body so fixed overlay is never trapped by parent transforms */}
-      {open &&
-        createPortal(
-          <div className="dtp-overlay" onClick={() => setOpen(false)}>
-            <CalendarPanel
-              key={value || "empty"}
-              value={value}
-              onConfirm={handleConfirm}
-              onClose={() => setOpen(false)}
-            />
-          </div>,
-          document.body,
-        )}
-    </>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════
-   CONFIRM DIALOG
-═══════════════════════════════════════════════════════════ */
-function ConfirmDialog({ message, onConfirm, onCancel }) {
-  return (
-    <div className="confirm-overlay">
-      <div className="confirm-box">
-        <div className="confirm-icon">
-          <i className="bx bx-error-circle" />
-        </div>
-        <p className="confirm-msg">{message}</p>
-        <div className="confirm-actions">
-          <button className="ef-cancel" onClick={onCancel}>
-            Cancel
-          </button>
-          <button className="confirm-ok" onClick={onConfirm}>
-            Yes, Delete
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════
-   IMAGE UPLOAD FIELD
-═══════════════════════════════════════════════════════════ */
-function ImageUploadField({ value, onChange }) {
-  const fileRef = useRef(null);
+/* ─── Image Upload ─── */
+function ImageUpload({ value, onChange }) {
+  const ref = useRef(null);
   const handleFile = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -498,22 +320,22 @@ function ImageUploadField({ value, onChange }) {
     reader.readAsDataURL(file);
   };
   return (
-    <div className="img-upload-wrap">
+    <div className="ep-img-wrap">
       {value && (
-        <div className="img-upload-preview">
+        <div className="ep-img-preview">
           <img src={value} alt="preview" />
         </div>
       )}
       <button
         type="button"
-        className="img-upload-btn"
-        onClick={() => fileRef.current.click()}
+        className="ep-img-btn"
+        onClick={() => ref.current.click()}
       >
         <i className="bx bx-image-add" />
         {value ? "Change Image" : "Upload Image"}
       </button>
       <input
-        ref={fileRef}
+        ref={ref}
         type="file"
         accept="image/*"
         style={{ display: "none" }}
@@ -523,316 +345,73 @@ function ImageUploadField({ value, onChange }) {
   );
 }
 
-/* ═══════════════════════════════════════════════════════════
-   EDIT EVENTS PAGE
-═══════════════════════════════════════════════════════════ */
-function EditEventsPage({ events, onSave, onBack }) {
-  const [draft, setDraft] = useState(events);
-  const [updating, setUpdating] = useState(null);
-  const [updateForm, setUpdateForm] = useState({});
-  const [addingNew, setAddingNew] = useState(false);
-  const [newForm, setNewForm] = useState({
-    title: "",
-    date: "",
-    dateRaw: "",
-    location: "",
-    badge: "",
-    img: "",
-  });
-  const [confirmId, setConfirmId] = useState(null);
-  const [toast, setToast] = useState(null);
-
-  const showToast = (msg) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 3500);
-  };
-  const confirmDelete = () => {
-    setDraft((p) => p.filter((e) => e.id !== confirmId));
-    setConfirmId(null);
-  };
-  const handleDeleteClick = (id) => {
-    if (draft.length <= 1) {
-      showToast("You must have at least 1 event.");
-      return;
-    }
-    setConfirmId(id);
-  };
-
-  const openUpdate = (ev) => {
-    setAddingNew(false);
-    setUpdating(ev.id);
-    setUpdateForm({
-      title: ev.title,
-      date: ev.date,
-      dateRaw: "",
-      location: ev.location,
-      badge: ev.badge || "",
-      img: ev.img,
-    });
-  };
-  const saveUpdate = () => {
-    setDraft((p) =>
-      p.map((e) =>
-        e.id === updating
-          ? { ...e, ...updateForm, badge: updateForm.badge || null }
-          : e,
-      ),
-    );
-    setUpdating(null);
-  };
-  const handleAdd = () => {
-    if (!newForm.title.trim() || !newForm.dateRaw) {
-      showToast("Title and Date are required.");
-      return;
-    }
-    setDraft((p) => [
-      ...p,
-      {
-        id: nextId++,
-        img:
-          newForm.img ||
-          "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=600&fit=crop",
-        badge: newForm.badge || null,
-        badgeType: newForm.badge ? "default" : null,
-        date: newForm.date,
-        title: newForm.title,
-        location: newForm.location,
-      },
-    ]);
-    setNewForm({
-      title: "",
-      date: "",
-      dateRaw: "",
-      location: "",
-      badge: "",
-      img: "",
-    });
-    setAddingNew(false);
-  };
-
-  const sheetOpen = updating !== null || addingNew;
-
-  return (
-    <div className="edit-overlay">
-      <div className="edit-page">
-        {confirmId !== null && (
-          <ConfirmDialog
-            message="Are you sure you want to delete this event? This cannot be undone."
-            onConfirm={confirmDelete}
-            onCancel={() => setConfirmId(null)}
-          />
-        )}
-        {toast && (
-          <div className="edit-toast">
-            <i className="bx bx-error-circle" /> {toast}
-          </div>
-        )}
-
-        <div className="edit-page-header">
-          <button className="edit-back-btn" onClick={onBack}>
-            <i className="bx bx-arrow-back" />
-          </button>
-          <span className="edit-page-title">Edit Events</span>
-          <button
-            className="edit-save-btn"
-            onClick={() => {
-              onSave(draft);
-              onBack();
-            }}
-          >
-            Save
-          </button>
+/* ─── Bottom Sheet (portal) ─── */
+function BottomSheet({ title, icon, children, onClose, onApply, applyLabel }) {
+  return createPortal(
+    <>
+      <div className="ep-backdrop" onClick={onClose} />
+      <div className="ep-sheet">
+        <div className="ep-sheet-handle" />
+        <div className="ep-sheet-title">
+          <i className={`bx ${icon}`} />
+          {title}
         </div>
-
-        <div className="edit-page-content">
-          {draft.map((ev) => (
-            <div className="edit-event-row" key={ev.id}>
-              <div className="edit-event-thumb">
-                <img src={ev.img} alt={ev.title} />
-              </div>
-              <div className="edit-event-info">
-                <div className="edit-event-title">{ev.title}</div>
-                <div className="edit-event-date">{ev.date}</div>
-                <div className="edit-event-loc">
-                  <i className="bx bx-map" /> {ev.location}
-                </div>
-              </div>
-              <div className="edit-event-actions">
-                <button
-                  className="edit-update-btn"
-                  onClick={() => openUpdate(ev)}
-                >
-                  <i className="bx bx-edit" /> Update
-                </button>
-                <button
-                  className="edit-delete-btn"
-                  onClick={() => handleDeleteClick(ev.id)}
-                >
-                  <i className="bx bx-trash" /> Delete
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="edit-page-footer">
-          <button
-            className="add-new-btn"
-            onClick={() => {
-              setUpdating(null);
-              setNewForm({
-                title: "",
-                date: "",
-                dateRaw: "",
-                location: "",
-                badge: "",
-                img: "",
-              });
-              setAddingNew(true);
-            }}
-          >
-            <i className="bx bx-plus" /> Add New Event
+        <div className="ep-sheet-body">{children}</div>
+        {/* Last flex child — always visible */}
+        <div className="ep-sheet-actions">
+          <button className="ep-sheet-cancel" onClick={onClose}>
+            Cancel
           </button>
-        </div>
-
-        <div
-          className={`form-sheet-backdrop${sheetOpen ? " active" : ""}`}
-          onClick={() => {
-            setUpdating(null);
-            setAddingNew(false);
-          }}
-        />
-        <div className={`form-sheet${sheetOpen ? " active" : ""}`}>
-          <div className="form-sheet-handle" />
-
-          {updating !== null && !addingNew && (
-            <>
-              <div className="form-sheet-title">
-                <i className="bx bx-edit-alt" /> Update Event
-              </div>
-              {[
-                { key: "title", label: "Title" },
-                { key: "location", label: "Location" },
-                { key: "badge", label: "Badge Text" },
-              ].map((f) => (
-                <div className="ef-field" key={f.key}>
-                  <label className="ef-label">{f.label}</label>
-                  <input
-                    className="ef-input"
-                    value={updateForm[f.key] || ""}
-                    onChange={(e) =>
-                      setUpdateForm((v) => ({ ...v, [f.key]: e.target.value }))
-                    }
-                  />
-                </div>
-              ))}
-              <div className="ef-field">
-                <label className="ef-label">Date &amp; Time</label>
-                <DateTimePicker
-                  key={`upd-${updating}`}
-                  value={updateForm.dateRaw || ""}
-                  currentLabel={
-                    updateForm.date && !updateForm.dateRaw
-                      ? updateForm.date
-                      : null
-                  }
-                  onChange={(raw) =>
-                    setUpdateForm((v) => ({
-                      ...v,
-                      dateRaw: raw,
-                      date: formatDisplay(raw),
-                    }))
-                  }
-                />
-              </div>
-              <div className="ef-field">
-                <label className="ef-label">Image</label>
-                <ImageUploadField
-                  value={updateForm.img}
-                  onChange={(val) => setUpdateForm((v) => ({ ...v, img: val }))}
-                />
-              </div>
-              <div className="ef-actions">
-                <button className="ef-cancel" onClick={() => setUpdating(null)}>
-                  Cancel
-                </button>
-                <button className="ef-save" onClick={saveUpdate}>
-                  Apply
-                </button>
-              </div>
-            </>
-          )}
-
-          {addingNew && (
-            <>
-              <div className="form-sheet-title">
-                <i className="bx bx-plus-circle" /> New Event
-              </div>
-              {[
-                { key: "title", label: "Title *" },
-                { key: "location", label: "Location" },
-                { key: "badge", label: "Badge Text" },
-              ].map((f) => (
-                <div className="ef-field" key={f.key}>
-                  <label className="ef-label">{f.label}</label>
-                  <input
-                    className="ef-input"
-                    value={newForm[f.key] || ""}
-                    onChange={(e) =>
-                      setNewForm((v) => ({ ...v, [f.key]: e.target.value }))
-                    }
-                  />
-                </div>
-              ))}
-              <div className="ef-field">
-                <label className="ef-label">Date &amp; Time *</label>
-                <DateTimePicker
-                  key="new-event"
-                  value={newForm.dateRaw || ""}
-                  onChange={(raw) =>
-                    setNewForm((v) => ({
-                      ...v,
-                      dateRaw: raw,
-                      date: formatDisplay(raw),
-                    }))
-                  }
-                />
-              </div>
-              <div className="ef-field">
-                <label className="ef-label">Image</label>
-                <ImageUploadField
-                  value={newForm.img}
-                  onChange={(val) => setNewForm((v) => ({ ...v, img: val }))}
-                />
-              </div>
-              <div className="ef-actions">
-                <button
-                  className="ef-cancel"
-                  onClick={() => setAddingNew(false)}
-                >
-                  Cancel
-                </button>
-                <button className="ef-save" onClick={handleAdd}>
-                  Add Event
-                </button>
-              </div>
-            </>
-          )}
+          <button className="ep-sheet-apply" onClick={onApply}>
+            {applyLabel}
+          </button>
         </div>
       </div>
-    </div>
+    </>,
+    document.body,
+  );
+}
+
+/* ─── Confirm Dialog (portal) ─── */
+function ConfirmDialog({ message, onConfirm, onCancel }) {
+  return createPortal(
+    <div className="ep-confirm-bg">
+      <div className="ep-confirm-box">
+        <div className="ep-confirm-icon">
+          <i className="bx bx-error-circle" />
+        </div>
+        <p className="ep-confirm-msg">{message}</p>
+        <div className="ep-confirm-actions">
+          <button className="ep-confirm-cancel" onClick={onCancel}>
+            Cancel
+          </button>
+          <button className="ep-confirm-ok" onClick={onConfirm}>
+            Yes, Delete
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
+/* ─── Toast (portal) ─── */
+function Toast({ msg }) {
+  return createPortal(
+    <div className="ep-toast">
+      <i className="bx bx-error-circle" />
+      {msg}
+    </div>,
+    document.body,
   );
 }
 
 /* ═══════════════════════════════════════════════════════════
-   EDIT NOTICES PAGE
+   EDIT EVENTS PAGE — portalled to document.body
 ═══════════════════════════════════════════════════════════ */
-function EditNoticesPage({ notices, onSave, onBack }) {
-  const [draft, setDraft] = useState(notices);
-  const [updating, setUpdating] = useState(null);
-  const [updateForm, setUpdateForm] = useState({});
-  const [addingNew, setAddingNew] = useState(false);
-  const [newForm, setNewForm] = useState({ title: "", body: "", time: "" });
+function EditEventsPage({ events, onSave, onBack }) {
+  const [draft, setDraft] = useState(events);
+  const [sheet, setSheet] = useState(null);
   const [confirmId, setConfirmId] = useState(null);
   const [toast, setToast] = useState(null);
 
@@ -840,230 +419,333 @@ function EditNoticesPage({ notices, onSave, onBack }) {
     setToast(msg);
     setTimeout(() => setToast(null), 3500);
   };
-  const confirmDelete = () => {
-    setDraft((p) => p.filter((n) => n.id !== confirmId));
-    setConfirmId(null);
+  const openUpdate = (ev) =>
+    setSheet({
+      mode: "update",
+      id: ev.id,
+      data: {
+        title: ev.title,
+        date: ev.date,
+        location: ev.location,
+        badge: ev.badge || "",
+        img: ev.img,
+      },
+    });
+  const openAdd = () =>
+    setSheet({
+      mode: "add",
+      data: { title: "", date: "", location: "", badge: "", img: "" },
+    });
+  const setField = (key, val) =>
+    setSheet((s) => ({ ...s, data: { ...s.data, [key]: val } }));
+
+  const handleApply = () => {
+    if (sheet.mode === "add") {
+      if (!sheet.data.title.trim() || !sheet.data.date.trim()) {
+        showToast("Title and Date are required.");
+        return;
+      }
+      setDraft((p) => [
+        ...p,
+        {
+          id: nextId++,
+          img:
+            sheet.data.img ||
+            "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=600&fit=crop",
+          badge: sheet.data.badge || null,
+          badgeType: sheet.data.badge ? "default" : null,
+          date: sheet.data.date,
+          title: sheet.data.title,
+          location: sheet.data.location,
+        },
+      ]);
+    } else {
+      setDraft((p) =>
+        p.map((e) =>
+          e.id === sheet.id
+            ? { ...e, ...sheet.data, badge: sheet.data.badge || null }
+            : e,
+        ),
+      );
+    }
+    setSheet(null);
   };
-  const handleDeleteClick = (id) => {
+
+  const handleDelete = (id) => {
     if (draft.length <= 1) {
-      showToast("You must have at least 1 notice.");
+      showToast("You must keep at least 1 event.");
       return;
     }
     setConfirmId(id);
   };
-  const openUpdate = (n) => {
-    setAddingNew(false);
-    setUpdating(n.id);
-    setUpdateForm({ title: n.title, body: n.body, time: n.time });
+
+  return createPortal(
+    <div className="ep-root">
+      <div className="ep-header">
+        <button className="ep-back" onClick={onBack}>
+          <i className="bx bx-arrow-back" />
+        </button>
+        <span className="ep-title">Edit Events</span>
+        <button
+          className="ep-save"
+          onClick={() => {
+            onSave(draft);
+            onBack();
+          }}
+        >
+          Save
+        </button>
+      </div>
+
+      <div className="ep-content">
+        {draft.map((ev) => (
+          <div className="ep-event-row" key={ev.id}>
+            <div className="ep-thumb">
+              <img src={ev.img} alt={ev.title} />
+            </div>
+            <div className="ep-info">
+              <div className="ep-info-title">{ev.title}</div>
+              <div className="ep-info-date">{ev.date}</div>
+              <div className="ep-info-loc">
+                <i className="bx bx-map" />
+                {ev.location}
+              </div>
+            </div>
+            <div className="ep-row-actions">
+              <button className="ep-update-btn" onClick={() => openUpdate(ev)}>
+                <i className="bx bx-edit" />
+                Update
+              </button>
+              <button
+                className="ep-delete-btn"
+                onClick={() => handleDelete(ev.id)}
+              >
+                <i className="bx bx-trash" />
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="ep-footer">
+        <button className="ep-add-btn" onClick={openAdd}>
+          <i className="bx bx-plus" />
+          Add New Event
+        </button>
+      </div>
+
+      {sheet && (
+        <BottomSheet
+          title={sheet.mode === "add" ? "New Event" : "Update Event"}
+          icon={sheet.mode === "add" ? "bx-plus-circle" : "bx-edit-alt"}
+          onClose={() => setSheet(null)}
+          onApply={handleApply}
+          applyLabel={sheet.mode === "add" ? "Add Event" : "Apply"}
+        >
+          {[
+            { key: "title", label: sheet.mode === "add" ? "Title *" : "Title" },
+            {
+              key: "date",
+              label: sheet.mode === "add" ? "Date & Time *" : "Date & Time",
+            },
+            { key: "location", label: "Location" },
+            { key: "badge", label: "Badge Text" },
+          ].map((f) => (
+            <div className="ep-field" key={f.key}>
+              <label className="ep-label">{f.label}</label>
+              <input
+                className="ep-input"
+                value={sheet.data[f.key]}
+                onChange={(e) => setField(f.key, e.target.value)}
+              />
+            </div>
+          ))}
+          <div className="ep-field">
+            <label className="ep-label">Image</label>
+            <ImageUpload
+              value={sheet.data.img}
+              onChange={(v) => setField("img", v)}
+            />
+          </div>
+        </BottomSheet>
+      )}
+
+      {confirmId !== null && (
+        <ConfirmDialog
+          message="Delete this event? This cannot be undone."
+          onConfirm={() => {
+            setDraft((p) => p.filter((e) => e.id !== confirmId));
+            setConfirmId(null);
+          }}
+          onCancel={() => setConfirmId(null)}
+        />
+      )}
+
+      {toast && <Toast msg={toast} />}
+    </div>,
+    document.body,
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   EDIT NOTICES PAGE — portalled to document.body
+═══════════════════════════════════════════════════════════ */
+function EditNoticesPage({ notices, onSave, onBack }) {
+  const [draft, setDraft] = useState(notices);
+  const [sheet, setSheet] = useState(null);
+  const [confirmId, setConfirmId] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3500);
   };
-  const saveUpdate = () => {
-    setDraft((p) =>
-      p.map((n) => (n.id === updating ? { ...n, ...updateForm } : n)),
-    );
-    setUpdating(null);
-  };
-  const handleAdd = () => {
-    if (!newForm.title.trim()) {
+  const openUpdate = (n) =>
+    setSheet({
+      mode: "update",
+      id: n.id,
+      data: { title: n.title, body: n.body, time: n.time },
+    });
+  const openAdd = () =>
+    setSheet({ mode: "add", data: { title: "", body: "", time: "" } });
+  const setField = (key, val) =>
+    setSheet((s) => ({ ...s, data: { ...s.data, [key]: val } }));
+
+  const handleApply = () => {
+    if (!sheet.data.title.trim()) {
       showToast("Title is required.");
       return;
     }
-    setDraft((p) => [
-      ...p,
-      {
-        id: nextId++,
-        title: newForm.title,
-        body: newForm.body,
-        time: newForm.time || "Just now",
-      },
-    ]);
-    setNewForm({ title: "", body: "", time: "" });
-    setAddingNew(false);
+    if (sheet.mode === "add") {
+      setDraft((p) => [
+        ...p,
+        {
+          id: nextId++,
+          title: sheet.data.title,
+          body: sheet.data.body,
+          time: sheet.data.time || "Just now",
+        },
+      ]);
+    } else {
+      setDraft((p) =>
+        p.map((n) => (n.id === sheet.id ? { ...n, ...sheet.data } : n)),
+      );
+    }
+    setSheet(null);
   };
 
-  const sheetOpen = updating !== null || addingNew;
+  const handleDelete = (id) => {
+    if (draft.length <= 1) {
+      showToast("You must keep at least 1 notice.");
+      return;
+    }
+    setConfirmId(id);
+  };
 
-  return (
-    <div className="edit-overlay">
-      <div className="edit-page">
-        {confirmId !== null && (
-          <ConfirmDialog
-            message="Are you sure you want to delete this notice? This cannot be undone."
-            onConfirm={confirmDelete}
-            onCancel={() => setConfirmId(null)}
-          />
-        )}
-        {toast && (
-          <div className="edit-toast">
-            <i className="bx bx-error-circle" /> {toast}
-          </div>
-        )}
-
-        <div className="edit-page-header">
-          <button className="edit-back-btn" onClick={onBack}>
-            <i className="bx bx-arrow-back" />
-          </button>
-          <span className="edit-page-title">Edit Notices</span>
-          <button
-            className="edit-save-btn"
-            onClick={() => {
-              onSave(draft);
-              onBack();
-            }}
-          >
-            Save
-          </button>
-        </div>
-
-        <div className="edit-page-content">
-          {draft.map((n) => (
-            <div className="edit-notice-row" key={n.id}>
-              <div className="edit-notice-info">
-                <div className="edit-notice-title">{n.title}</div>
-                <div className="edit-notice-body">{n.body}</div>
-                <div className="edit-notice-time">{n.time}</div>
-              </div>
-              <div className="edit-event-actions">
-                <button
-                  className="edit-update-btn"
-                  onClick={() => openUpdate(n)}
-                >
-                  <i className="bx bx-edit" /> Update
-                </button>
-                <button
-                  className="edit-delete-btn"
-                  onClick={() => handleDeleteClick(n.id)}
-                >
-                  <i className="bx bx-trash" /> Delete
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="edit-page-footer">
-          <button
-            className="add-new-btn"
-            onClick={() => {
-              setUpdating(null);
-              setNewForm({ title: "", body: "", time: "" });
-              setAddingNew(true);
-            }}
-          >
-            <i className="bx bx-plus" /> Add New Notice
-          </button>
-        </div>
-
-        <div
-          className={`form-sheet-backdrop${sheetOpen ? " active" : ""}`}
+  return createPortal(
+    <div className="ep-root">
+      <div className="ep-header">
+        <button className="ep-back" onClick={onBack}>
+          <i className="bx bx-arrow-back" />
+        </button>
+        <span className="ep-title">Edit Notices</span>
+        <button
+          className="ep-save"
           onClick={() => {
-            setUpdating(null);
-            setAddingNew(false);
+            onSave(draft);
+            onBack();
           }}
-        />
-        <div className={`form-sheet${sheetOpen ? " active" : ""}`}>
-          <div className="form-sheet-handle" />
-
-          {updating !== null && !addingNew && (
-            <>
-              <div className="form-sheet-title">
-                <i className="bx bx-edit-alt" /> Update Notice
-              </div>
-              <div className="ef-field">
-                <label className="ef-label">Title</label>
-                <input
-                  className="ef-input"
-                  value={updateForm.title || ""}
-                  onChange={(e) =>
-                    setUpdateForm((v) => ({ ...v, title: e.target.value }))
-                  }
-                />
-              </div>
-              <div className="ef-field">
-                <label className="ef-label">Body</label>
-                <textarea
-                  className="ef-input ef-textarea"
-                  rows={3}
-                  value={updateForm.body || ""}
-                  onChange={(e) =>
-                    setUpdateForm((v) => ({ ...v, body: e.target.value }))
-                  }
-                />
-              </div>
-              <div className="ef-field">
-                <label className="ef-label">Time (e.g. "2 hours ago")</label>
-                <input
-                  className="ef-input"
-                  placeholder="e.g. 2 hours ago, Just now"
-                  value={updateForm.time || ""}
-                  onChange={(e) =>
-                    setUpdateForm((v) => ({ ...v, time: e.target.value }))
-                  }
-                />
-              </div>
-              <div className="ef-actions">
-                <button className="ef-cancel" onClick={() => setUpdating(null)}>
-                  Cancel
-                </button>
-                <button className="ef-save" onClick={saveUpdate}>
-                  Apply
-                </button>
-              </div>
-            </>
-          )}
-
-          {addingNew && (
-            <>
-              <div className="form-sheet-title">
-                <i className="bx bx-plus-circle" /> New Notice
-              </div>
-              <div className="ef-field">
-                <label className="ef-label">Title *</label>
-                <input
-                  className="ef-input"
-                  value={newForm.title || ""}
-                  onChange={(e) =>
-                    setNewForm((v) => ({ ...v, title: e.target.value }))
-                  }
-                />
-              </div>
-              <div className="ef-field">
-                <label className="ef-label">Body</label>
-                <textarea
-                  className="ef-input ef-textarea"
-                  rows={3}
-                  value={newForm.body || ""}
-                  onChange={(e) =>
-                    setNewForm((v) => ({ ...v, body: e.target.value }))
-                  }
-                />
-              </div>
-              <div className="ef-field">
-                <label className="ef-label">Time (e.g. "Just now")</label>
-                <input
-                  className="ef-input"
-                  placeholder="e.g. Just now, 1 hour ago"
-                  value={newForm.time || ""}
-                  onChange={(e) =>
-                    setNewForm((v) => ({ ...v, time: e.target.value }))
-                  }
-                />
-              </div>
-              <div className="ef-actions">
-                <button
-                  className="ef-cancel"
-                  onClick={() => setAddingNew(false)}
-                >
-                  Cancel
-                </button>
-                <button className="ef-save" onClick={handleAdd}>
-                  Add Notice
-                </button>
-              </div>
-            </>
-          )}
-        </div>
+        >
+          Save
+        </button>
       </div>
-    </div>
+
+      <div className="ep-content">
+        {draft.map((n) => (
+          <div className="ep-notice-row" key={n.id}>
+            <div className="ep-notice-info">
+              <div className="ep-notice-title">{n.title}</div>
+              <div className="ep-notice-body">{n.body}</div>
+              <div className="ep-notice-time">{n.time}</div>
+            </div>
+            <div className="ep-row-actions">
+              <button className="ep-update-btn" onClick={() => openUpdate(n)}>
+                <i className="bx bx-edit" />
+                Update
+              </button>
+              <button
+                className="ep-delete-btn"
+                onClick={() => handleDelete(n.id)}
+              >
+                <i className="bx bx-trash" />
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="ep-footer">
+        <button className="ep-add-btn" onClick={openAdd}>
+          <i className="bx bx-plus" />
+          Add New Notice
+        </button>
+      </div>
+
+      {sheet && (
+        <BottomSheet
+          title={sheet.mode === "add" ? "New Notice" : "Update Notice"}
+          icon={sheet.mode === "add" ? "bx-plus-circle" : "bx-edit-alt"}
+          onClose={() => setSheet(null)}
+          onApply={handleApply}
+          applyLabel={sheet.mode === "add" ? "Add Notice" : "Apply"}
+        >
+          <div className="ep-field">
+            <label className="ep-label">
+              {sheet.mode === "add" ? "Title *" : "Title"}
+            </label>
+            <input
+              className="ep-input"
+              value={sheet.data.title}
+              onChange={(e) => setField("title", e.target.value)}
+            />
+          </div>
+          <div className="ep-field">
+            <label className="ep-label">Body</label>
+            <textarea
+              className="ep-input ep-textarea"
+              rows={3}
+              value={sheet.data.body}
+              onChange={(e) => setField("body", e.target.value)}
+            />
+          </div>
+          <div className="ep-field">
+            <label className="ep-label">Time (e.g. "2 hours ago")</label>
+            <input
+              className="ep-input"
+              placeholder="Just now"
+              value={sheet.data.time}
+              onChange={(e) => setField("time", e.target.value)}
+            />
+          </div>
+        </BottomSheet>
+      )}
+
+      {confirmId !== null && (
+        <ConfirmDialog
+          message="Delete this notice? This cannot be undone."
+          onConfirm={() => {
+            setDraft((p) => p.filter((n) => n.id !== confirmId));
+            setConfirmId(null);
+          }}
+          onCancel={() => setConfirmId(null)}
+        />
+      )}
+
+      {toast && <Toast msg={toast} />}
+    </div>,
+    document.body,
   );
 }
 
@@ -1079,7 +761,7 @@ function useCarousel(total) {
   const dragRef = useRef({ startX: 0, delta: 0, baseTx: 0, t0: 0 });
 
   const cardW = useCallback(() => {
-    const c = trackRef.current?.querySelector(".event-card");
+    const c = trackRef.current?.querySelector(".ae-card");
     return c ? c.offsetWidth : 340;
   }, []);
   const gapPx = useCallback(() => {
@@ -1223,36 +905,33 @@ export default function AdminExplorer() {
       {page === "editEvents" && (
         <EditEventsPage
           events={events}
-          onSave={(u) => setEvents(u)}
+          onSave={setEvents}
           onBack={() => setPage(null)}
         />
       )}
       {page === "editNotices" && (
         <EditNoticesPage
           notices={notices}
-          onSave={(u) => setNotices(u)}
+          onSave={setNotices}
           onBack={() => setPage(null)}
         />
       )}
 
-      {/* SPOTLIGHT */}
-      <div className="spotlight-section">
-        <div className="section-header">
-          <div className="header-line" />
-          <h2 className="section-title">In The Spotlight</h2>
-          <div className="header-line" />
-          <button
-            className="edit-corner-btn admin"
-            onClick={() => setPage("editEvents")}
-          >
+      {/* IN THE SPOTLIGHT */}
+      <div className="ae-spotlight">
+        <div className="ae-section-header">
+          <div className="ae-header-line" />
+          <h2 className="ae-section-title">In The Spotlight</h2>
+          <button className="ae-edit-btn" onClick={() => setPage("editEvents")}>
             <i className="bx bx-edit" />
             <span>Edit</span>
           </button>
+          <div className="ae-header-line" />
         </div>
-        <div className="events-carousel" ref={carouselRef}>
+        <div className="ae-carousel" ref={carouselRef}>
           <div
             ref={trackRef}
-            className={`events-track${dragging ? " is-dragging" : ""}`}
+            className={`ae-track${dragging ? " dragging" : ""}`}
             style={{
               transform: `translateX(${tx}px)`,
               transition: dragging
@@ -1277,9 +956,9 @@ export default function AdminExplorer() {
             {events.map((ev, i) => (
               <div
                 key={ev.id}
-                className={`event-card${i === current ? " active" : ""}`}
+                className={`ae-card${i === current ? " active" : ""}`}
               >
-                <div className="event-image">
+                <div className="ae-card-img">
                   <img
                     src={ev.img}
                     alt={ev.title}
@@ -1288,24 +967,24 @@ export default function AdminExplorer() {
                     onError={() => handleImgLoad(ev.id)}
                     draggable={false}
                   />
-                  <div className="event-overlay" />
+                  <div className="ae-overlay" />
                   {ev.badge && (
                     <div
-                      className={`event-badge${ev.badgeType === "promo" ? " promo" : ""}`}
+                      className={`ae-badge${ev.badgeType === "promo" ? " promo" : ""}`}
                     >
                       {ev.badge}
                     </div>
                   )}
                 </div>
-                <div className="event-info">
-                  <div className="event-date">{ev.date}</div>
-                  <h3 className="event-title">{ev.title}</h3>
-                  <div className="event-location">
+                <div className="ae-card-info">
+                  <div className="ae-card-date">{ev.date}</div>
+                  <h3 className="ae-card-title">{ev.title}</h3>
+                  <div className="ae-card-loc">
                     <i className="bx bx-map" />
                     <span>{ev.location}</span>
                   </div>
                   <button
-                    className={`bookmark-btn${savedCards[ev.id] ? " saved" : ""}`}
+                    className={`ae-bookmark${savedCards[ev.id] ? " saved" : ""}`}
                     onClick={(e) => toggleBookmark(ev.id, e)}
                   >
                     <i
@@ -1317,25 +996,25 @@ export default function AdminExplorer() {
             ))}
           </div>
         </div>
-        <div className="carousel-controls">
+        <div className="ae-controls">
           <button
-            className="carousel-arrow"
+            className="ae-arrow"
             onClick={() => goTo(current - 1)}
             disabled={current === 0}
           >
             <i className="bx bx-chevron-left" />
           </button>
-          <div className="carousel-dots">
+          <div className="ae-dots">
             {events.map((_, i) => (
               <span
                 key={i}
-                className={`dot${i === current ? " active" : ""}`}
+                className={`ae-dot${i === current ? " active" : ""}`}
                 onClick={() => goTo(i)}
               />
             ))}
           </div>
           <button
-            className="carousel-arrow"
+            className="ae-arrow"
             onClick={() => goTo(current + 1)}
             disabled={current === total - 1}
           >
@@ -1345,35 +1024,33 @@ export default function AdminExplorer() {
       </div>
 
       {/* NOTICES */}
-      <div className="notices-section">
-        <div className="section-header">
-          <div className="header-line" />
-          <h2 className="section-title">Notices</h2>
-          <div className="header-line" />
+      <div className="ae-notices-section">
+        <div className="ae-section-header">
+          <div className="ae-header-line" />
+          <h2 className="ae-section-title">Notices</h2>
           <button
-            className="edit-corner-btn admin"
+            className="ae-edit-btn"
             onClick={() => setPage("editNotices")}
           >
             <i className="bx bx-edit" />
             <span>Edit</span>
           </button>
+          <div className="ae-header-line" />
         </div>
-        <div className="notices-list">
+        <div className="ae-notices-list">
           {notices.map((n) => (
-            <div className="notice-item" key={n.id}>
-              <div className="notice-content">
-                <h4>{n.title}</h4>
-                <p>{n.body}</p>
-                <span className="notice-time">{n.time}</span>
-              </div>
+            <div className="ae-notice-item" key={n.id}>
+              <h4>{n.title}</h4>
+              <p>{n.body}</p>
+              <span className="ae-notice-time">{n.time}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* QUICK ACCESS */}
-      <h2 className="section-heading">Quick Access</h2>
-      <div className="bus-card">
+      <h2 className="ae-section-heading">Quick Access</h2>
+      <div className="ae-bus-card">
         <h3 style={{ color: "#a78bfa", marginBottom: 10 }}>Admin Panel 👋</h3>
         <p style={{ color: "#aaa" }}>
           Manage events, notices, and college content from here.
