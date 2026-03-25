@@ -1,10 +1,25 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import "../styles/searchpage.css";
 
-/* ═══════════════════════════════════════════════════
-   MOCK DATA
-═══════════════════════════════════════════════════ */
-const MOCK = [
-  // Students
+// ─── Data ─────────────────────────────────────────────────────────────────────
+
+const TABS = [
+  { key: "student", label: "Students" },
+  { key: "faculty", label: "Faculty" },
+  { key: "event", label: "Events" },
+  { key: "notice", label: "Notices" },
+  { key: "chat", label: "Groups" },
+];
+
+const TYPE_COLOR = {
+  student: "#a78bfa",
+  faculty: "#10b981",
+  event: "#f59e0b",
+  notice: "#3b82f6",
+  chat: "#ec4899",
+};
+
+const INITIAL_MOCK = [
   {
     id: 1,
     type: "student",
@@ -13,7 +28,7 @@ const MOCK = [
     branch: "BCA",
     year: "3rd year",
     initials: "JG",
-    connected: false,
+    following: false,
   },
   {
     id: 2,
@@ -23,7 +38,7 @@ const MOCK = [
     branch: "B.Tech CSE",
     year: "2nd year",
     initials: "PS",
-    connected: true,
+    following: true,
   },
   {
     id: 3,
@@ -33,7 +48,7 @@ const MOCK = [
     branch: "MCA",
     year: "1st year",
     initials: "RD",
-    connected: false,
+    following: false,
   },
   {
     id: 4,
@@ -43,7 +58,7 @@ const MOCK = [
     branch: "B.Sc IT",
     year: "4th year",
     initials: "SP",
-    connected: false,
+    following: false,
   },
   {
     id: 5,
@@ -53,9 +68,8 @@ const MOCK = [
     branch: "MBA",
     year: "2nd year",
     initials: "AV",
-    connected: true,
+    following: true,
   },
-  // Faculty
   {
     id: 6,
     type: "faculty",
@@ -64,7 +78,7 @@ const MOCK = [
     dept: "Computer Science",
     designation: "Associate Professor",
     initials: "AM",
-    connected: false,
+    following: false,
   },
   {
     id: 7,
@@ -74,7 +88,7 @@ const MOCK = [
     dept: "Mathematics",
     designation: "Professor",
     initials: "SR",
-    connected: true,
+    following: true,
   },
   {
     id: 8,
@@ -84,9 +98,8 @@ const MOCK = [
     dept: "Physics",
     designation: "Assistant Professor",
     initials: "BM",
-    connected: false,
+    following: false,
   },
-  // Events
   {
     id: 9,
     type: "event",
@@ -114,7 +127,6 @@ const MOCK = [
     desc: "24-hour coding marathon open to all",
     initials: "H3",
   },
-  // Notices
   {
     id: 12,
     type: "notice",
@@ -139,7 +151,6 @@ const MOCK = [
     dept: "Library",
     desc: "Library will remain open until 9 PM from April onwards.",
   },
-  // Chat / Groups
   {
     id: 15,
     type: "chat",
@@ -166,616 +177,329 @@ const MOCK = [
   },
 ];
 
-const TABS = [
-  { key: "all", label: "All" },
-  { key: "student", label: "Students" },
-  { key: "faculty", label: "Faculty" },
-  { key: "event", label: "Events" },
-  { key: "notice", label: "Notice" },
-  { key: "chat", label: "Chat" },
-];
-
-/* ═══════════════════════════════════════════════════
-   COLOUR TOKENS  (match app dark theme)
-═══════════════════════════════════════════════════ */
-const C = {
-  bg: "#0a0a0a",
-  surface: "#111111",
-  card: "#141414",
-  border: "#1e1e1e",
-  borderLight: "#2a2a2a",
-  purple: "#a78bfa",
-  purpleGlow: "rgba(167,139,250,0.15)",
-  purpleDim: "rgba(167,139,250,0.35)",
-  text: "#f0f0f0",
-  textMuted: "#888888",
-  textDim: "#3a3a3a",
-  success: "#10b981",
-  warn: "#f59e0b",
-  blue: "#3b82f6",
+const TAB_PLACEHOLDER = {
+  student: "Search students by name, branch…",
+  faculty: "Search faculty by name, department…",
+  event: "Search events…",
+  notice: "Search notices…",
+  chat: "Search groups…",
 };
 
-/* type → accent colour */
-const TYPE_COLOR = {
-  student: "#a78bfa",
-  faculty: "#10b981",
-  event: "#f59e0b",
-  notice: "#3b82f6",
-  chat: "#ec4899",
-};
+// ─── Chip ─────────────────────────────────────────────────────────────────────
 
-const TYPE_BG = {
-  student: "rgba(167,139,250,0.12)",
-  faculty: "rgba(16,185,129,0.12)",
-  event: "rgba(245,158,11,0.12)",
-  notice: "rgba(59,130,246,0.12)",
-  chat: "rgba(236,72,153,0.12)",
-};
+const Chip = ({ label, color }) => (
+  <span
+    className="se-chip"
+    style={{ background: `${color}18`, border: `1px solid ${color}35`, color }}
+  >
+    {label}
+  </span>
+);
 
-/* ── keyframes injected once ── */
-const KF = `
-@keyframes fadeUp   { from { opacity:0; transform:translateY(14px) } to { opacity:1; transform:translateY(0) } }
-@keyframes shimmer  { 0%   { background-position:200% 0 }           100% { background-position:-200% 0 } }
-@keyframes pulse    { 0%,100% { opacity:1 } 50% { opacity:0.5 } }
-`;
+// ─── Avatar ───────────────────────────────────────────────────────────────────
 
-/* ═══════════════════════════════════════════════════
-   SKELETON CARD
-═══════════════════════════════════════════════════ */
-function SkeletonCard() {
-  const sh = (w, h, r = 8) => (
-    <div
+const Avatar = ({ initials, color, shape = "circle", small = false }) => (
+  <div
+    className={[
+      "se-avatar",
+      small ? "se-avatar--sm" : "",
+      shape === "circle" ? "se-avatar--circle" : "se-avatar--rounded",
+    ].join(" ")}
+    style={{
+      background: `${color}22`,
+      border: `1.5px solid ${color}55`,
+      color,
+    }}
+  >
+    {initials}
+  </div>
+);
+
+// ─── FollowButton ─────────────────────────────────────────────────────────────
+
+const FollowButton = ({ following, color, onToggle }) => {
+  const [hovered, setHovered] = useState(false);
+  return following ? (
+    <button
+      className="se-btn se-btn--outline"
+      onClick={onToggle}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       style={{
-        width: w,
-        height: h,
-        borderRadius: r,
-        background: `linear-gradient(90deg,#1a1a1a 25%,#242424 50%,#1a1a1a 75%)`,
-        backgroundSize: "600px 100%",
-        animation: "shimmer 1.4s infinite linear",
-        flexShrink: 0,
-      }}
-    />
-  );
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 14,
-        padding: "14px 16px",
-        background: C.card,
-        borderRadius: 14,
-        border: `1px solid ${C.border}`,
-        marginBottom: 10,
+        border: `1px solid ${color}55`,
+        color,
+        background: hovered ? `${color}18` : "transparent",
       }}
     >
-      {sh(48, 48, "50%")}
-      <div style={{ flex: 1 }}>
-        {sh("55%", 14, 6)}
-        <div style={{ height: 8 }} />
-        {sh("35%", 11, 6)}
-        <div style={{ height: 8 }} />
-        <div style={{ display: "flex", gap: 6 }}>
-          {sh(52, 20, 20)}
-          {sh(60, 20, 20)}
-        </div>
-      </div>
-      {sh(72, 32, 8)}
-    </div>
+      Following
+    </button>
+  ) : (
+    <button
+      className="se-btn se-btn--solid"
+      onClick={onToggle}
+      style={{ background: color, border: `1px solid ${color}` }}
+    >
+      Follow
+    </button>
   );
-}
+};
 
-/* ═══════════════════════════════════════════════════
-   RESULT CARDS
-═══════════════════════════════════════════════════ */
-function StudentCard({ item, onConnect }) {
-  const accent = TYPE_COLOR.student;
+// ─── Cards ────────────────────────────────────────────────────────────────────
+
+const StudentCard = ({ item, onToggleFollow }) => {
+  const c = TYPE_COLOR.student;
   return (
-    <div style={cardWrap()}>
-      {/* avatar */}
-      <div style={avatarStyle(accent)}>{item.initials}</div>
-      {/* info */}
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            marginBottom: 2,
-          }}
-        >
-          <span
-            style={{
-              fontWeight: 700,
-              fontSize: 15,
-              color: C.text,
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {item.name}
-          </span>
-        </div>
-        <div
-          style={{
-            fontSize: 12,
-            color: accent,
-            marginBottom: 6,
-            fontWeight: 600,
-          }}
-        >
+    <div className="se-card">
+      <Avatar initials={item.initials} color={c} />
+      <div className="se-card-meta">
+        <div className="se-card-name">{item.name}</div>
+        <div className="se-card-username" style={{ color: c }}>
           {item.username}
         </div>
-        <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
-          {item.branch && <Chip label={item.branch} color={accent} />}
-          {item.year && <Chip label={item.year} color={C.textMuted} />}
+        <div className="se-card-chips">
+          <Chip label={item.branch} color={c} />
+          <Chip label={item.year} color="#555" />
         </div>
       </div>
-      {/* action */}
-      <ConnectBtn
-        connected={item.connected}
-        accent={accent}
-        onClick={() => onConnect(item.id)}
+      <FollowButton
+        following={item.following}
+        color={c}
+        onToggle={() => onToggleFollow(item.id)}
       />
     </div>
   );
-}
+};
 
-function FacultyCard({ item, onConnect }) {
-  const accent = TYPE_COLOR.faculty;
+const FacultyCard = ({ item, onToggleFollow }) => {
+  const c = TYPE_COLOR.faculty;
   return (
-    <div style={cardWrap()}>
-      <div style={avatarStyle(accent)}>{item.initials}</div>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <span
-          style={{
-            fontWeight: 700,
-            fontSize: 15,
-            color: C.text,
-            display: "block",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {item.name}
-        </span>
-        <div
-          style={{
-            fontSize: 12,
-            color: accent,
-            marginBottom: 6,
-            fontWeight: 600,
-          }}
-        >
+    <div className="se-card">
+      <Avatar initials={item.initials} color={c} />
+      <div className="se-card-meta">
+        <div className="se-card-name">{item.name}</div>
+        <div className="se-card-username" style={{ color: c }}>
           {item.username}
         </div>
-        <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
-          {item.designation && <Chip label={item.designation} color={accent} />}
-          {item.dept && <Chip label={item.dept} color={C.textMuted} />}
+        <div className="se-card-chips">
+          <Chip label={item.designation} color={c} />
+          <Chip label={item.dept} color="#555" />
         </div>
       </div>
-      <ConnectBtn
-        connected={item.connected}
-        accent={accent}
-        onClick={() => onConnect(item.id)}
+      <FollowButton
+        following={item.following}
+        color={c}
+        onToggle={() => onToggleFollow(item.id)}
       />
     </div>
   );
-}
+};
 
-function EventCard({ item }) {
-  const accent = TYPE_COLOR.event;
+const EventCard = ({ item }) => {
+  const c = TYPE_COLOR.event;
   return (
-    <div style={cardWrap()}>
-      <div style={{ ...avatarStyle(accent), fontSize: 16, borderRadius: 12 }}>
-        {item.initials}
-      </div>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <span
-          style={{
-            fontWeight: 700,
-            fontSize: 15,
-            color: C.text,
-            display: "block",
-            marginBottom: 3,
-          }}
-        >
-          {item.name}
-        </span>
-        <div style={{ fontSize: 12, color: C.textMuted, marginBottom: 6 }}>
-          {item.desc}
-        </div>
-        <div style={{ display: "flex", gap: 5 }}>
-          <Chip label={`📅 ${item.date}`} color={accent} />
-          <Chip label={item.tag} color={C.textMuted} />
+    <div className="se-card">
+      <Avatar initials={item.initials} color={c} shape="rounded" />
+      <div className="se-card-meta">
+        <div className="se-card-name">{item.name}</div>
+        <div className="se-card-desc">{item.desc}</div>
+        <div className="se-card-chips">
+          <Chip label={`📅 ${item.date}`} color={c} />
+          <Chip label={item.tag} color="#555" />
         </div>
       </div>
       <button
-        style={{
-          padding: "6px 12px",
-          background: accent,
-          border: "none",
-          borderRadius: 8,
-          color: "#000",
-          fontWeight: 700,
-          fontSize: 12,
-          cursor: "pointer",
-          flexShrink: 0,
-          whiteSpace: "nowrap",
-        }}
+        className="se-btn se-btn--solid"
+        style={{ background: c, border: `1px solid ${c}` }}
       >
         View
       </button>
     </div>
   );
-}
+};
 
-function NoticeCard({ item }) {
-  const accent = TYPE_COLOR.notice;
+const NoticeCard = ({ item }) => {
+  const c = TYPE_COLOR.notice;
   return (
-    <div
-      style={{
-        ...cardWrap(),
-        flexDirection: "column",
-        alignItems: "flex-start",
-        gap: 10,
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
-          width: "100%",
-        }}
-      >
-        <div
-          style={{
-            width: 38,
-            height: 38,
-            borderRadius: 10,
-            background: `rgba(59,130,246,0.15)`,
-            border: `1px solid rgba(59,130,246,0.3)`,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 18,
-            flexShrink: 0,
-          }}
-        >
-          📋
-        </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <span
-            style={{
-              fontWeight: 700,
-              fontSize: 14,
-              color: C.text,
-              display: "block",
-            }}
-          >
-            {item.name}
-          </span>
-          <div style={{ display: "flex", gap: 6, marginTop: 3 }}>
-            <Chip label={item.dept} color={accent} />
-            <Chip label={item.date} color={C.textMuted} />
+    <div className="se-card se-card--notice">
+      <div className="se-card-notice-row">
+        <Avatar initials="📋" color={c} shape="rounded" small />
+        <div className="se-card-meta">
+          <div className="se-card-name">{item.name}</div>
+          <div className="se-card-chips">
+            <Chip label={item.dept} color={c} />
+            <Chip label={item.date} color="#555" />
           </div>
         </div>
       </div>
-      <p
-        style={{
-          fontSize: 13,
-          color: C.textMuted,
-          lineHeight: 1.6,
-          margin: 0,
-          paddingLeft: 48,
-        }}
-      >
-        {item.desc}
-      </p>
+      <p className="se-card-notice-body">{item.desc}</p>
     </div>
   );
-}
+};
 
-function ChatCard({ item }) {
-  const accent = TYPE_COLOR.chat;
+const ChatCard = ({ item }) => {
+  const c = TYPE_COLOR.chat;
   return (
-    <div style={cardWrap()}>
-      <div
-        style={{
-          width: 48,
-          height: 48,
-          borderRadius: 14,
-          background: `rgba(236,72,153,0.15)`,
-          border: `1px solid rgba(236,72,153,0.3)`,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontWeight: 800,
-          fontSize: 16,
-          color: accent,
-          flexShrink: 0,
-        }}
-      >
-        {item.initials}
-      </div>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <span
-          style={{
-            fontWeight: 700,
-            fontSize: 15,
-            color: C.text,
-            display: "block",
-            marginBottom: 2,
-          }}
-        >
-          {item.name}
-        </span>
-        <div style={{ fontSize: 12, color: C.textMuted, marginBottom: 5 }}>
+    <div className="se-card">
+      <Avatar initials={item.initials} color={c} shape="rounded" />
+      <div className="se-card-meta">
+        <div className="se-card-name">{item.name}</div>
+        <div style={{ fontSize: 11, color: "#666", marginBottom: 4 }}>
           {item.members}
         </div>
-        <div
-          style={{
-            fontSize: 12,
-            color: C.textMuted,
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {item.desc}
-        </div>
+        <div className="se-card-desc se-card-desc--chat">{item.desc}</div>
       </div>
       <button
-        style={{
-          padding: "6px 12px",
-          background: `rgba(236,72,153,0.15)`,
-          border: `1px solid rgba(236,72,153,0.35)`,
-          borderRadius: 8,
-          color: accent,
-          fontWeight: 700,
-          fontSize: 12,
-          cursor: "pointer",
-          flexShrink: 0,
-          whiteSpace: "nowrap",
-        }}
+        className="se-btn se-btn--outline"
+        style={{ background: `${c}18`, border: `1px solid ${c}35`, color: c }}
       >
         Join
       </button>
     </div>
   );
-}
+};
 
-/* ── helpers ── */
-const cardWrap = () => ({
-  display: "flex",
-  alignItems: "center",
-  gap: 14,
-  padding: "14px 16px",
-  background: C.card,
-  borderRadius: 14,
-  border: `1px solid ${C.border}`,
-  marginBottom: 10,
-  animation: "fadeUp 0.3s ease both",
-  transition: "border-color 0.2s, transform 0.18s",
-  cursor: "default",
-});
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
 
-const avatarStyle = (accent) => ({
-  width: 48,
-  height: 48,
-  borderRadius: "50%",
-  background: `linear-gradient(135deg,${accent}33,${accent}18)`,
-  border: `1.5px solid ${accent}55`,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  fontWeight: 800,
-  fontSize: 17,
-  color: accent,
-  flexShrink: 0,
-  letterSpacing: 0.5,
-});
-
-function Chip({ label, color }) {
-  return (
-    <span
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        padding: "2px 9px",
-        borderRadius: 20,
-        background: `${color}18`,
-        border: `1px solid ${color}35`,
-        color,
-        fontSize: 11,
-        fontWeight: 600,
-        whiteSpace: "nowrap",
-      }}
-    >
-      {label}
-    </span>
-  );
-}
-
-function ConnectBtn({ connected, accent, onClick }) {
-  const [hover, setHover] = useState(false);
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={{
-        padding: "7px 13px",
-        background: connected ? `${accent}18` : accent,
-        border: `1px solid ${connected ? accent + "55" : accent}`,
-        borderRadius: 9,
-        color: connected ? accent : "#08090d",
-        fontWeight: 700,
-        fontSize: 12,
-        cursor: "pointer",
-        flexShrink: 0,
-        whiteSpace: "nowrap",
-        transition: "all 0.18s",
-        opacity: hover && connected ? 0.8 : 1,
-      }}
-    >
-      {connected ? "✓ Connected" : "+ Connect"}
-    </button>
-  );
-}
-
-/* ═══════════════════════════════════════════════════
-   EMPTY STATE
-═══════════════════════════════════════════════════ */
-function EmptyState({ query, tab }) {
-  return (
+const SkeletonCard = () => (
+  <div className="se-skeleton-card">
     <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "60px 20px",
-        color: C.textMuted,
-        textAlign: "center",
-        animation: "fadeUp 0.3s ease",
-      }}
-    >
-      <div style={{ fontSize: 54, marginBottom: 16, opacity: 0.4 }}>🔍</div>
-      <div
-        style={{
-          fontSize: 16,
-          fontWeight: 700,
-          color: C.text,
-          marginBottom: 8,
-        }}
-      >
-        {query
-          ? `No results for "${query}"`
-          : `No ${tab === "all" ? "results" : tab + "s"} yet`}
-      </div>
-      <div style={{ fontSize: 13, lineHeight: 1.7, maxWidth: 260 }}>
-        {query
-          ? "Try a different keyword or change the filter tab."
-          : "Start typing to search across students, faculty, events and more."}
+      className="se-skeleton-block"
+      style={{ width: 48, height: 48, borderRadius: "50%" }}
+    />
+    <div className="se-skeleton-meta">
+      <div className="se-skeleton-block" style={{ width: "55%", height: 13 }} />
+      <div className="se-skeleton-block" style={{ width: "35%", height: 11 }} />
+      <div className="se-skeleton-chips">
+        <div
+          className="se-skeleton-block"
+          style={{ width: 52, height: 19, borderRadius: 20 }}
+        />
+        <div
+          className="se-skeleton-block"
+          style={{ width: 60, height: 19, borderRadius: 20 }}
+        />
       </div>
     </div>
-  );
-}
+    <div
+      className="se-skeleton-block"
+      style={{ width: 70, height: 31, borderRadius: 8 }}
+    />
+  </div>
+);
 
-/* ═══════════════════════════════════════════════════
-   MAIN SEARCH PAGE
-═══════════════════════════════════════════════════ */
-export default function SearchPage() {
+// ─── Empty State ──────────────────────────────────────────────────────────────
+
+const EmptyState = ({ query }) => (
+  <div className="se-empty">
+    <div className="se-empty-icon">
+      <svg
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#3a3a3a"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.35-4.35" />
+      </svg>
+    </div>
+    {query ? (
+      <>
+        <div className="se-empty-title">No results for "{query}"</div>
+        <div className="se-empty-sub">Try a different keyword.</div>
+      </>
+    ) : (
+      <>
+        <div className="se-empty-title">No recent searches</div>
+        <div className="se-empty-sub">Your search history will appear here</div>
+      </>
+    )}
+  </div>
+);
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+
+export default function SearchExplore() {
+  const [activeTab, setActiveTab] = useState("student");
   const [query, setQuery] = useState("");
-  const [activeTab, setActiveTab] = useState("all");
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState(MOCK);
-  const inputRef = useRef(null);
-  const tabsRef = useRef(null);
+  const [inputValue, setInputValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [items, setItems] = useState(INITIAL_MOCK);
 
-  /* auto-focus on mount */
-  useEffect(() => {
-    inputRef.current?.focus();
+  const debounceRef = useRef(null);
+  const loadingRef = useRef(null);
+
+  const handleInput = useCallback((e) => {
+    const val = e.target.value;
+    setInputValue(val);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => setQuery(val), 280);
   }, []);
 
-  /* search logic with debounce */
-  useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(
-      () => {
-        const q = query.trim().toLowerCase();
-        let filtered = data;
-
-        /* filter by tab */
-        if (activeTab !== "all") {
-          filtered = filtered.filter((r) => r.type === activeTab);
-        }
-
-        /* filter by query */
-        if (q) {
-          filtered = filtered.filter((r) => {
-            const fields = [
-              r.name,
-              r.username,
-              r.branch,
-              r.year,
-              r.dept,
-              r.designation,
-              r.tag,
-              r.desc,
-              r.members,
-            ].filter(Boolean);
-            return fields.some((f) => f.toLowerCase().includes(q));
-          });
-        }
-
-        setResults(filtered);
-        setLoading(false);
-      },
-      (q) => q,
-      280,
-    );
-
-    // Actually debounce properly
-    const id = setTimeout(() => {
-      const q = query.trim().toLowerCase();
-      let filtered = data;
-      if (activeTab !== "all")
-        filtered = filtered.filter((r) => r.type === activeTab);
-      if (q) {
-        filtered = filtered.filter((r) => {
-          const fields = [
-            r.name,
-            r.username,
-            r.branch,
-            r.year,
-            r.dept,
-            r.designation,
-            r.tag,
-            r.desc,
-            r.members,
-          ].filter(Boolean);
-          return fields.some((f) => f.toLowerCase().includes(q));
-        });
-      }
-      setResults(filtered);
-      setLoading(false);
-    }, 280);
-    clearTimeout(timer);
-    return () => clearTimeout(id);
-  }, [query, activeTab, data]);
-
-  const handleConnect = (id) => {
-    setData((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, connected: !r.connected } : r)),
-    );
+  const clearSearch = () => {
+    setInputValue("");
+    setQuery("");
   };
 
-  /* scroll active tab into view */
   useEffect(() => {
-    const activeEl = tabsRef.current?.querySelector(".tab-active");
-    if (activeEl)
-      activeEl.scrollIntoView({
-        inline: "center",
-        behavior: "smooth",
-        block: "nearest",
-      });
-  }, [activeTab]);
+    if (!query.trim()) {
+      setIsLoading(false);
+      return;
+    }
+    setIsLoading(true);
+    clearTimeout(loadingRef.current);
+    loadingRef.current = setTimeout(() => setIsLoading(false), 260);
+    return () => clearTimeout(loadingRef.current);
+  }, [query, activeTab]);
+
+  const toggleFollow = (id) =>
+    setItems((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, following: !item.following } : item,
+      ),
+    );
+
+  const q = query.trim().toLowerCase();
+  const results = q
+    ? items.filter((r) => {
+        if (r.type !== activeTab) return false;
+        const fields = [
+          r.name,
+          r.username,
+          r.branch,
+          r.year,
+          r.dept,
+          r.designation,
+          r.tag,
+          r.desc,
+          r.members,
+        ].filter(Boolean);
+        return fields.some((f) => f.toLowerCase().includes(q));
+      })
+    : [];
+
+  const color = TYPE_COLOR[activeTab];
 
   const renderCard = (item) => {
     switch (item.type) {
       case "student":
         return (
-          <StudentCard key={item.id} item={item} onConnect={handleConnect} />
+          <StudentCard
+            key={item.id}
+            item={item}
+            onToggleFollow={toggleFollow}
+          />
         );
       case "faculty":
         return (
-          <FacultyCard key={item.id} item={item} onConnect={handleConnect} />
+          <FacultyCard
+            key={item.id}
+            item={item}
+            onToggleFollow={toggleFollow}
+          />
         );
       case "event":
         return <EventCard key={item.id} item={item} />;
@@ -788,70 +512,16 @@ export default function SearchPage() {
     }
   };
 
-  /* counts per tab */
-  const counts = {};
-  TABS.forEach((t) => {
-    counts[t.key] =
-      t.key === "all"
-        ? data.length
-        : data.filter((r) => r.type === t.key).length;
-  });
-
   return (
-    <div
-      style={{
-        background: C.bg,
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        fontFamily: "'Segoe UI', system-ui, sans-serif",
-      }}
-    >
-      <style>
-        {KF}
-        {`
-        * { box-sizing:border-box; margin:0; padding:0; }
-        ::-webkit-scrollbar { width:4px }
-        ::-webkit-scrollbar-track { background:transparent }
-        ::-webkit-scrollbar-thumb { background:#222; border-radius:4px }
-        .search-input:focus { outline:none; border-color:${C.purple} !important; box-shadow:0 0 0 3px ${C.purpleGlow} !important; }
-        .tab-pill { cursor:pointer; transition:all 0.18s; white-space:nowrap; }
-        .tab-pill:hover { opacity:0.85; }
-        .tab-pill.tab-active { background:${C.purple} !important; color:#08090a !important; border-color:${C.purple} !important; }
-        .result-card:hover { border-color:${C.borderLight} !important; transform:translateY(-1px); }
-        `}
-      </style>
-
-      {/* ── STICKY SEARCH HEADER ── */}
-      <div
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 100,
-          background: C.bg,
-          borderBottom: `1px solid ${C.border}`,
-          paddingBottom: 0,
-        }}
-      >
-        {/* Search bar row */}
-        <div style={{ padding: "14px 16px 12px" }}>
-          <div style={{ position: "relative" }}>
-            {/* search icon */}
-            <span
-              style={{
-                position: "absolute",
-                left: 14,
-                top: "50%",
-                transform: "translateY(-50%)",
-                fontSize: 19,
-                color: C.textMuted,
-                pointerEvents: "none",
-                display: "flex",
-              }}
-            >
+    <div className="se-wrapper">
+      <div className="se-inner">
+        {/* ── Header ── */}
+        <div className="se-header">
+          <div className="se-search-wrap">
+            <span className="se-search-icon">
               <svg
-                width="19"
-                height="19"
+                width="17"
+                height="17"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -863,208 +533,75 @@ export default function SearchPage() {
                 <path d="m21 21-4.35-4.35" />
               </svg>
             </span>
-
             <input
-              ref={inputRef}
-              className="search-input"
               type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search in specific area…"
-              style={{
-                width: "100%",
-                padding: "13px 42px 13px 46px",
-                background: C.surface,
-                border: `1.5px solid ${C.border}`,
-                borderRadius: 14,
-                fontSize: 15,
-                color: C.text,
-                caretColor: C.purple,
-                fontFamily: "inherit",
-                transition: "all 0.2s",
-              }}
+              className="se-search-input"
+              value={inputValue}
+              placeholder={TAB_PLACEHOLDER[activeTab]}
+              onChange={handleInput}
             />
-
-            {/* clear button */}
-            {query && (
-              <button
-                onClick={() => {
-                  setQuery("");
-                  inputRef.current?.focus();
-                }}
-                style={{
-                  position: "absolute",
-                  right: 12,
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  background: `${C.borderLight}`,
-                  border: "none",
-                  borderRadius: "50%",
-                  width: 22,
-                  height: 22,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                  color: C.textMuted,
-                  fontSize: 14,
-                  lineHeight: 1,
-                }}
-              >
+            {inputValue && (
+              <button className="se-clear-btn" onClick={clearSearch}>
                 ✕
               </button>
             )}
           </div>
-        </div>
 
-        {/* Filter tabs */}
-        <div
-          ref={tabsRef}
-          style={{
-            display: "flex",
-            gap: 7,
-            padding: "0 16px 12px",
-            overflowX: "auto",
-            scrollbarWidth: "none",
-          }}
-          onScroll={(e) => e.stopPropagation()}
-        >
-          <style>{`.tab-scroll::-webkit-scrollbar{display:none}`}</style>
-          {TABS.map((tab) => {
-            const isActive = activeTab === tab.key;
-            const count = query
-              ? tab.key === "all"
-                ? results.length
-                : results.filter((r) => r.type === tab.key).length
-              : counts[tab.key];
-            return (
-              <button
-                key={tab.key}
-                className={`tab-pill${isActive ? " tab-active" : ""}`}
-                onClick={() => setActiveTab(tab.key)}
-                style={{
-                  padding: "6px 14px",
-                  borderRadius: 20,
-                  background: isActive ? C.purple : C.surface,
-                  border: `1px solid ${isActive ? C.purple : C.borderLight}`,
-                  color: isActive ? "#08090a" : C.textMuted,
-                  fontSize: 13,
-                  fontWeight: 700,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 5,
-                  flexShrink: 0,
-                }}
-              >
-                {tab.label}
-                <span style={{ fontSize: 11, fontWeight: 800, opacity: 0.8 }}>
-                  {count > 0 ? count : ""}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* ── RESULTS ── */}
-      <div style={{ flex: 1, padding: "14px 14px 100px", overflowY: "auto" }}>
-        {/* section label */}
-        {!loading && results.length > 0 && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              marginBottom: 14,
-            }}
-          >
-            <div
-              style={{
-                height: 1,
-                flex: 1,
-                background: `linear-gradient(to right,${C.borderLight},transparent)`,
-              }}
-            />
-            <span
-              style={{
-                fontSize: 11,
-                fontWeight: 800,
-                color: C.textMuted,
-                letterSpacing: 2,
-                textTransform: "uppercase",
-              }}
-            >
-              {results.length} result{results.length !== 1 ? "s" : ""}
-            </span>
-            <div
-              style={{
-                height: 1,
-                flex: 1,
-                background: `linear-gradient(to left,${C.borderLight},transparent)`,
-              }}
-            />
-          </div>
-        )}
-
-        {/* loading skeletons */}
-        {loading && [1, 2, 3].map((i) => <SkeletonCard key={i} />)}
-
-        {/* group results by type when "all" tab */}
-        {!loading &&
-          results.length > 0 &&
-          activeTab === "all" &&
-          (() => {
-            const groups = {};
-            results.forEach((r) => {
-              if (!groups[r.type]) groups[r.type] = [];
-              groups[r.type].push(r);
-            });
-            return Object.entries(groups).map(([type, items]) => (
-              <div key={type} style={{ marginBottom: 6 }}>
-                {/* group header */}
-                <div
+          <div className="se-tabs">
+            {TABS.map((t) => {
+              const active = activeTab === t.key;
+              const tc = TYPE_COLOR[t.key];
+              return (
+                <button
+                  key={t.key}
+                  className="se-tab-btn"
+                  onClick={() => setActiveTab(t.key)}
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 8,
-                    marginBottom: 9,
-                    marginTop: 4,
+                    background: active ? `${tc}22` : "#111",
+                    border: `1px solid ${active ? `${tc}66` : "#2a2a2a"}`,
+                    color: active ? tc : "#777",
                   }}
                 >
-                  <span
-                    style={{
-                      fontSize: 10,
-                      fontWeight: 800,
-                      color: TYPE_COLOR[type],
-                      letterSpacing: 2.5,
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {type}s
-                  </span>
-                  <div
-                    style={{
-                      flex: 1,
-                      height: 1,
-                      background: `${TYPE_COLOR[type]}22`,
-                    }}
-                  />
-                </div>
-                {items.map(renderCard)}
+                  {t.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ── Body ── */}
+        <div className="se-body">
+          {isLoading && [1, 2, 3].map((i) => <SkeletonCard key={i} />)}
+
+          {!isLoading && q && results.length > 0 && (
+            <>
+              <div className="se-results-header">
+                <div
+                  className="se-results-line"
+                  style={{
+                    background:
+                      "linear-gradient(to right, #2a2a2a, transparent)",
+                  }}
+                />
+                <span className="se-results-count" style={{ color }}>
+                  {results.length} result{results.length !== 1 ? "s" : ""}
+                </span>
+                <div
+                  className="se-results-line"
+                  style={{
+                    background:
+                      "linear-gradient(to left, #2a2a2a, transparent)",
+                  }}
+                />
               </div>
-            ));
-          })()}
+              <div className="se-results-grid">{results.map(renderCard)}</div>
+            </>
+          )}
 
-        {/* flat list for specific tab */}
-        {!loading &&
-          results.length > 0 &&
-          activeTab !== "all" &&
-          results.map(renderCard)}
-
-        {/* empty */}
-        {!loading && results.length === 0 && (
-          <EmptyState query={query} tab={activeTab} />
-        )}
+          {!isLoading && (!q || results.length === 0) && (
+            <EmptyState query={q && results.length === 0 ? q : ""} />
+          )}
+        </div>
       </div>
     </div>
   );
