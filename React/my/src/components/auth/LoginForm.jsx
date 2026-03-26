@@ -37,7 +37,9 @@ export default function LoginForm({ onSwitchToRegister, onForgotPassword }) {
       if (count <= 0) {
         clearInterval(t);
         localStorage.setItem("token", "your-auth-token-here");
-        setTimeout(() => { navigate("/explorer"); }, 0);
+        setTimeout(() => {
+          navigate("/explorer");
+        }, 0);
       }
     }, 1000);
     return () => clearInterval(t);
@@ -81,7 +83,10 @@ export default function LoginForm({ onSwitchToRegister, onForgotPassword }) {
       valid = false;
     }
     if (valid) {
-      setSuccess({ title: "Logged In!", message: "You have successfully logged in. Welcome back!" });
+      setSuccess({
+        title: "Logged In!",
+        message: "You have successfully logged in. Welcome back!",
+      });
     }
   };
 
@@ -105,7 +110,10 @@ export default function LoginForm({ onSwitchToRegister, onForgotPassword }) {
       valid = false;
     }
     if (valid) {
-      setSuccess({ title: "Logged In!", message: "You have successfully logged in via phone. Welcome!" });
+      setSuccess({
+        title: "Logged In!",
+        message: "You have successfully logged in via phone. Welcome!",
+      });
     }
   };
 
@@ -122,7 +130,10 @@ export default function LoginForm({ onSwitchToRegister, onForgotPassword }) {
     <>
       {createPortal(
         <div className={`success-overlay${success ? " show" : ""}`}>
-          <div className="success-card" key={success ? success.title : "hidden"}>
+          <div
+            className="success-card"
+            key={success ? success.title : "hidden"}
+          >
             <div className="success-icon-circle">
               <i className="bx bx-check"></i>
             </div>
@@ -136,7 +147,7 @@ export default function LoginForm({ onSwitchToRegister, onForgotPassword }) {
             </p>
           </div>
         </div>,
-        document.body
+        document.body,
       )}
 
       <div className="objects">
@@ -170,7 +181,10 @@ export default function LoginForm({ onSwitchToRegister, onForgotPassword }) {
                   type="email"
                   placeholder="Enter your email"
                   value={email}
-                  onChange={(e) => { setEmail(e.target.value); setEmailError(""); }}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setEmailError("");
+                  }}
                   className={emailError ? "error" : ""}
                 />
               </div>
@@ -186,7 +200,10 @@ export default function LoginForm({ onSwitchToRegister, onForgotPassword }) {
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
                   value={password}
-                  onChange={(e) => { setPassword(e.target.value); setPasswordError(""); }}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setPasswordError("");
+                  }}
                   className={passwordError ? "error" : ""}
                 />
                 <i
@@ -256,7 +273,10 @@ export default function LoginForm({ onSwitchToRegister, onForgotPassword }) {
                   placeholder="Enter OTP"
                   maxLength="6"
                   value={otp}
-                  onChange={(e) => { setOtp(e.target.value); setOtpError(""); }}
+                  onChange={(e) => {
+                    setOtp(e.target.value);
+                    setOtpError("");
+                  }}
                 />
               </div>
               <div className={`error-message ${otpError ? "show" : ""}`}>
@@ -280,7 +300,11 @@ export default function LoginForm({ onSwitchToRegister, onForgotPassword }) {
           <span>OR</span>
         </div>
 
-        <button type="button" className="google-login" onClick={handleGoogleLogin}>
+        <button
+          type="button"
+          className="google-login"
+          onClick={handleGoogleLogin}
+        >
           <img
             src="https://www.svgrepo.com/show/475656/google-color.svg"
             alt="Google"

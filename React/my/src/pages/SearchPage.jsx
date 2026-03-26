@@ -1,8 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import "../styles/searchpage.css";
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
-
 const TABS = [
   { key: "student", label: "Students" },
   { key: "faculty", label: "Faculty" },
@@ -185,8 +183,6 @@ const TAB_PLACEHOLDER = {
   chat: "Search groups…",
 };
 
-// ─── Chip ─────────────────────────────────────────────────────────────────────
-
 const Chip = ({ label, color }) => (
   <span
     className="se-chip"
@@ -195,8 +191,6 @@ const Chip = ({ label, color }) => (
     {label}
   </span>
 );
-
-// ─── Avatar ───────────────────────────────────────────────────────────────────
 
 const Avatar = ({ initials, color, shape = "circle", small = false }) => (
   <div
@@ -214,8 +208,6 @@ const Avatar = ({ initials, color, shape = "circle", small = false }) => (
     {initials}
   </div>
 );
-
-// ─── FollowButton ─────────────────────────────────────────────────────────────
 
 const FollowButton = ({ following, color, onToggle }) => {
   const [hovered, setHovered] = useState(false);
@@ -243,8 +235,6 @@ const FollowButton = ({ following, color, onToggle }) => {
     </button>
   );
 };
-
-// ─── Cards ────────────────────────────────────────────────────────────────────
 
 const StudentCard = ({ item, onToggleFollow }) => {
   const c = TYPE_COLOR.student;
@@ -358,8 +348,6 @@ const ChatCard = ({ item }) => {
   );
 };
 
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
-
 const SkeletonCard = () => (
   <div className="se-skeleton-card">
     <div
@@ -386,8 +374,6 @@ const SkeletonCard = () => (
     />
   </div>
 );
-
-// ─── Empty State ──────────────────────────────────────────────────────────────
 
 const EmptyState = ({ query }) => (
   <div className="se-empty">
@@ -419,8 +405,6 @@ const EmptyState = ({ query }) => (
     )}
   </div>
 );
-
-// ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function SearchExplore() {
   const [activeTab, setActiveTab] = useState("student");
@@ -517,55 +501,59 @@ export default function SearchExplore() {
       <div className="se-inner">
         {/* ── Header ── */}
         <div className="se-header">
-          <div className="se-search-wrap">
-            <span className="se-search-icon">
-              <svg
-                width="17"
-                height="17"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.35-4.35" />
-              </svg>
-            </span>
-            <input
-              type="text"
-              className="se-search-input"
-              value={inputValue}
-              placeholder={TAB_PLACEHOLDER[activeTab]}
-              onChange={handleInput}
-            />
-            {inputValue && (
-              <button className="se-clear-btn" onClick={clearSearch}>
-                ✕
-              </button>
-            )}
-          </div>
+          <div className="se-header-inner">
+            <div className="se-search-wrap">
+              <div className="se-search-input-wrap">
+                <span className="se-search-icon">
+                  <svg
+                    width="17"
+                    height="17"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.35-4.35" />
+                  </svg>
+                </span>
+                <input
+                  type="text"
+                  className="se-search-input"
+                  value={inputValue}
+                  placeholder={TAB_PLACEHOLDER[activeTab]}
+                  onChange={handleInput}
+                />
+                {inputValue && (
+                  <button className="se-clear-btn" onClick={clearSearch}>
+                    ✕
+                  </button>
+                )}
+              </div>
+            </div>
 
-          <div className="se-tabs">
-            {TABS.map((t) => {
-              const active = activeTab === t.key;
-              const tc = TYPE_COLOR[t.key];
-              return (
-                <button
-                  key={t.key}
-                  className="se-tab-btn"
-                  onClick={() => setActiveTab(t.key)}
-                  style={{
-                    background: active ? `${tc}22` : "#111",
-                    border: `1px solid ${active ? `${tc}66` : "#2a2a2a"}`,
-                    color: active ? tc : "#777",
-                  }}
-                >
-                  {t.label}
-                </button>
-              );
-            })}
+            <div className="se-tabs">
+              {TABS.map((t) => {
+                const active = activeTab === t.key;
+                const tc = TYPE_COLOR[t.key];
+                return (
+                  <button
+                    key={t.key}
+                    className="se-tab-btn"
+                    onClick={() => setActiveTab(t.key)}
+                    style={{
+                      background: active ? `${tc}22` : "#111",
+                      border: `1px solid ${active ? `${tc}66` : "#2a2a2a"}`,
+                      color: active ? tc : "#777",
+                    }}
+                  >
+                    {t.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 

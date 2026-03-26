@@ -5,7 +5,11 @@ import VerificationForm from "./VerificationForm";
 import TermsModal from "./TermsModal";
 import VerificationModal from "./VerificationModal";
 import ForgotPasswordForm from "./ForgotPasswordForm";
+import websiteVideo from "../../assets/website.mp4";
 
+// Inside your return, BEFORE the login box:
+<video id="bg-video" src={websiteVideo} autoPlay loop muted playsInline />
+<div className="video-overlay" />
 import logo from "../../assets/logo.png";
 import bgVideo from "../../assets/website.mp4";
 

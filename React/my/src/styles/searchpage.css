@@ -24,7 +24,7 @@
 
 .se-wrapper {
   background: #0a0a0a;
-  min-height: 100%; /* ← was 100vh, changed so it works inside the sheet */
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   font-family: "Segoe UI", system-ui, sans-serif;
@@ -35,7 +35,7 @@
 
 .se-inner {
   width: 100%;
-  max-width: 760px;
+  max-width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -52,26 +52,44 @@
   border-bottom: 1px solid #1e1e1e;
 }
 
+.se-header-inner {
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
 /* ─── Search Bar ─────────────────────────────────────────────────────────── */
 
+/* Outer wrap: only controls spacing around the input row */
 .se-search-wrap {
   padding: 16px 16px 12px;
+}
+
+/* Inner wrap: position:relative so icons anchor to input edges, not outer padding.
+   This is the key fix — icons never need to change across breakpoints. */
+.se-search-input-wrap {
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .se-search-icon {
   position: absolute;
-  left: 28px;
+  left: 14px;
   top: 50%;
-  transform: translateY(-55%);
+  transform: translateY(-50%);
   color: #555;
   display: flex;
+  align-items: center;
+  justify-content: center;
   pointer-events: none;
+  line-height: 0;
+  z-index: 1;
 }
 
 .se-search-input {
   width: 100%;
-  padding: 12px 44px 12px 48px;
+  padding: 12px 42px 12px 42px;
   background: #111;
   border: 1.5px solid #1e1e1e;
   border-radius: 14px;
@@ -83,6 +101,7 @@
     border-color 0.2s,
     box-shadow 0.2s;
   outline: none;
+  box-sizing: border-box;
 }
 .se-search-input::placeholder {
   color: #444;
@@ -94,9 +113,9 @@
 
 .se-clear-btn {
   position: absolute;
-  right: 28px;
+  right: 12px;
   top: 50%;
-  transform: translateY(-55%);
+  transform: translateY(-50%);
   background: #2a2a2a;
   border: none;
   border-radius: 50%;
@@ -108,6 +127,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  line-height: 0;
+  z-index: 1;
   transition: background 0.15s;
 }
 .se-clear-btn:hover {
@@ -146,7 +167,13 @@
   flex: 1;
   padding: 16px 16px 20px;
   overflow-y: auto;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
+
+/* ─── Results grid ───────────────────────────────────────────────────────── */
 
 .se-results-grid {
   display: grid;
@@ -381,15 +408,12 @@
 
 /* ─── Responsive ─────────────────────────────────────────────────────────── */
 
+/* .se-search-icon and .se-clear-btn are NOT overridden in any breakpoint.
+   They stay at left:14px / right:12px relative to the input — always centered. */
+
 @media (min-width: 600px) {
   .se-search-wrap {
     padding: 20px 20px 14px;
-  }
-  .se-search-icon {
-    left: 32px;
-  }
-  .se-clear-btn {
-    right: 32px;
   }
   .se-tabs {
     padding: 0 20px 14px;
@@ -400,7 +424,6 @@
   }
   .se-search-input {
     font-size: 15px;
-    padding: 13px 48px 13px 52px;
   }
   .se-card {
     padding: 16px 18px;
@@ -415,12 +438,6 @@
   .se-search-wrap {
     padding: 24px 28px 16px;
   }
-  .se-search-icon {
-    left: 40px;
-  }
-  .se-clear-btn {
-    right: 40px;
-  }
   .se-tabs {
     padding: 0 28px 16px;
     gap: 10px;
@@ -430,23 +447,76 @@
   }
   .se-search-input {
     font-size: 15px;
-    padding: 14px 52px 14px 56px;
     border-radius: 16px;
   }
-  .se-results-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-  .se-results-grid .se-card--notice {
-    grid-column: span 2;
-  }
   .se-card {
-    margin-bottom: 0;
+    margin-bottom: 10px;
   }
 }
 
-@media (min-width: 1200px) {
-  .se-inner {
-    max-width: 900px;
+@media (min-width: 1280px) {
+  .se-search-wrap {
+    padding: 28px 40px 18px;
+  }
+  .se-tabs {
+    padding: 0 40px 18px;
+    gap: 12px;
+  }
+  .se-tab-btn {
+    font-size: 13px;
+    padding: 7px 20px;
+  }
+  .se-body {
+    padding: 28px 40px 28px;
+  }
+  .se-search-input {
+    font-size: 16px;
+    border-radius: 18px;
+  }
+  .se-card {
+    padding: 18px 20px;
+    gap: 16px;
+  }
+  .se-card-name {
+    font-size: 15px;
+  }
+  .se-card-desc {
+    font-size: 13px;
+  }
+  .se-avatar {
+    width: 52px;
+    height: 52px;
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .se-search-wrap {
+    padding: 32px 56px 20px;
+  }
+  .se-tabs {
+    padding: 0 56px 20px;
+    gap: 14px;
+  }
+  .se-tab-btn {
+    font-size: 13px;
+    padding: 8px 22px;
+  }
+  .se-body {
+    padding: 32px 56px 32px;
+  }
+  .se-search-input {
+    font-size: 17px;
+    border-radius: 20px;
+  }
+  .se-card {
+    padding: 20px 22px;
+  }
+  .se-card-name {
+    font-size: 16px;
+  }
+  .se-results-count {
+    font-size: 11px;
+    letter-spacing: 3px;
   }
 }
