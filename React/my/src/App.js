@@ -18,7 +18,7 @@ import Profile from "./pages/Profile";
 import Bus from "./pages/Bus";
 import Chat from "./pages/Chat";
 import FacultyProfile from "./pages/FacultyProfile";
-
+import Settings from "./pages/Settings";
 // ── Existing pages ──
 import SupportUs from "./pages/SupportUs";
 import Syllabus from "./pages/Syllabus";
@@ -51,7 +51,7 @@ function App() {
           <Route path="/chat" element={<Chat />} />
           <Route path="/admin-explorer" element={<AdminExplorer />} />
           <Route path="/faculty-profile" element={<FacultyProfile />} />
-
+          <Route path="/settings" element={<Settings />} />
           {/* ── More section — built pages ── */}
           <Route path="/support-us" element={<SupportUs />} />
           <Route path="/syllabus" element={<Syllabus />} />
@@ -72,8 +72,6 @@ function App() {
           <Route path="/assignments" element={<ComingSoon />} />
           <Route path="/fees" element={<ComingSoon />} />
           <Route path="/id-card" element={<ComingSoon />} />
-          <Route path="/feedback" element={<ComingSoon />} />
-          <Route path="/settings" element={<ComingSoon />} />
         </Route>
       </Routes>
     </Router>

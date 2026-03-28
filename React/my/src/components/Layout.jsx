@@ -4,7 +4,6 @@ import "boxicons/css/boxicons.min.css";
 import "../styles/Explorer.css";
 import SearchExplore from "../pages/SearchPage";
 
-// ── Set this to false for regular users ──
 const IS_ADMIN = true;
 
 const NAV_ITEMS = [
@@ -39,15 +38,45 @@ const NAV_ITEMS = [
 ];
 
 const BROWSE_ITEMS = [
-  { icon: "bx-donate-heart", label: "Support Us", path: "/support-us" },
-  { icon: "bx-book-open", label: "Syllabus", path: "/syllabus" },
-  { icon: "bx-message-error", label: "Raise Complaint", path: "/complaint" },
-  { icon: "bx-group", label: "Clubs", path: "/clubs" },
-  { icon: "bx-briefcase", label: "Placements", path: "/placements" },
-  { icon: "bx-building", label: "Facilities", path: "/facilities" },
-  { icon: "bx-bus", label: "Transport", path: "/transport" },
-  { icon: "bx-food-menu", label: "Cafeteria", path: "/cafeteria" },
-  { icon: "bx-library", label: "Library", path: "/library" },
+  {
+    icon: "bx-donate-heart",
+    label: "Support Us",
+    path: "/support-us",
+    name: "Support Us",
+  },
+  {
+    icon: "bx-book-open",
+    label: "Syllabus",
+    path: "/syllabus",
+    name: "Syllabus",
+  },
+  {
+    icon: "bx-message-error",
+    label: "Raise Complaint",
+    path: "/complaint",
+    name: "Raise Complaint",
+  },
+  { icon: "bx-group", label: "Clubs", path: "/clubs", name: "Clubs" },
+  {
+    icon: "bx-briefcase",
+    label: "Placements",
+    path: "/placements",
+    name: "Placements",
+  },
+  {
+    icon: "bx-building",
+    label: "Facilities",
+    path: "/facilities",
+    name: "Facilities",
+  },
+  { icon: "bx-bus", label: "Transport", path: "/transport", name: "Transport" },
+  {
+    icon: "bx-food-menu",
+    label: "Cafeteria",
+    path: "/cafeteria",
+    name: "Cafeteria",
+  },
+  { icon: "bx-library", label: "Library", path: "/library", name: "Library" },
 ];
 
 export default function Layout() {
@@ -85,7 +114,6 @@ export default function Layout() {
     }
   }, [openPanel]);
 
-  // Close search on route change
   useEffect(() => {
     setSearchOpen(false);
   }, [location.pathname]);
@@ -106,9 +134,7 @@ export default function Layout() {
 
   const handleBrowseCardClick = (item) => {
     setExplorerOpen(false);
-    if (item.path) {
-      navigate(item.path);
-    }
+    if (item.path) navigate(item.path, { state: { name: item.name } });
   };
 
   const handleLogoutClick = () => {
@@ -126,15 +152,14 @@ export default function Layout() {
     }, 2000);
   };
 
-  // ── FIX: When More/explorer sheet is open, NO other nav item glows ──
   const isNavActive = (item) => {
-    if (explorerOpen) {
-      // Only the "More" button should be active when sheet is open
-      return item.isMore;
-    }
+    if (explorerOpen) return item.isMore;
     if (item.isMore) return false;
     return location.pathname === item.path;
   };
+
+  const isNotifOpen = openPanel === "notif";
+  const isMenuOpen = openPanel === "menu";
 
   return (
     <div className="main-app">
@@ -148,22 +173,37 @@ export default function Layout() {
         </div>
 
         <div className="header-icons">
-          {/* Animated search ↔ X */}
-          <i
-            className={`bx ${searchOpen ? "bx-x" : "bx-search"} search-toggle-icon${searchOpen ? " search-toggle-icon--open" : ""}`}
+          {/* Search */}
+          <span
+            className={`hdr-icon-wrap${searchOpen ? " hdr-icon-wrap--open" : ""}`}
             onClick={() => setSearchOpen((p) => !p)}
-          />
-          <i className="bx bx-bell" onClick={(e) => togglePanel("notif", e)} />
-          <i
-            ref={menuButtonRef}
-            className="bx bx-menu"
-            onClick={(e) => togglePanel("menu", e)}
-          />
-        </div>
+          >
+            <i className="bx bx-search hdr-icon hdr-icon--default" />
+            <i className="bx bx-x hdr-icon hdr-icon--close" />
+          </span>
 
+          {/* Bell */}
+          <span
+            className={`hdr-icon-wrap${isNotifOpen ? " hdr-icon-wrap--open" : ""}`}
+            onClick={(e) => togglePanel("notif", e)}
+          >
+            <i className="bx bx-bell hdr-icon hdr-icon--default" />
+            <i className="bx bx-x hdr-icon hdr-icon--close" />
+          </span>
+
+          {/* Menu */}
+          <span
+            ref={menuButtonRef}
+            className={`hdr-icon-wrap${isMenuOpen ? " hdr-icon-wrap--open" : ""}`}
+            onClick={(e) => togglePanel("menu", e)}
+          >
+            <i className="bx bx-menu hdr-icon hdr-icon--default" />
+            <i className="bx bx-x hdr-icon hdr-icon--close" />
+          </span>
+        </div>
         {/* Notification panel */}
         <div
-          className={`notification-panel${openPanel === "notif" ? " active" : ""}`}
+          className={`notification-panel${isNotifOpen ? " active" : ""}`}
           onClick={(e) => e.stopPropagation()}
         >
           {[
@@ -196,7 +236,7 @@ export default function Layout() {
 
         {/* Menu panel */}
         <div
-          className={`menu-panel${openPanel === "menu" ? " active" : ""}`}
+          className={`menu-panel${isMenuOpen ? " active" : ""}`}
           onClick={(e) => e.stopPropagation()}
           style={
             window.innerWidth <= 480
@@ -211,11 +251,19 @@ export default function Layout() {
           }
         >
           {[
-            { icon: "bx-cog", label: "Settings" },
-            { icon: "bx-message-dots", label: "Feedback" },
-            { icon: "bx-help-circle", label: "Help" },
+            { icon: "bx-cog", label: "Settings", path: "/settings" },
+            { icon: "bx-help-circle", label: "Help", path: null },
           ].map((m, i) => (
-            <div className="menu-item" key={i}>
+            <div
+              className="menu-item"
+              key={i}
+              onClick={() => {
+                if (m.path) {
+                  setOpenPanel(null);
+                  navigate(m.path);
+                }
+              }}
+            >
               <i className={`bx ${m.icon}`} />
               <span>{m.label}</span>
             </div>
@@ -227,7 +275,7 @@ export default function Layout() {
         </div>
       </div>
 
-      {/* ══ PAGE CONTENT — Outlet renders the matched route ══ */}
+      {/* ══ PAGE CONTENT ══ */}
       <div
         className={`page-content active${explorerOpen || searchOpen ? " content-blurred" : ""}`}
       >
@@ -258,7 +306,7 @@ export default function Layout() {
         </div>
       )}
 
-      {/* ══ MORE SHEET OVERLAY ══ */}
+      {/* ══ MORE SHEET ══ */}
       <div
         className={`explorer-overlay${explorerOpen ? " active" : ""}`}
         onClick={() => setExplorerOpen(false)}
