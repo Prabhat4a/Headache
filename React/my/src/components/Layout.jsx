@@ -39,15 +39,15 @@ const NAV_ITEMS = [
 ];
 
 const BROWSE_ITEMS = [
-  { icon: "bx-calendar-event", label: "Events" },
-  { icon: "bx-book-open", label: "Courses" },
-  { icon: "bx-trophy", label: "Sports" },
-  { icon: "bx-group", label: "Clubs" },
-  { icon: "bx-briefcase", label: "Placements" },
-  { icon: "bx-building", label: "Facilities" },
-  { icon: "bx-bus", label: "Transport" },
-  { icon: "bx-food-menu", label: "Cafeteria" },
-  { icon: "bx-library", label: "Library" },
+  { icon: "bx-donate-heart", label: "Support Us", path: "/support-us" },
+  { icon: "bx-book-open", label: "Syllabus", path: "/syllabus" },
+  { icon: "bx-message-error", label: "Raise Complaint", path: "/complaint" },
+  { icon: "bx-group", label: "Clubs", path: "/clubs" },
+  { icon: "bx-briefcase", label: "Placements", path: "/placements" },
+  { icon: "bx-building", label: "Facilities", path: "/facilities" },
+  { icon: "bx-bus", label: "Transport", path: "/transport" },
+  { icon: "bx-food-menu", label: "Cafeteria", path: "/cafeteria" },
+  { icon: "bx-library", label: "Library", path: "/library" },
 ];
 
 export default function Layout() {
@@ -104,6 +104,13 @@ export default function Layout() {
     }
   };
 
+  const handleBrowseCardClick = (item) => {
+    setExplorerOpen(false);
+    if (item.path) {
+      navigate(item.path);
+    }
+  };
+
   const handleLogoutClick = () => {
     setOpenPanel(null);
     setLogoutConfirmOpen(true);
@@ -119,8 +126,13 @@ export default function Layout() {
     }, 2000);
   };
 
+  // ── FIX: When More/explorer sheet is open, NO other nav item glows ──
   const isNavActive = (item) => {
-    if (item.isMore) return explorerOpen;
+    if (explorerOpen) {
+      // Only the "More" button should be active when sheet is open
+      return item.isMore;
+    }
+    if (item.isMore) return false;
     return location.pathname === item.path;
   };
 
@@ -260,7 +272,7 @@ export default function Layout() {
               <div
                 className="browse-card"
                 key={i}
-                onClick={() => setExplorerOpen(false)}
+                onClick={() => handleBrowseCardClick(item)}
               >
                 <i className={`bx ${item.icon}`} />
                 <span>{item.label}</span>

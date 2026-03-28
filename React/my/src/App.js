@@ -14,10 +14,15 @@ import CompleteRegister from "./pages/CompleteRegister";
 import LinkAccount from "./pages/LinkAccount";
 import Layout from "./components/Layout";
 import Explorer from "./components/Explorer";
-import Profile from "./pages/Profile"; // ✅ was ./components/pages/Profile
-import Bus from "./pages/Bus"; // ✅ was ./components/pages/Bus
-import Chat from "./pages/Chat"; // ✅ was ./components/pages/Chat
+import Profile from "./pages/Profile";
+import Bus from "./pages/Bus";
+import Chat from "./pages/Chat";
 import FacultyProfile from "./pages/FacultyProfile";
+
+// ── New pages ──
+import SupportUs from "./pages/SupportUs";
+import Syllabus from "./pages/Syllabus";
+import RaiseComplaint from "./pages/RaiseComplaint";
 
 const isAuthenticated = () => localStorage.getItem("token") !== null;
 const ProtectedLayout = () =>
@@ -39,8 +44,12 @@ function App() {
           <Route path="/bus" element={<Bus />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/admin-explorer" element={<AdminExplorer />} />
-
           <Route path="/faculty-profile" element={<FacultyProfile />} />
+
+          {/* ── Browse pages ── */}
+          <Route path="/support-us" element={<SupportUs />} />
+          <Route path="/syllabus" element={<Syllabus />} />
+          <Route path="/complaint" element={<RaiseComplaint />} />
         </Route>
       </Routes>
     </Router>
