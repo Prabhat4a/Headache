@@ -255,14 +255,18 @@ export default function Syllabus() {
 
   return (
     <div className="syl-wrapper">
-      {/* ── Header ── */}
       <div className="syl-header">
         <div className="syl-header-row">
-          {step !== "branch" && (
-            <button className="syl-back-btn" onClick={handleBack}>
-              <i className="bx bx-arrow-back" />
-            </button>
-          )}
+          {/* Always show back — goes to previous page on branch step, goes back within syllabus on other steps */}
+          <button
+            className="syl-back-btn"
+            onClick={
+              step === "branch" ? () => window.history.back() : handleBack
+            }
+          >
+            <i className="bx bx-arrow-back" />
+          </button>
+
           <div className="syl-header-icon">
             <i className="bx bx-book-open" />
           </div>
@@ -367,10 +371,6 @@ export default function Syllabus() {
                       >
                         {TYPE_LABEL[subj.type]}
                       </span>
-                    </div>
-                    <div className="syl-subject-credits">
-                      <span className="syl-credit-num">{subj.credits}</span>
-                      <span className="syl-credit-label">Credits</span>
                     </div>
                   </div>
                 ))

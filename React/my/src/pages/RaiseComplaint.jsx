@@ -154,7 +154,11 @@ export default function RaiseComplaint() {
   return (
     <div className="rc-wrapper">
       {/* ── Header ── */}
+      {/* ── Header ── */}
       <div className="rc-header">
+        <button className="syl-back-btn" onClick={() => window.history.back()}>
+          <i className="bx bx-arrow-back" />
+        </button>
         <div className="rc-header-icon">
           <i className="bx bx-message-error" />
         </div>
@@ -248,27 +252,6 @@ export default function RaiseComplaint() {
           maxLength={1000}
         />
         <span className="rc-char-count">{description.length}/1000</span>
-      </div>
-
-      {/* ── Anonymous Toggle ── */}
-      <div className="rc-section">
-        <div
-          className={`rc-anon-row${isAnonymous ? " active" : ""}`}
-          onClick={() => setIsAnonymous((p) => !p)}
-        >
-          <div className="rc-anon-info">
-            <i className="bx bx-low-vision" />
-            <div>
-              <span className="rc-anon-title">Submit Anonymously</span>
-              <span className="rc-anon-desc">
-                Your identity will not be revealed to the administration
-              </span>
-            </div>
-          </div>
-          <div className={`rc-toggle${isAnonymous ? " on" : ""}`}>
-            <div className="rc-toggle-knob" />
-          </div>
-        </div>
       </div>
 
       {/* ── Submit ── */}

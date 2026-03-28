@@ -36,6 +36,9 @@ export default function SupportUs() {
     <div className="su-wrapper">
       {/* ── Header ── */}
       <div className="su-header">
+        <button className="su-back-btn" onClick={() => window.history.back()}>
+          <i className="bx bx-arrow-back" />
+        </button>
         <div className="su-header-icon">
           <i className="bx bx-donate-heart" />
         </div>
