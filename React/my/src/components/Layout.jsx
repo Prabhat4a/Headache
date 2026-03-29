@@ -120,6 +120,8 @@ export default function Layout() {
 
   const togglePanel = (name, e) => {
     e.stopPropagation();
+    setSearchOpen(false); // ← close search when opening notif/menu
+
     setOpenPanel((p) => (p === name ? null : name));
   };
 
