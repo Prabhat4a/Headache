@@ -19,10 +19,12 @@ import Bus from "./pages/Bus";
 import Chat from "./pages/Chat";
 import FacultyProfile from "./pages/FacultyProfile";
 import Settings from "./pages/Settings";
-// ── Existing pages ──
+
+// ── Built pages ──
 import SupportUs from "./pages/SupportUs";
 import Syllabus from "./pages/Syllabus";
 import RaiseComplaint from "./pages/RaiseComplaint";
+import Placements from "./pages/Placements";
 
 // ── Coming Soon ──
 import ComingSoon from "./pages/ComingSoon";
@@ -52,14 +54,15 @@ function App() {
           <Route path="/admin-explorer" element={<AdminExplorer />} />
           <Route path="/faculty-profile" element={<FacultyProfile />} />
           <Route path="/settings" element={<Settings />} />
+
           {/* ── More section — built pages ── */}
           <Route path="/support-us" element={<SupportUs />} />
           <Route path="/syllabus" element={<Syllabus />} />
           <Route path="/complaint" element={<RaiseComplaint />} />
+          <Route path="/placements" element={<Placements />} />
 
           {/* ── More section — Coming Soon pages ── */}
           <Route path="/clubs" element={<ComingSoon />} />
-          <Route path="/placements" element={<ComingSoon />} />
           <Route path="/facilities" element={<ComingSoon />} />
           <Route path="/transport" element={<ComingSoon />} />
           <Route path="/cafeteria" element={<ComingSoon />} />

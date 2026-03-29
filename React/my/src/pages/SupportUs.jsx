@@ -1,37 +1,9 @@
 import { useState } from "react";
 import "boxicons/css/boxicons.min.css";
 import "../styles/SupportUs.css";
-
-// ── Replace this with your actual QR code image path or URL ──
-const QR_PLACEHOLDER = null; // Set to your QR image path e.g. "/qr-code.png"
-
-const UPI_ID = "yourname@upi"; // ← Replace with your UPI ID
-const COLLEGE_NAME = "STUVO5 College";
-
-const PRESET_AMOUNTS = [10, 20, 50, 100, 200, 500];
+import QRImage from "../assets/QR code.jpeg";
 
 export default function SupportUs() {
-  const [copied, setCopied] = useState(false);
-  const [selectedAmount, setSelectedAmount] = useState(null);
-  const [customAmount, setCustomAmount] = useState("");
-  const [thankYou, setThankYou] = useState(false);
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(UPI_ID).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
-
-  const handleDonateClick = () => {
-    const amt = selectedAmount || customAmount;
-    if (!amt) return;
-    setThankYou(true);
-    setTimeout(() => setThankYou(false), 3500);
-  };
-
-  const activeAmount = selectedAmount || customAmount;
-
   return (
     <div className="su-wrapper">
       {/* ── Header ── */}
@@ -55,94 +27,9 @@ export default function SupportUs() {
           <i className="bx bx-qr" />
           <span>Scan to Pay</span>
         </div>
-
         <div className="su-qr-box">
-          {QR_PLACEHOLDER ? (
-            <img
-              src={QR_PLACEHOLDER}
-              alt="Payment QR Code"
-              className="su-qr-img"
-            />
-          ) : (
-            /* Placeholder grid when no QR provided */
-            <div className="su-qr-placeholder">
-              <div className="su-qr-grid">
-                {Array.from({ length: 121 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className={`su-qr-cell ${Math.random() > 0.5 ? "filled" : ""}`}
-                  />
-                ))}
-              </div>
-              <div className="su-qr-corners">
-                <div className="su-qr-corner tl" />
-                <div className="su-qr-corner tr" />
-                <div className="su-qr-corner bl" />
-              </div>
-            </div>
-          )}
+          <img src={QRImage} alt="Payment QR Code" className="su-qr-img" />
         </div>
-
-        <div className="su-upi-row">
-          <span className="su-upi-label">UPI ID</span>
-          <span className="su-upi-id">{UPI_ID}</span>
-          <button
-            className={`su-copy-btn${copied ? " copied" : ""}`}
-            onClick={handleCopy}
-          >
-            <i className={`bx ${copied ? "bx-check" : "bx-copy"}`} />
-            <span>{copied ? "Copied!" : "Copy"}</span>
-          </button>
-        </div>
-      </div>
-
-      {/* ── Amount Selector ── */}
-      <div className="su-card su-amount-card">
-        <div className="su-card-label">
-          <i className="bx bx-rupee" />
-          <span>Choose Amount</span>
-        </div>
-
-        <div className="su-preset-grid">
-          {PRESET_AMOUNTS.map((amt) => (
-            <button
-              key={amt}
-              className={`su-preset-btn${selectedAmount === amt ? " active" : ""}`}
-              onClick={() => {
-                setSelectedAmount(amt);
-                setCustomAmount("");
-              }}
-            >
-              ₹{amt}
-            </button>
-          ))}
-        </div>
-
-        <div className="su-custom-row">
-          <span className="su-rupee-symbol">₹</span>
-          <input
-            type="number"
-            className="su-custom-input"
-            placeholder="Enter custom amount"
-            value={customAmount}
-            onChange={(e) => {
-              setCustomAmount(e.target.value);
-              setSelectedAmount(null);
-            }}
-            min="1"
-          />
-        </div>
-
-        <button
-          className={`su-donate-btn${activeAmount ? " ready" : ""}`}
-          onClick={handleDonateClick}
-          disabled={!activeAmount}
-        >
-          <i className="bx bx-heart" />
-          <span>
-            {activeAmount ? `Donate ₹${activeAmount}` : "Select an amount"}
-          </span>
-        </button>
       </div>
 
       {/* ── Why Support Section ── */}
@@ -170,14 +57,6 @@ export default function SupportUs() {
           ))}
         </div>
       </div>
-
-      {/* ── Thank You Toast ── */}
-      {thankYou && (
-        <div className="su-toast">
-          <i className="bx bx-heart" />
-          <span>Thank you for your support! 💜</span>
-        </div>
-      )}
     </div>
   );
 }
