@@ -5,22 +5,29 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+
+// ── Components ──
 import AdminExplorer from "./components/Admin-explorer";
+import Layout from "./components/Layout";
+import Explorer from "./components/Explorer";
+
+// ── Public Pages ──
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
-import CompleteRegister from "./pages/CompleteRegister";
+import CompleteRegister from "./pages/CompleteRegister"; // .js file
 import LinkAccount from "./pages/LinkAccount";
-import Layout from "./components/Layout";
-import Explorer from "./components/Explorer";
+
+// ── Protected Pages ──
 import Profile from "./pages/Profile";
 import Bus from "./pages/Bus";
 import Chat from "./pages/Chat";
 import FacultyProfile from "./pages/FacultyProfile";
 import Settings from "./pages/Settings";
+import SearchPage from "./pages/SearchPage"; // ← was MISSING from router
 
-// ── Built pages ──
+// ── Built Pages ──
 import SupportUs from "./pages/SupportUs";
 import Syllabus from "./pages/Syllabus";
 import RaiseComplaint from "./pages/RaiseComplaint";
@@ -29,7 +36,9 @@ import Placements from "./pages/Placements";
 // ── Coming Soon ──
 import ComingSoon from "./pages/ComingSoon";
 
+// ── Auth guard ──
 const isAuthenticated = () => localStorage.getItem("token") !== null;
+
 const ProtectedLayout = () =>
   isAuthenticated() ? <Layout /> : <Navigate to="/login" replace />;
 
@@ -47,21 +56,21 @@ function App() {
 
         {/* ── Protected routes ── */}
         <Route element={<ProtectedLayout />}>
+          {/* Core */}
           <Route path="/explorer" element={<Explorer />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/bus" element={<Bus />} />
           <Route path="/chat" element={<Chat />} />
+          <Route path="/search" element={<SearchPage />} /> {/* ← FIXED */}
           <Route path="/admin-explorer" element={<AdminExplorer />} />
           <Route path="/faculty-profile" element={<FacultyProfile />} />
           <Route path="/settings" element={<Settings />} />
-
-          {/* ── More section — built pages ── */}
+          {/* More section — built pages */}
           <Route path="/support-us" element={<SupportUs />} />
           <Route path="/syllabus" element={<Syllabus />} />
           <Route path="/complaint" element={<RaiseComplaint />} />
           <Route path="/placements" element={<Placements />} />
-
-          {/* ── More section — Coming Soon pages ── */}
+          {/* More section — Coming Soon */}
           <Route path="/clubs" element={<ComingSoon />} />
           <Route path="/facilities" element={<ComingSoon />} />
           <Route path="/transport" element={<ComingSoon />} />
@@ -76,6 +85,9 @@ function App() {
           <Route path="/fees" element={<ComingSoon />} />
           <Route path="/id-card" element={<ComingSoon />} />
         </Route>
+
+        {/* ── Catch-all: redirect unknown routes to home ── */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );

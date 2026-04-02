@@ -279,7 +279,7 @@ export default function Layout() {
 
       {/* ══ PAGE CONTENT ══ */}
       <div
-        className={`page-content active${explorerOpen || searchOpen ? " content-blurred" : ""}`}
+        className={`page-content active${explorerOpen || searchOpen ? " content-blurred" : ""}${location.pathname === "/chat" ? " chat-active" : ""}`}
       >
         <Outlet />
       </div>

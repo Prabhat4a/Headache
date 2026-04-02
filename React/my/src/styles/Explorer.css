@@ -235,6 +235,8 @@ body {
 .page-content {
   display: none;
   flex: 1;
+  min-height: 0; /* ← CRITICAL: lets flexbox shrink it properly */
+  position: relative; /* ← chat's absolute inset anchors here */
   overflow-y: auto;
   overflow-x: hidden;
   padding-bottom: 20px;
@@ -243,8 +245,14 @@ body {
   transition: filter 0.25s ease;
 }
 .page-content.active {
-  display: block;
+  display: flex;
+  flex-direction: column;
   animation: fadeUp 0.3s ease;
+}
+/* Chat page needs full height, no scroll on the container */
+.page-content.chat-active {
+  overflow: hidden;
+  padding-bottom: 0;
 }
 .page-content.content-blurred {
   filter: blur(4px);
