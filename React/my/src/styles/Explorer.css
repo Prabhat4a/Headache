@@ -244,15 +244,21 @@ body {
   filter: blur(0);
   transition: filter 0.25s ease;
 }
-.page-content.active {
-  display: flex;
-  flex-direction: column;
-  animation: fadeUp 0.3s ease;
-}
-/* Chat page needs full height, no scroll on the container */
 .page-content.chat-active {
   overflow: hidden;
   padding-bottom: 0;
+  flex: 1;
+  min-height: 0;
+  height: 0; /* forces flex child to not overflow */
+}
+
+/* The direct child of page-content (the route wrapper div) must also stretch */
+.page-content.chat-active > * {
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 .page-content.content-blurred {
   filter: blur(4px);
@@ -1404,4 +1410,12 @@ body {
 .header-icons .menu-toggle-icon:not(.menu-toggle-icon--open) {
   transform: rotate(0deg) scale(1);
   color: #aaa !important;
+}
+.page-content.active {
+  display: block;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 20px;
 }

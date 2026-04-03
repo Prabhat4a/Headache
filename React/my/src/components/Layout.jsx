@@ -3,6 +3,7 @@ import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import "boxicons/css/boxicons.min.css";
 import "../styles/Explorer.css";
 import SearchExplore from "../pages/SearchPage";
+import ChatOverlay from "./ChatOverlay"; // ✅ same folder as Layout.jsx
 
 const IS_ADMIN = true;
 
@@ -21,13 +22,7 @@ const NAV_ITEMS = [
     label: "More",
     isMore: true,
   },
-  {
-    id: "chat",
-    icon: "bx-message-rounded-dots",
-    label: "Chat",
-    path: "/chat",
-    isMore: false,
-  },
+  { id: "chat", icon: "bx-message-rounded-dots", label: "Chat", isMore: false },
   {
     id: "profile",
     icon: "bx-user-circle",
@@ -89,6 +84,7 @@ export default function Layout() {
   const [bannerVisible, setBannerVisible] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [logoutToast, setLogoutToast] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false); // ✅ chat overlay
 
   const menuButtonRef = useRef(null);
   const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 });
@@ -120,14 +116,16 @@ export default function Layout() {
 
   const togglePanel = (name, e) => {
     e.stopPropagation();
-    setSearchOpen(false); // ← close search when opening notif/menu
-
+    setSearchOpen(false);
     setOpenPanel((p) => (p === name ? null : name));
   };
 
   const handleNavClick = (item) => {
     if (item.isMore) {
       setExplorerOpen((prev) => !prev);
+    } else if (item.id === "chat") {
+      // ✅ open overlay, do NOT navigate
+      setChatOpen(true);
     } else {
       setExplorerOpen(false);
       navigate(item.path);
@@ -155,6 +153,7 @@ export default function Layout() {
   };
 
   const isNavActive = (item) => {
+    if (item.id === "chat") return chatOpen; // ✅ highlight chat when overlay open
     if (explorerOpen) return item.isMore;
     if (item.isMore) return false;
     return location.pathname === item.path;
@@ -203,6 +202,7 @@ export default function Layout() {
             <i className="bx bx-x hdr-icon hdr-icon--close" />
           </span>
         </div>
+
         {/* Notification panel */}
         <div
           className={`notification-panel${isNotifOpen ? " active" : ""}`}
@@ -278,8 +278,15 @@ export default function Layout() {
       </div>
 
       {/* ══ PAGE CONTENT ══ */}
+      {/* ✅ "active" kept as separate class string item so it always applies */}
       <div
-        className={`page-content active${explorerOpen || searchOpen ? " content-blurred" : ""}${location.pathname === "/chat" ? " chat-active" : ""}`}
+        className={[
+          "page-content",
+          "active",
+          explorerOpen || searchOpen ? "content-blurred" : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
       >
         <Outlet />
       </div>
@@ -413,6 +420,9 @@ export default function Layout() {
           <span>Logged out successfully!</span>
         </div>
       )}
+
+      {/* ══ CHAT OVERLAY ══ — renders as fixed full-screen portal, always last */}
+      <ChatOverlay isOpen={chatOpen} onClose={() => setChatOpen(false)} />
     </div>
   );
 }

@@ -16,16 +16,15 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
-import CompleteRegister from "./pages/CompleteRegister"; // .js file
+import CompleteRegister from "./pages/CompleteRegister";
 import LinkAccount from "./pages/LinkAccount";
 
 // ── Protected Pages ──
 import Profile from "./pages/Profile";
 import Bus from "./pages/Bus";
-import Chat from "./pages/Chat";
 import FacultyProfile from "./pages/FacultyProfile";
 import Settings from "./pages/Settings";
-import SearchPage from "./pages/SearchPage"; // ← was MISSING from router
+import SearchPage from "./pages/SearchPage";
 
 // ── Built Pages ──
 import SupportUs from "./pages/SupportUs";
@@ -60,16 +59,22 @@ function App() {
           <Route path="/explorer" element={<Explorer />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/bus" element={<Bus />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/search" element={<SearchPage />} /> {/* ← FIXED */}
+
+          {/* ✅ Chat is now a full-screen overlay opened from the bottom nav.
+              This redirect prevents a blank page if someone visits /chat directly. */}
+          <Route path="/chat" element={<Navigate to="/explorer" replace />} />
+
+          <Route path="/search" element={<SearchPage />} />
           <Route path="/admin-explorer" element={<AdminExplorer />} />
           <Route path="/faculty-profile" element={<FacultyProfile />} />
           <Route path="/settings" element={<Settings />} />
+
           {/* More section — built pages */}
           <Route path="/support-us" element={<SupportUs />} />
           <Route path="/syllabus" element={<Syllabus />} />
           <Route path="/complaint" element={<RaiseComplaint />} />
           <Route path="/placements" element={<Placements />} />
+
           {/* More section — Coming Soon */}
           <Route path="/clubs" element={<ComingSoon />} />
           <Route path="/facilities" element={<ComingSoon />} />
