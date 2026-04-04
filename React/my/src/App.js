@@ -37,7 +37,6 @@ import ComingSoon from "./pages/ComingSoon";
 
 // ── Auth guard ──
 const isAuthenticated = () => localStorage.getItem("token") !== null;
-
 const ProtectedLayout = () =>
   isAuthenticated() ? <Layout /> : <Navigate to="/login" replace />;
 
@@ -45,7 +44,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* ── Public routes ── */}
+        {/* ── Public ── */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -53,15 +52,14 @@ function App() {
         <Route path="/complete-register" element={<CompleteRegister />} />
         <Route path="/link-account" element={<LinkAccount />} />
 
-        {/* ── Protected routes ── */}
+        {/* ── Protected ── */}
         <Route element={<ProtectedLayout />}>
-          {/* Core */}
           <Route path="/explorer" element={<Explorer />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/bus" element={<Bus />} />
 
-          {/* ✅ Chat is now a full-screen overlay opened from the bottom nav.
-              This redirect prevents a blank page if someone visits /chat directly. */}
+          {/* ✅ Chat is an overlay triggered from bottom nav.
+              Redirect /chat to explorer so the URL never breaks. */}
           <Route path="/chat" element={<Navigate to="/explorer" replace />} />
 
           <Route path="/search" element={<SearchPage />} />
@@ -69,13 +67,13 @@ function App() {
           <Route path="/faculty-profile" element={<FacultyProfile />} />
           <Route path="/settings" element={<Settings />} />
 
-          {/* More section — built pages */}
+          {/* More section */}
           <Route path="/support-us" element={<SupportUs />} />
           <Route path="/syllabus" element={<Syllabus />} />
           <Route path="/complaint" element={<RaiseComplaint />} />
           <Route path="/placements" element={<Placements />} />
 
-          {/* More section — Coming Soon */}
+          {/* Coming Soon */}
           <Route path="/clubs" element={<ComingSoon />} />
           <Route path="/facilities" element={<ComingSoon />} />
           <Route path="/transport" element={<ComingSoon />} />
@@ -91,7 +89,7 @@ function App() {
           <Route path="/id-card" element={<ComingSoon />} />
         </Route>
 
-        {/* ── Catch-all: redirect unknown routes to home ── */}
+        {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

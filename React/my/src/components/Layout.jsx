@@ -3,33 +3,21 @@ import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import "boxicons/css/boxicons.min.css";
 import "../styles/Explorer.css";
 import SearchExplore from "../pages/SearchPage";
-import ChatOverlay from "./ChatOverlay"; // ✅ same folder as Layout.jsx
+import ChatOverlay from "./ChatOverlay";
 
 const IS_ADMIN = true;
 
 const NAV_ITEMS = [
-  {
-    id: "explorer",
-    icon: "bx-compass",
-    label: "Explorer",
-    path: "/explorer",
-    isMore: false,
-  },
-  { id: "bus", icon: "bx-bus", label: "Bus", path: "/bus", isMore: false },
+  { id: "explorer", icon: "bx-compass", label: "Explorer", path: "/explorer" },
+  { id: "bus", icon: "bx-bus", label: "Bus", path: "/bus" },
   {
     id: "more",
     icon: "bx-dots-horizontal-rounded",
     label: "More",
     isMore: true,
   },
-  { id: "chat", icon: "bx-message-rounded-dots", label: "Chat", isMore: false },
-  {
-    id: "profile",
-    icon: "bx-user-circle",
-    label: "Profile",
-    path: "/profile",
-    isMore: false,
-  },
+  { id: "chat", icon: "bx-message-rounded-dots", label: "Chat" },
+  { id: "profile", icon: "bx-user-circle", label: "Profile", path: "/profile" },
 ];
 
 const BROWSE_ITEMS = [
@@ -84,7 +72,7 @@ export default function Layout() {
   const [bannerVisible, setBannerVisible] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [logoutToast, setLogoutToast] = useState(false);
-  const [chatOpen, setChatOpen] = useState(false); // ✅ chat overlay
+  const [chatOpen, setChatOpen] = useState(false);
 
   const menuButtonRef = useRef(null);
   const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 });
@@ -114,20 +102,38 @@ export default function Layout() {
     setSearchOpen(false);
   }, [location.pathname]);
 
+  useEffect(() => {
+    setChatOpen(false);
+  }, [location.pathname]);
+
   const togglePanel = (name, e) => {
     e.stopPropagation();
     setSearchOpen(false);
     setOpenPanel((p) => (p === name ? null : name));
   };
 
+  /* ── Only one nav item active at a time ── */
+  const isNavActive = (item) => {
+    if (item.id === "chat") return chatOpen && !explorerOpen;
+    if (item.isMore) return explorerOpen;
+    if (item.id === "bus" || item.id === "explorer" || item.id === "profile") {
+      if (chatOpen || explorerOpen) return false;
+      return location.pathname === item.path;
+    }
+    return false;
+  };
+
+  /* ── Closing others when switching tabs ── */
   const handleNavClick = (item) => {
     if (item.isMore) {
-      setExplorerOpen((prev) => !prev);
+      setChatOpen(false);
+      setExplorerOpen((p) => !p);
     } else if (item.id === "chat") {
-      // ✅ open overlay, do NOT navigate
-      setChatOpen(true);
+      setExplorerOpen(false);
+      setChatOpen((p) => !p);
     } else {
       setExplorerOpen(false);
+      setChatOpen(false);
       navigate(item.path);
     }
   };
@@ -152,13 +158,6 @@ export default function Layout() {
     }, 2000);
   };
 
-  const isNavActive = (item) => {
-    if (item.id === "chat") return chatOpen; // ✅ highlight chat when overlay open
-    if (explorerOpen) return item.isMore;
-    if (item.isMore) return false;
-    return location.pathname === item.path;
-  };
-
   const isNotifOpen = openPanel === "notif";
   const isMenuOpen = openPanel === "menu";
 
@@ -174,7 +173,6 @@ export default function Layout() {
         </div>
 
         <div className="header-icons">
-          {/* Search */}
           <span
             className={`hdr-icon-wrap${searchOpen ? " hdr-icon-wrap--open" : ""}`}
             onClick={() => setSearchOpen((p) => !p)}
@@ -182,8 +180,6 @@ export default function Layout() {
             <i className="bx bx-search hdr-icon hdr-icon--default" />
             <i className="bx bx-x hdr-icon hdr-icon--close" />
           </span>
-
-          {/* Bell */}
           <span
             className={`hdr-icon-wrap${isNotifOpen ? " hdr-icon-wrap--open" : ""}`}
             onClick={(e) => togglePanel("notif", e)}
@@ -191,8 +187,6 @@ export default function Layout() {
             <i className="bx bx-bell hdr-icon hdr-icon--default" />
             <i className="bx bx-x hdr-icon hdr-icon--close" />
           </span>
-
-          {/* Menu */}
           <span
             ref={menuButtonRef}
             className={`hdr-icon-wrap${isMenuOpen ? " hdr-icon-wrap--open" : ""}`}
@@ -278,7 +272,6 @@ export default function Layout() {
       </div>
 
       {/* ══ PAGE CONTENT ══ */}
-      {/* ✅ "active" kept as separate class string item so it always applies */}
       <div
         className={[
           "page-content",
@@ -421,7 +414,7 @@ export default function Layout() {
         </div>
       )}
 
-      {/* ══ CHAT OVERLAY ══ — renders as fixed full-screen portal, always last */}
+      {/* ══ CHAT OVERLAY ══ */}
       <ChatOverlay isOpen={chatOpen} onClose={() => setChatOpen(false)} />
     </div>
   );
