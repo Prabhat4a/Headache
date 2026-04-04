@@ -101,7 +101,6 @@ export default function Layout() {
   useEffect(() => {
     setSearchOpen(false);
   }, [location.pathname]);
-
   useEffect(() => {
     setChatOpen(false);
   }, [location.pathname]);
@@ -112,7 +111,6 @@ export default function Layout() {
     setOpenPanel((p) => (p === name ? null : name));
   };
 
-  /* ── Only one nav item active at a time ── */
   const isNavActive = (item) => {
     if (item.id === "chat") return chatOpen && !explorerOpen;
     if (item.isMore) return explorerOpen;
@@ -123,7 +121,6 @@ export default function Layout() {
     return false;
   };
 
-  /* ── Closing others when switching tabs ── */
   const handleNavClick = (item) => {
     if (item.isMore) {
       setChatOpen(false);
@@ -147,7 +144,6 @@ export default function Layout() {
     setOpenPanel(null);
     setLogoutConfirmOpen(true);
   };
-
   const handleLogoutConfirm = () => {
     setLogoutConfirmOpen(false);
     setLogoutToast(true);
@@ -414,7 +410,7 @@ export default function Layout() {
         </div>
       )}
 
-      {/* ══ CHAT OVERLAY ══ */}
+      {/* ══ CHAT OVERLAY — full-screen, covers header + bottom nav ══ */}
       <ChatOverlay isOpen={chatOpen} onClose={() => setChatOpen(false)} />
     </div>
   );
