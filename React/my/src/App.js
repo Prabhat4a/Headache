@@ -1,3 +1,4 @@
+// ── All imports FIRST ──
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -6,12 +7,10 @@ import {
   Navigate,
 } from "react-router-dom";
 
-// ── Components ──
 import AdminExplorer from "./components/Admin-explorer";
 import Layout from "./components/Layout";
 import Explorer from "./components/Explorer";
 
-// ── Public Pages ──
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -19,28 +18,54 @@ import ForgotPassword from "./pages/ForgotPassword";
 import CompleteRegister from "./pages/CompleteRegister";
 import LinkAccount from "./pages/LinkAccount";
 
-// ── Protected Pages ──
 import Profile from "./pages/Profile";
 import Bus from "./pages/Bus";
 import FacultyProfile from "./pages/FacultyProfile";
 import Settings from "./pages/Settings";
+import Help from "./pages/Help"; // ← keep this as the real import
 import SearchPage from "./pages/SearchPage";
 
-// ── Built Pages ──
 import SupportUs from "./pages/SupportUs";
 import Syllabus from "./pages/Syllabus";
 import RaiseComplaint from "./pages/RaiseComplaint";
 import Placements from "./pages/Placements";
 
-// ── Coming Soon ──
 import ComingSoon from "./pages/ComingSoon";
 
-// ── Auth guard ──
+// ── THEN constants/functions ──
 const isAuthenticated = () => localStorage.getItem("token") !== null;
 const ProtectedLayout = () =>
   isAuthenticated() ? <Layout /> : <Navigate to="/login" replace />;
-
 function App() {
+  // TEMP DEBUG — remove after fix
+  const components = {
+    AdminExplorer,
+    Layout,
+    Explorer,
+    Home,
+    Login,
+    Register,
+    ForgotPassword,
+    CompleteRegister,
+    LinkAccount,
+    Profile,
+    Bus,
+    FacultyProfile,
+    Settings,
+    Help,
+    SearchPage,
+    SupportUs,
+    Syllabus,
+    RaiseComplaint,
+    Placements,
+    ComingSoon,
+  };
+  Object.entries(components).forEach(([name, comp]) => {
+    if (typeof comp !== "function") {
+      console.error(`❌ BAD IMPORT: ${name} is`, typeof comp, comp);
+    }
+  });
+
   return (
     <Router>
       <Routes>
@@ -66,6 +91,7 @@ function App() {
           <Route path="/admin-explorer" element={<AdminExplorer />} />
           <Route path="/faculty-profile" element={<FacultyProfile />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/help" element={<Help />} />
 
           {/* More section */}
           <Route path="/support-us" element={<SupportUs />} />

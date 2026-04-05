@@ -240,7 +240,7 @@ body {
   position: relative; /* ← chat's absolute inset anchors here */
   overflow-y: auto;
   overflow-x: hidden;
-  padding-bottom: 20px;
+  padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
   -webkit-overflow-scrolling: touch;
   filter: blur(0);
   transition: filter 0.25s ease;
@@ -1421,5 +1421,5 @@ body {
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-bottom: 20px;
+  padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
 }

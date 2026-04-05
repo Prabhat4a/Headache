@@ -244,7 +244,7 @@ export default function Layout() {
         >
           {[
             { icon: "bx-cog", label: "Settings", path: "/settings" },
-            { icon: "bx-help-circle", label: "Help", path: null },
+            { icon: "bx-help-circle", label: "Help", path: "/help" },
           ].map((m, i) => (
             <div
               className="menu-item"
