@@ -1,0 +1,654 @@
+/* ================================================
+   BusTracking.css  —  STUVO5  |  Grey/Black theme
+   ================================================ */
+
+.bt-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #0a0a0a;
+  color: #e2e8f0;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  padding-bottom: 80px;
+}
+
+/* ── TOASTS ── */
+.bt-toasts {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: calc(100% - 32px);
+  max-width: 420px;
+  pointer-events: none;
+}
+.bt-toast {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  backdrop-filter: blur(12px);
+  animation: toastIn 0.3s ease;
+  pointer-events: all;
+}
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.bt-toast--success {
+  background: rgba(20, 20, 20, 0.95);
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  color: #4ade80;
+}
+.bt-toast--error {
+  background: rgba(20, 20, 20, 0.95);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  color: #f87171;
+}
+.bt-toast--cancel {
+  background: rgba(20, 20, 20, 0.95);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  color: #94a3b8;
+}
+.bt-toast--info {
+  background: rgba(20, 20, 20, 0.95);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  color: #cbd5e1;
+}
+.bt-toast i {
+  font-size: 16px;
+}
+
+/* ── HEADER ── */
+.bt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: #0a0a0a;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+.bt-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #f1f5f9;
+  letter-spacing: 0.2px;
+}
+.bt-icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #9ca3af;
+  font-size: 20px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.bt-icon-btn:hover {
+  background: #242424;
+  color: #e2e8f0;
+}
+
+/* ── MAP ── */
+.bt-leaflet-map {
+  width: 100%;
+  height: 250px;
+  background: #111;
+  position: relative;
+  z-index: 1;
+}
+.bt-leaflet-map .leaflet-control-zoom a {
+  background: #1a1a1a !important;
+  color: #9ca3af !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+.bt-leaflet-map .leaflet-control-zoom a:hover {
+  background: #242424 !important;
+  color: #e2e8f0 !important;
+}
+
+.bt-map-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #4b5563;
+}
+.bt-map-loading i {
+  font-size: 28px;
+}
+.bt-map-loading span {
+  font-size: 13px;
+}
+
+/* Bus markers rendered inside Leaflet */
+.bt-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 40px;
+  border-radius: 10px;
+  background: #1a1a1a;
+  border: 2px solid var(--mc, #9ca3af);
+  color: var(--mc, #9ca3af);
+  font-size: 18px;
+  gap: 1px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.6);
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+.bt-marker span {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  line-height: 1;
+  color: #e2e8f0;
+}
+.bt-marker i {
+  line-height: 1;
+}
+.bt-marker::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--mc, #9ca3af);
+}
+.bt-marker--sel {
+  background: #e2e8f0;
+  color: #0a0a0a;
+  border-color: #fff;
+  transform: scale(1.2);
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, 0.2),
+    0 4px 16px rgba(0, 0, 0, 0.7);
+}
+.bt-marker--sel span {
+  color: #0a0a0a;
+}
+
+/* ── USER LOCATION MARKER ── */
+.bt-user-marker {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bt-user-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #4ade80;
+  border: 2.5px solid #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 2;
+}
+.bt-user-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(74, 222, 128, 0.25);
+  animation: bt-pulse 1.8s ease-out infinite;
+}
+@keyframes bt-pulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+/* ── ROUTE INFO BAR ── */
+.bt-route-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: #111;
+  border-bottom: 1px solid rgba(74, 222, 128, 0.2);
+  animation: bt-slideDown 0.2s ease;
+}
+@keyframes bt-slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.bt-route-bar > .bx {
+  font-size: 18px;
+  color: #4ade80;
+  flex-shrink: 0;
+}
+.bt-route-bar-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.bt-route-bar-dist {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+.bt-route-bar-label {
+  font-size: 11px;
+  color: #6b7280;
+}
+.bt-route-bar-close {
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: #9ca3af;
+  font-size: 18px;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+.bt-route-bar-close:hover {
+  background: #242424;
+  color: #e2e8f0;
+}
+
+/* ── LOCATION STRIP ── */
+.bt-loc-strip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  background: rgba(251, 146, 60, 0.08);
+  border-bottom: 1px solid rgba(251, 146, 60, 0.15);
+  font-size: 11.5px;
+  color: #fb923c;
+}
+.bt-loc-strip i {
+  font-size: 13px;
+}
+
+/* ── PULL HANDLE ── */
+.bt-pull-handle {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
+  background: #0a0a0a;
+}
+.bt-pull-handle span {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ── LIST SECTION ── */
+.bt-list-section {
+  padding: 0 14px 16px;
+}
+
+.bt-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.bt-list-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+.bt-list-clock {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: #6b7280;
+  font-variant-numeric: tabular-nums;
+  background: #141414;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+.bt-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+  animation: liveblink 1.4s ease-in-out infinite;
+}
+@keyframes liveblink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.bt-buses {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── BUS CARD (accordion) ── */
+.bt-card {
+  background: #111111;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+.bt-card--open {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+.bt-card--routed {
+  border-color: rgba(74, 222, 128, 0.4);
+  box-shadow:
+    0 0 0 1px rgba(74, 222, 128, 0.15),
+    0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Collapsed row */
+.bt-card-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 13px 13px 14px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+.bt-card-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.bt-bus-badge {
+  flex-shrink: 0;
+  width: 52px;
+  height: 54px;
+  border-radius: 11px;
+  background: #1e1e1e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: #cbd5e1;
+}
+.bt-bus-badge i {
+  font-size: 22px;
+  line-height: 1;
+}
+.bt-bus-badge span {
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: #9ca3af;
+}
+
+.bt-card-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bt-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.bt-card-route {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f1f5f9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bt-status {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.bt-card-next {
+  font-size: 12px;
+  color: #94a3b8;
+}
+.bt-card-next strong {
+  color: #cbd5e1;
+}
+.bt-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  color: #6b7280;
+}
+.bt-card-meta i {
+  font-size: 12px;
+}
+.bt-sep {
+  opacity: 0.5;
+}
+
+.bt-chevron {
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.25);
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+.bt-chevron--up {
+  transform: rotate(180deg);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ── EXPANDED CONTENT ── */
+.bt-expand {
+  padding: 0 14px 14px;
+  animation: expandIn 0.25s ease;
+}
+@keyframes expandIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bt-expand-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.07);
+  margin-bottom: 14px;
+}
+
+/* Detail grid */
+.bt-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.bt-dcell {
+  background: #161616;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  padding: 10px 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+.bt-dcell i {
+  font-size: 15px;
+  color: #6b7280;
+  margin-bottom: 2px;
+}
+.bt-dlabel {
+  font-size: 9.5px;
+  color: #4b5563;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.bt-dval {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #d1d5db;
+}
+.bt-dval--hi {
+  color: #e2e8f0;
+}
+
+/* Extra rows */
+.bt-extra-list {
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.bt-erow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 13px;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.bt-erow:last-child {
+  border-bottom: none;
+}
+.bt-erow i {
+  font-size: 15px;
+  color: #4b5563;
+  width: 18px;
+}
+.bt-erow span:nth-child(2) {
+  flex: 1;
+  color: #6b7280;
+}
+.bt-erow span:nth-child(3) {
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+/* Action buttons */
+.bt-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.bt-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 11px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+.bt-btn i {
+  font-size: 16px;
+}
+
+/* Track on Map — white/silver */
+.bt-btn--map {
+  background: #e2e8f0;
+  color: #0a0a0a;
+}
+.bt-btn--map:hover {
+  background: #f1f5f9;
+}
+
+/* Active route state — green tint */
+.bt-btn--map-active {
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  color: #4ade80;
+}
+.bt-btn--map-active:hover {
+  background: rgba(74, 222, 128, 0.2);
+}
+
+/* Notify Me — outlined */
+.bt-btn--notify {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #9ca3af;
+}
+.bt-btn--notify:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Notified/active state */
+.bt-btn--notified {
+  background: rgba(74, 222, 128, 0.1);
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  color: #4ade80;
+}
+.bt-btn--notified:hover {
+  background: rgba(74, 222, 128, 0.18);
+}
