@@ -81,7 +81,7 @@ const Register = () => {
       <div className="video-overlay"></div>
 
       <div className="logo">
-        <img src="logo.png" alt="STRUVO" className="logo-icon" />
+        <img src="logo.png" alt="STRUVO" className="auth-logo-icon" />{" "}
         <h1>STUVO5</h1>
       </div>
 

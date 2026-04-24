@@ -26,9 +26,6 @@
    22. RESPONSIVE (768px, 520px, 480px, 380px)
 ============================================================ */
 
-
-
-
 /* ============================================================
    1. RESET & BASE
 ============================================================ */
@@ -47,9 +44,6 @@ body {
   color: #fff;
   overflow-x: hidden;
 }
-
-
-
 
 /* ============================================================
    2. AUTH SECTION — shared page wrapper for login/register
@@ -86,9 +80,6 @@ body {
   z-index: -1;
 }
 
-
-
-
 /* ============================================================
    3. LOGO — STUVO5 brand mark at top of auth pages
 ============================================================ */
@@ -103,7 +94,7 @@ body {
   gap: 15px;
 }
 
-.logo-icon {
+.auth-logo-icon {
   width: 45px;
   height: 45px;
   object-fit: contain;
@@ -118,9 +109,6 @@ body {
   background-clip: text;
   margin: 0;
 }
-
-
-
 
 /* ============================================================
    4. LOGIN BOX — frosted glass card for login/register forms
@@ -184,9 +172,6 @@ form {
   margin-top: 0;
 }
 
-
-
-
 /* ============================================================
    5. LOGIN TAB SWITCHER — Email / Phone number toggle
 ============================================================ */
@@ -231,9 +216,6 @@ form {
 .tab-form.active {
   display: block;
 }
-
-
-
 
 /* ============================================================
    6. INPUT STYLES — text inputs, selects, icons, errors
@@ -315,9 +297,6 @@ form {
   display: block;
 }
 
-
-
-
 /* ============================================================
    7. BUTTONS — login, register, verify, google sign-in
 ============================================================ */
@@ -373,9 +352,6 @@ form {
   flex-shrink: 0;
 }
 
-
-
-
 /* ============================================================
    8. REMEMBER / FORGOT — checkbox row and account links
 ============================================================ */
@@ -422,9 +398,6 @@ form {
   text-decoration: underline;
 }
 
-
-
-
 /* ============================================================
    9. DIVIDER — "OR" separator between login methods
 ============================================================ */
@@ -448,9 +421,6 @@ form {
   padding: 0 15px;
   font-size: 14px;
 }
-
-
-
 
 /* ============================================================
    10. PHONE INPUT — country code prefix + number field
@@ -550,9 +520,6 @@ form {
   font-size: 14px;
 }
 
-
-
-
 /* ============================================================
    11. RESEND OTP COUNTDOWN — timer below phone login OTP field
 ============================================================ */
@@ -604,9 +571,6 @@ form {
 .resend-code a:hover {
   color: #c4b5fd;
 }
-
-
-
 
 /* ============================================================
    12. OTP VERIFY MODAL — popup for phone verification code
@@ -744,14 +708,11 @@ form {
   box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
 }
 
-
-
-
 /* ============================================================
    13. FOOTER — fixed bottom bar with Terms / Privacy / Contact
 ============================================================ */
 
-.site-footer {
+.auth-section .site-footer {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -785,9 +746,6 @@ form {
   font-size: 12px;
   white-space: nowrap;
 }
-
-
-
 
 /* ============================================================
    14. TERMS / PRIVACY / CONTACT MODALS
@@ -960,8 +918,13 @@ form {
   scrollbar-color: rgba(167, 139, 250, 0.4) transparent;
   -ms-overflow-style: none;
 }
-.contact-body::-webkit-scrollbar { width: 4px; }
-.contact-body::-webkit-scrollbar-thumb { background: rgba(167, 139, 250, 0.4); border-radius: 4px; }
+.contact-body::-webkit-scrollbar {
+  width: 4px;
+}
+.contact-body::-webkit-scrollbar-thumb {
+  background: rgba(167, 139, 250, 0.4);
+  border-radius: 4px;
+}
 
 .topic-grid {
   display: grid;
@@ -1003,7 +966,9 @@ form {
   gap: 4px;
   transition: color 0.2s;
 }
-.contact-back-btn:hover { color: #fff; }
+.contact-back-btn:hover {
+  color: #fff;
+}
 
 .selected-topic-badge {
   background: rgba(102, 126, 234, 0.18);
@@ -1017,7 +982,9 @@ form {
   display: inline-block;
 }
 
-.contact-form-group { margin-bottom: 18px; }
+.contact-form-group {
+  margin-bottom: 18px;
+}
 .contact-form-group label {
   display: block;
   color: rgba(255, 255, 255, 0.65);
@@ -1028,15 +995,24 @@ form {
   margin-bottom: 8px;
 }
 
-.contact-input-wrapper { position: relative; width: 100%; }
+.contact-input-wrapper {
+  position: relative;
+  width: 100%;
+}
 .contact-input-wrapper i {
   position: absolute;
-  left: 14px; top: 50%;
+  left: 14px;
+  top: 50%;
   transform: translateY(-50%);
-  color: #667eea; font-size: 17px;
-  pointer-events: none; z-index: 2;
+  color: #667eea;
+  font-size: 17px;
+  pointer-events: none;
+  z-index: 2;
 }
-.contact-input-wrapper .textarea-icon { top: 16px; transform: none; }
+.contact-input-wrapper .textarea-icon {
+  top: 16px;
+  transform: none;
+}
 
 .contact-input-wrapper input,
 .contact-input-wrapper textarea {
@@ -1066,41 +1042,91 @@ form {
   display: none;
   font-weight: 500;
 }
-.contact-error.show { display: block; }
+.contact-error.show {
+  display: block;
+}
 
 .send-message-btn {
-  width: 100%; height: 50px;
+  width: 100%;
+  height: 50px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white; border: none; border-radius: 12px;
-  font-size: 15px; font-weight: 700; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  gap: 8px; transition: all 0.3s ease; margin-top: 8px;
-  letter-spacing: 0.5px; box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  margin-top: 8px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35);
 }
-.send-message-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(102, 126, 234, 0.48); }
-.send-message-btn i { font-size: 18px; position: static; transform: none; left: auto; top: auto; color: white; }
+.send-message-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(102, 126, 234, 0.48);
+}
+.send-message-btn i {
+  font-size: 18px;
+  position: static;
+  transform: none;
+  left: auto;
+  top: auto;
+  color: white;
+}
 
 .contact-success-body {
-  display: flex; flex-direction: column; align-items: center;
-  text-align: center; padding: 40px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 40px 30px;
 }
 
 .success-icon-wrap {
-  width: 80px; height: 80px; border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
   background: rgba(16, 185, 129, 0.12);
   border: 2px solid rgba(16, 185, 129, 0.4);
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 20px;
 }
-.success-icon-wrap i { font-size: 40px; color: #10b981; position: static; transform: none; }
-.success-title { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 12px; }
-.success-msg { color: rgba(255, 255, 255, 0.65); font-size: 14.5px; line-height: 1.7; margin-bottom: 12px; }
-.success-msg strong { color: #c4b5fd; }
-.success-ref { color: rgba(255, 255, 255, 0.35); font-size: 12.5px; }
-.success-ref span { color: #a78bfa; font-weight: 600; font-family: monospace; }
-
-
-
+.success-icon-wrap i {
+  font-size: 40px;
+  color: #10b981;
+  position: static;
+  transform: none;
+}
+.success-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 12px;
+}
+.success-msg {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 14.5px;
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+.success-msg strong {
+  color: #c4b5fd;
+}
+.success-ref {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 12.5px;
+}
+.success-ref span {
+  color: #a78bfa;
+  font-weight: 600;
+  font-family: monospace;
+}
 
 /* ============================================================
    15. VERIFICATION PAGE — "Complete Your Profile" page
@@ -1170,43 +1196,88 @@ form {
 }
 
 .avatar-circle {
-  width: 90px; height: 90px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.08);
   border: 2px solid rgba(167, 139, 250, 0.4);
-  position: relative; cursor: pointer;
-  overflow: hidden; display: flex;
-  align-items: center; justify-content: center;
-  margin-bottom: 10px; transition: border-color 0.3s;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  transition: border-color 0.3s;
   flex-shrink: 0;
 }
-.avatar-circle:hover { border-color: #a78bfa; }
+.avatar-circle:hover {
+  border-color: #a78bfa;
+}
 
 .avatar-placeholder i {
   font-size: 48px;
   color: rgba(255, 255, 255, 0.3);
-  position: static; transform: none; left: auto; top: auto;
+  position: static;
+  transform: none;
+  left: auto;
+  top: auto;
 }
 
 .avatar-preview-img {
-  width: 100%; height: 100%;
-  object-fit: cover; border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .avatar-overlay {
-  position: absolute; bottom: 0; left: 0; right: 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   background: rgba(0, 0, 0, 0.6);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 6px; opacity: 0; transition: opacity 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  opacity: 0;
+  transition: opacity 0.3s;
 }
-.avatar-circle:hover .avatar-overlay { opacity: 1; }
-.avatar-overlay i { font-size: 16px; color: white; position: static; transform: none; left: auto; top: auto; }
-.avatar-overlay span { font-size: 10px; color: white; font-weight: 600; }
+.avatar-circle:hover .avatar-overlay {
+  opacity: 1;
+}
+.avatar-overlay i {
+  font-size: 16px;
+  color: white;
+  position: static;
+  transform: none;
+  left: auto;
+  top: auto;
+}
+.avatar-overlay span {
+  font-size: 10px;
+  color: white;
+  font-weight: 600;
+}
 
-.avatar-label { color: rgba(255, 255, 255, 0.7); font-size: 13px; }
-.optional { color: rgba(255, 255, 255, 0.4); font-weight: 400; font-size: 11px; }
-.optional-label { color: rgba(255, 255, 255, 0.4); font-weight: 400; font-size: 10px; text-transform: none; letter-spacing: 0; }
+.avatar-label {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+}
+.optional {
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 400;
+  font-size: 11px;
+}
+.optional-label {
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 400;
+  font-size: 10px;
+  text-transform: none;
+  letter-spacing: 0;
+}
 
 /* ── Verification form grid ── */
 .form-row {
@@ -1222,25 +1293,43 @@ form {
   align-items: flex-start;
 }
 .verification-box .input-box label {
-  display: flex; align-items: center; gap: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
   color: rgba(255, 255, 255, 0.9);
-  font-size: 11px; font-weight: 600;
-  margin-bottom: 7px; text-transform: uppercase; letter-spacing: 0.3px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 7px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
-.verification-box .input-wrapper { position: relative; width: 100%; }
+.verification-box .input-wrapper {
+  position: relative;
+  width: 100%;
+}
 .verification-box .input-box input,
 .verification-box .input-box select {
   padding: 11px 16px 11px 44px;
   border-radius: 11px;
   border: 2px solid rgba(255, 255, 255, 0.15);
-  outline: none; height: 46px; width: 100%;
-  font-size: 14px; background: rgba(255, 255, 255, 0.97);
-  transition: all 0.3s; color: #1a1a2e; font-weight: 500;
+  outline: none;
+  height: 46px;
+  width: 100%;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.97);
+  transition: all 0.3s;
+  color: #1a1a2e;
+  font-weight: 500;
 }
 .verification-box .input-wrapper i {
-  position: absolute; left: 14px; top: 50%;
+  position: absolute;
+  left: 14px;
+  top: 50%;
   transform: translateY(-50%);
-  color: #667eea; font-size: 17px; z-index: 10; pointer-events: none;
+  color: #667eea;
+  font-size: 17px;
+  z-index: 10;
+  pointer-events: none;
 }
 .verification-box .input-box input:focus,
 .verification-box .input-box select:focus {
@@ -1249,7 +1338,8 @@ form {
   background: white;
 }
 .verification-box .input-box select {
-  cursor: pointer; appearance: none;
+  cursor: pointer;
+  appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath fill='%23667eea' d='M7 10L2 5h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
@@ -1262,26 +1352,40 @@ form {
   box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
 }
 
-.verify-button { margin-top: 20px; margin-bottom: 0; }
+.verify-button {
+  margin-top: 20px;
+  margin-bottom: 0;
+}
 .verification-box .verify-button button {
-  height: 50px; border-radius: 14px; font-weight: 700; font-size: 15px;
+  height: 50px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 15px;
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-  text-transform: uppercase; letter-spacing: 1px; margin: 0; transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+  transition: all 0.3s ease;
 }
 .verification-box .verify-button button:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
 }
 
-.back-to-login { text-align: center; margin-top: 18px; }
-.back-to-login a {
-  color: #c4b5fd; text-decoration: none; font-weight: 600;
-  font-size: 14px; transition: color 0.3s ease;
+.back-to-login {
+  text-align: center;
+  margin-top: 18px;
 }
-.back-to-login a:hover { color: #fff; }
-
-
-
+.back-to-login a {
+  color: #c4b5fd;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+.back-to-login a:hover {
+  color: #fff;
+}
 
 /* ============================================================
    16. VERIFICATION — STUDENT / FACULTY TAB SWITCHER
@@ -1336,12 +1440,15 @@ form {
 }
 
 @keyframes vfFadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-
-
-
 
 /* ============================================================
    17. VERIFICATION — CROP MODAL
@@ -1437,7 +1544,9 @@ form {
   transition: all 0.2s;
 }
 
-.vf-crop-cancel:hover { background: #333; }
+.vf-crop-cancel:hover {
+  background: #333;
+}
 
 .vf-crop-apply {
   flex: 1;
@@ -1458,9 +1567,6 @@ form {
   transform: translateY(-1px);
 }
 
-
-
-
 /* ============================================================
    18. SUCCESS OVERLAY — redirect countdown after login
        Full screen blur overlay with animated progress bar
@@ -1478,7 +1584,9 @@ form {
   align-items: center;
   padding: 20px;
 }
-.success-overlay.show { display: flex; }
+.success-overlay.show {
+  display: flex;
+}
 
 .success-card {
   background: rgba(15, 15, 28, 0.96);
@@ -1495,42 +1603,69 @@ form {
 }
 
 .success-icon-circle {
-  width: 80px; height: 80px; border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin: 0 auto 24px;
   box-shadow: 0 8px 28px rgba(102, 126, 234, 0.45);
   animation: iconPop 0.5s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-.success-icon-circle i { font-size: 40px; color: #fff; position: static; transform: none; left: auto; top: auto; }
+.success-icon-circle i {
+  font-size: 40px;
+  color: #fff;
+  position: static;
+  transform: none;
+  left: auto;
+  top: auto;
+}
 
 .success-card h2 {
-  color: #fff; font-size: 26px; font-weight: 700; margin-bottom: 10px;
+  color: #fff;
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 10px;
   background: linear-gradient(135deg, #fff 0%, #c4b5fd 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
-.success-card p { color: rgba(255, 255, 255, 0.7); font-size: 15px; line-height: 1.6; margin-bottom: 28px; }
+.success-card p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
 
 .success-progress-bar {
-  width: 100%; height: 4px;
+  width: 100%;
+  height: 4px;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 99px; overflow: hidden; margin-bottom: 12px;
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 12px;
 }
 .success-progress-fill {
-  height: 100%; width: 100%;
+  height: 100%;
+  width: 100%;
   background: linear-gradient(90deg, #667eea, #a78bfa);
-  border-radius: 99px; transform-origin: left;
+  border-radius: 99px;
+  transform-origin: left;
   animation: progressDrain 3s linear forwards;
 }
 
 .success-redirect-text {
   color: rgba(255, 255, 255, 0.35) !important;
-  font-size: 13px !important; margin-bottom: 0 !important;
+  font-size: 13px !important;
+  margin-bottom: 0 !important;
 }
-.success-redirect-text span { color: #a78bfa; font-weight: 700; }
-
-
-
+.success-redirect-text span {
+  color: #a78bfa;
+  font-weight: 700;
+}
 
 /* ============================================================
    19. SUCCESS NOTIFICATION — green toast for verified actions
@@ -1538,19 +1673,29 @@ form {
 
 .success-notification {
   position: fixed;
-  top: 20px; right: 20px;
+  top: 20px;
+  right: 20px;
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white; padding: 15px 25px; border-radius: 10px;
+  color: white;
+  padding: 15px 25px;
+  border-radius: 10px;
   box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
-  display: flex; align-items: center; gap: 10px;
-  font-weight: 600; z-index: 1000;
-  opacity: 0; transform: translateX(400px); transition: all 0.5s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  z-index: 1000;
+  opacity: 0;
+  transform: translateX(400px);
+  transition: all 0.5s ease;
 }
-.success-notification.show { opacity: 1; transform: translateX(0); }
-.success-notification i { font-size: 24px; }
-
-
-
+.success-notification.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+.success-notification i {
+  font-size: 24px;
+}
 
 /* ============================================================
    20. FORGOT PASSWORD PAGE — multi-step password reset flow
@@ -1560,9 +1705,13 @@ form {
 ============================================================ */
 
 .forgot-section {
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  min-height: 100vh; gap: 20px; padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 20px;
+  padding: 20px;
 }
 
 .forgot-box {
@@ -1570,117 +1719,235 @@ form {
   border: 2px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 0 30px black;
   backdrop-filter: blur(10px);
-  width: 500px; min-height: 300px;
-  display: flex; justify-content: center; align-items: center;
-  border-radius: 20px; padding: 40px;
+  width: 500px;
+  min-height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  padding: 40px;
 }
 
-.forgot-password-wrapper { width: 100%; padding: 20px; }
-.step-container { width: 100%; }
-.step-container.hidden { display: none; }
-#sentTo { color: #a78bfa; font-weight: 600; }
+.forgot-password-wrapper {
+  width: 100%;
+  padding: 20px;
+}
+.step-container {
+  width: 100%;
+}
+.step-container.hidden {
+  display: none;
+}
+#sentTo {
+  color: #a78bfa;
+  font-weight: 600;
+}
 
 .input-wrapper-verify {
-  width: 100%; display: flex; gap: 10px; align-items: center;
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 .input-with-icon {
-  position: relative; flex: 1;
-  display: flex; align-items: center; width: 100%;
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  width: 100%;
 }
 
 .verify-btn {
-  height: 45px; padding: 0 25px;
+  height: 45px;
+  padding: 0 25px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white; border-radius: 10px; border: none;
-  font-weight: 600; font-size: 15px; cursor: pointer;
-  transition: 0.3s; white-space: nowrap;
+  color: white;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+  white-space: nowrap;
 }
-.verify-btn:hover { transform: scale(1.05); box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4); }
+.verify-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
 
 .confirm-button button {
-  width: 100%; height: 45px;
+  width: 100%;
+  height: 45px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white; border-radius: 10px; border: none;
-  font-weight: 600; font-size: 16px; cursor: pointer;
-  margin: 2px; transition: 0.3s;
+  color: white;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 2px;
+  transition: 0.3s;
 }
-.confirm-button button:hover { transform: scale(1.02); box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4); }
-
-
-
+.confirm-button button:hover {
+  transform: scale(1.02);
+  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
 
 /* ============================================================
    21. ANIMATIONS — keyframes used across all auth pages
 ============================================================ */
 
 @keyframes blinkRed {
-  0%, 100% { color: aliceblue; }
-  50%       { color: #ef4444; }
+  0%,
+  100% {
+    color: aliceblue;
+  }
+  50% {
+    color: #ef4444;
+  }
 }
-.remember.blink-error { animation: blinkRed 0.5s ease-in-out 3; }
-.remember.blink-error label { color: #ef4444; }
+.remember.blink-error {
+  animation: blinkRed 0.5s ease-in-out 3;
+}
+.remember.blink-error label {
+  color: #ef4444;
+}
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25%       { transform: translateX(-8px); }
-  75%       { transform: translateX(8px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-8px);
+  }
+  75% {
+    transform: translateX(8px);
+  }
 }
 
 @keyframes slideUpOut {
-  from { opacity: 1; transform: translateY(0); }
-  to   { opacity: 0; transform: translateY(-20px); }
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
 }
 @keyframes slideUpIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 @keyframes slideDownOut {
-  from { opacity: 1; transform: translateY(0); }
-  to   { opacity: 0; transform: translateY(20px); }
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
 }
 @keyframes slideDownIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes tabSlideIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes modalSlideIn {
-  from { opacity: 0; transform: translateY(-30px) scale(0.95); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 @keyframes successCardIn {
-  from { opacity: 0; transform: scale(0.88) translateY(20px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
+  from {
+    opacity: 0;
+    transform: scale(0.88) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 @keyframes iconPop {
-  from { transform: scale(0); opacity: 0; }
-  to   { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @keyframes progressDrain {
-  from { transform: scaleX(1); }
-  to   { transform: scaleX(0); }
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
 }
 
 @keyframes popIn {
-  from { opacity: 0; transform: scale(0.5); }
-  to   { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-.slide-up-out   { animation: slideUpOut   0.35s ease forwards; }
-.slide-up-in    { display: block !important; animation: slideUpIn    0.35s ease forwards; }
-.slide-down-out { animation: slideDownOut 0.35s ease forwards; }
-.slide-down-in  { display: block !important; animation: slideDownIn  0.35s ease forwards; }
-.tab-slide-in   { animation: tabSlideIn   0.25s ease forwards; }
-
-
-
+.slide-up-out {
+  animation: slideUpOut 0.35s ease forwards;
+}
+.slide-up-in {
+  display: block !important;
+  animation: slideUpIn 0.35s ease forwards;
+}
+.slide-down-out {
+  animation: slideDownOut 0.35s ease forwards;
+}
+.slide-down-in {
+  display: block !important;
+  animation: slideDownIn 0.35s ease forwards;
+}
+.tab-slide-in {
+  animation: tabSlideIn 0.25s ease forwards;
+}
 
 /* ============================================================
    22. RESPONSIVE
@@ -1688,68 +1955,211 @@ form {
 
 /* ── 768px and below ── */
 @media (max-width: 768px) {
-  .login-box { width: 92%; padding: 30px 22px; }
-  .logo h1 { font-size: 36px; letter-spacing: 5px; }
-  .logo-icon { width: 36px; height: 36px; }
-  .verification-section { padding: 20px 12px 30px; gap: 16px; justify-content: flex-start; }
-  .verification-box { padding: 24px 18px; border-radius: 22px; }
-  .box-head-verify h1 { font-size: 21px; }
-  .form-row { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .login-box {
+    width: 92%;
+    padding: 30px 22px;
+  }
+  .logo h1 {
+    font-size: 36px;
+    letter-spacing: 5px;
+  }
+  .auth-logo-icon {
+    width: 36px;
+    height: 36px;
+  }
+  .verification-section {
+    padding: 20px 12px 30px;
+    gap: 16px;
+    justify-content: flex-start;
+  }
+  .verification-box {
+    padding: 24px 18px;
+    border-radius: 22px;
+  }
+  .box-head-verify h1 {
+    font-size: 21px;
+  }
+  .form-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
   .verification-box .input-box input,
-  .verification-box .input-box select { height: 44px; font-size: 13px; padding: 10px 14px 10px 40px; }
-  .verification-box .input-wrapper i { font-size: 16px; left: 12px; }
-  .verify-button button { height: 48px; font-size: 14px; }
-  .site-footer { gap: 16px; padding: 10px 15px; }
-  .contact-content { width: 96%; max-height: 88vh; border-radius: 16px; margin: auto; }
-  .contact-body { padding: 16px 14px; }
-  .topic-grid { grid-template-columns: 1fr; gap: 8px; }
-  .topic-btn { padding: 11px 12px; font-size: 13px; }
-  .terms-content { width: 96%; max-height: 80vh; border-radius: 16px; }
-  .terms-header { padding: 16px 18px; border-radius: 16px 16px 0 0; }
-  .terms-header h2 { font-size: 15px; }
-  .terms-body { padding: 16px 18px; }
-  .terms-footer { padding: 14px 18px; }
-  .forgot-box { width: 90%; padding: 30px 25px; }
-  .input-wrapper-verify { flex-direction: column; gap: 10px; }
-  .verify-btn { width: 100%; }
-  .success-notification { top: 10px; right: 10px; left: 10px; font-size: 14px; }
+  .verification-box .input-box select {
+    height: 44px;
+    font-size: 13px;
+    padding: 10px 14px 10px 40px;
+  }
+  .verification-box .input-wrapper i {
+    font-size: 16px;
+    left: 12px;
+  }
+  .verify-button button {
+    height: 48px;
+    font-size: 14px;
+  }
+  .site-footer {
+    gap: 16px;
+    padding: 10px 15px;
+  }
+  .contact-content {
+    width: 96%;
+    max-height: 88vh;
+    border-radius: 16px;
+    margin: auto;
+  }
+  .contact-body {
+    padding: 16px 14px;
+  }
+  .topic-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .topic-btn {
+    padding: 11px 12px;
+    font-size: 13px;
+  }
+  .terms-content {
+    width: 96%;
+    max-height: 80vh;
+    border-radius: 16px;
+  }
+  .terms-header {
+    padding: 16px 18px;
+    border-radius: 16px 16px 0 0;
+  }
+  .terms-header h2 {
+    font-size: 15px;
+  }
+  .terms-body {
+    padding: 16px 18px;
+  }
+  .terms-footer {
+    padding: 14px 18px;
+  }
+  .forgot-box {
+    width: 90%;
+    padding: 30px 25px;
+  }
+  .input-wrapper-verify {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .verify-btn {
+    width: 100%;
+  }
+  .success-notification {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    font-size: 14px;
+  }
 }
 
 /* ── 520px and below ── */
 @media (max-width: 520px) {
-  .verification-section { padding: 15px 10px 30px; gap: 14px; }
-  .verification-box { padding: 20px 14px; border-radius: 18px; max-width: 100%; }
-  .box-head-verify h1 { font-size: 18px; }
-  .subtitle { font-size: 12px; }
-  .form-row { grid-template-columns: 1fr; gap: 0; }
-  .avatar-circle { width: 80px; height: 80px; }
-  .avatar-placeholder i { font-size: 40px; }
+  .verification-section {
+    padding: 15px 10px 30px;
+    gap: 14px;
+  }
+  .verification-box {
+    padding: 20px 14px;
+    border-radius: 18px;
+    max-width: 100%;
+  }
+  .box-head-verify h1 {
+    font-size: 18px;
+  }
+  .subtitle {
+    font-size: 12px;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .avatar-circle {
+    width: 80px;
+    height: 80px;
+  }
+  .avatar-placeholder i {
+    font-size: 40px;
+  }
   .verification-box .input-box input,
-  .verification-box .input-box select { height: 44px; font-size: 14px; padding: 10px 14px 10px 42px; }
-  .verify-button button { height: 48px; font-size: 14px; border-radius: 12px; }
+  .verification-box .input-box select {
+    height: 44px;
+    font-size: 14px;
+    padding: 10px 14px 10px 42px;
+  }
+  .verify-button button {
+    height: 48px;
+    font-size: 14px;
+    border-radius: 12px;
+  }
 }
 
 /* ── 480px and below ── */
 @media (max-width: 480px) {
-  .auth-section { padding-bottom: 80px; gap: 15px; }
-  .logo h1 { font-size: 28px; letter-spacing: 4px; }
-  .login-box { width: 95%; padding: 25px 18px; border-radius: 16px; }
-  .box-head h1 { font-size: 26px; margin-bottom: 14px; }
-  .box-head-2 h1 { font-size: 26px; margin-bottom: 0; }
-  .input-box input { font-size: 14px; height: 42px; }
-  .site-footer { flex-direction: column; gap: 5px; padding: 8px 14px; }
-  .site-footer a, .site-footer span { font-size: 11px; }
-  .terms-header h2 { font-size: 14px; }
+  .auth-section .site-footer {
+    padding-bottom: 80px;
+    gap: 15px;
+  }
+  .logo h1 {
+    font-size: 28px;
+    letter-spacing: 4px;
+  }
+  .login-box {
+    width: 95%;
+    padding: 25px 18px;
+    border-radius: 16px;
+  }
+  .box-head h1 {
+    font-size: 26px;
+    margin-bottom: 14px;
+  }
+  .box-head-2 h1 {
+    font-size: 26px;
+    margin-bottom: 0;
+  }
+  .input-box input {
+    font-size: 14px;
+    height: 42px;
+  }
+  .site-footer {
+    flex-direction: column;
+    gap: 5px;
+    padding: 8px 14px;
+  }
+  .site-footer a,
+  .site-footer span {
+    font-size: 11px;
+  }
+  .terms-header h2 {
+    font-size: 14px;
+  }
 }
 
 /* ── 380px and below ── */
 @media (max-width: 380px) {
-  .logo h1 { font-size: 24px; letter-spacing: 3px; }
-  .login-box { padding: 20px 14px; }
-  .verification-box { padding: 16px 11px; border-radius: 16px; }
-  .box-head-verify h1 { font-size: 16px; }
-  .verify-button button { height: 44px; font-size: 13px; }
-  .verification-box .input-box label { font-size: 10px; }
+  .logo h1 {
+    font-size: 24px;
+    letter-spacing: 3px;
+  }
+  .login-box {
+    padding: 20px 14px;
+  }
+  .verification-box {
+    padding: 16px 11px;
+    border-radius: 16px;
+  }
+  .box-head-verify h1 {
+    font-size: 16px;
+  }
+  .verify-button button {
+    height: 44px;
+    font-size: 13px;
+  }
+  .verification-box .input-box label {
+    font-size: 10px;
+  }
 }
 
 /* ── Reduced motion ── */

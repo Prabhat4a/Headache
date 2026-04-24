@@ -1,5 +1,5 @@
 /* ================================================
-   BusTracking.css  —  STUVO5  |  Grey/Black theme
+   Bus.css  —  STUVO5  |  Uber-style Bus Tracking
    ================================================ */
 
 .bt-root {
@@ -10,66 +10,6 @@
   color: #e2e8f0;
   font-family: "Segoe UI", system-ui, sans-serif;
   padding-bottom: 80px;
-}
-
-/* ── TOASTS ── */
-.bt-toasts {
-  position: fixed;
-  top: 70px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: calc(100% - 32px);
-  max-width: 420px;
-  pointer-events: none;
-}
-.bt-toast {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 500;
-  backdrop-filter: blur(12px);
-  animation: toastIn 0.3s ease;
-  pointer-events: all;
-}
-@keyframes toastIn {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.bt-toast--success {
-  background: rgba(20, 20, 20, 0.95);
-  border: 1px solid rgba(74, 222, 128, 0.35);
-  color: #4ade80;
-}
-.bt-toast--error {
-  background: rgba(20, 20, 20, 0.95);
-  border: 1px solid rgba(248, 113, 113, 0.35);
-  color: #f87171;
-}
-.bt-toast--cancel {
-  background: rgba(20, 20, 20, 0.95);
-  border: 1px solid rgba(148, 163, 184, 0.25);
-  color: #94a3b8;
-}
-.bt-toast--info {
-  background: rgba(20, 20, 20, 0.95);
-  border: 1px solid rgba(148, 163, 184, 0.25);
-  color: #cbd5e1;
-}
-.bt-toast i {
-  font-size: 16px;
 }
 
 /* ── HEADER ── */
@@ -113,11 +53,17 @@
 /* ── MAP ── */
 .bt-leaflet-map {
   width: 100%;
-  height: 250px;
+  height: 240px;
   background: #111;
   position: relative;
   z-index: 1;
+  transition: height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
+/* Uber-style: map expands when a bus is selected */
+.bt-leaflet-map--expanded {
+  height: 420px;
+}
+
 .bt-leaflet-map .leaflet-control-zoom a {
   background: #1a1a1a !important;
   color: #9ca3af !important;
@@ -145,7 +91,7 @@
   font-size: 13px;
 }
 
-/* Bus markers rendered inside Leaflet */
+/* ── BUS MARKERS ── */
 .bt-marker {
   display: flex;
   flex-direction: column;
@@ -160,8 +106,11 @@
   font-size: 18px;
   gap: 1px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.6);
-  transition: transform 0.2s;
+  transition:
+    transform 0.2s,
+    opacity 0.3s;
   cursor: pointer;
+  position: relative;
 }
 .bt-marker span {
   font-size: 8px;
@@ -182,17 +131,49 @@
   border: 5px solid transparent;
   border-top-color: var(--mc, #9ca3af);
 }
+
+/* Hidden (other buses when one is selected) */
+.bt-marker--hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.6);
+}
+
+/* Selected bus marker */
 .bt-marker--sel {
-  background: #e2e8f0;
+  background: #fff;
   color: #0a0a0a;
   border-color: #fff;
-  transform: scale(1.2);
+  transform: scale(1.25);
   box-shadow:
-    0 0 0 3px rgba(255, 255, 255, 0.2),
-    0 4px 16px rgba(0, 0, 0, 0.7);
+    0 0 0 4px rgba(255, 255, 255, 0.18),
+    0 4px 20px rgba(0, 0, 0, 0.8);
 }
 .bt-marker--sel span {
   color: #0a0a0a;
+}
+.bt-marker--sel::after {
+  border-top-color: #fff;
+}
+
+/* ── DISTANCE LABEL ON MAP ── */
+.bt-dist-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(10, 10, 10, 0.92);
+  border: 1px solid rgba(74, 222, 128, 0.4);
+  color: #4ade80;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+.bt-dist-label i {
+  font-size: 13px;
 }
 
 /* ── USER LOCATION MARKER ── */
@@ -232,62 +213,92 @@
   }
 }
 
-/* ── ROUTE INFO BAR ── */
-.bt-route-bar {
+/* ── SELECTED BUS INFO STRIP (below map) ── */
+.bt-selected-strip {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 16px;
+  gap: 12px;
+  padding: 12px 16px;
   background: #111;
   border-bottom: 1px solid rgba(74, 222, 128, 0.2);
-  animation: bt-slideDown 0.2s ease;
+  animation: bt-slideDown 0.25s ease;
 }
 @keyframes bt-slideDown {
   from {
     opacity: 0;
-    transform: translateY(-6px);
+    transform: translateY(-8px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-.bt-route-bar > .bx {
-  font-size: 18px;
-  color: #4ade80;
-  flex-shrink: 0;
-}
-.bt-route-bar-info {
+.bt-ss-left {
   flex: 1;
   display: flex;
-  flex-direction: column;
-  gap: 1px;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
 }
-.bt-route-bar-dist {
+.bt-ss-id {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #f1f5f9;
+  background: #1e1e1e;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 4px 8px;
+  border-radius: 7px;
+  white-space: nowrap;
+}
+.bt-ss-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.bt-ss-route {
   font-size: 13px;
   font-weight: 600;
   color: #f1f5f9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.bt-route-bar-label {
-  font-size: 11px;
+.bt-ss-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.bt-ss-dist {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
   color: #6b7280;
 }
-.bt-route-bar-close {
+.bt-ss-dist i {
+  font-size: 12px;
+  color: #4ade80;
+}
+.bt-ss-close {
   background: #1a1a1a;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   display: grid;
   place-items: center;
   cursor: pointer;
   color: #9ca3af;
-  font-size: 18px;
+  font-size: 20px;
+  flex-shrink: 0;
   transition:
     background 0.15s,
     color 0.15s;
 }
-.bt-route-bar-close:hover {
+.bt-ss-close:hover {
   background: #242424;
   color: #e2e8f0;
 }
@@ -325,7 +336,6 @@
 .bt-list-section {
   padding: 0 14px 16px;
 }
-
 .bt-list-header {
   display: flex;
   align-items: center;
@@ -369,51 +379,43 @@
 .bt-buses {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
-/* ── BUS CARD (accordion) ── */
+/* ── BUS CARD ── (now a flat tap target, no accordion) */
 .bt-card {
-  background: #111111;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  overflow: hidden;
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
-}
-.bt-card--open {
-  border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-}
-.bt-card--routed {
-  border-color: rgba(74, 222, 128, 0.4);
-  box-shadow:
-    0 0 0 1px rgba(74, 222, 128, 0.15),
-    0 4px 20px rgba(0, 0, 0, 0.5);
-}
-
-/* Collapsed row */
-.bt-card-row {
   width: 100%;
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 13px 13px 13px 14px;
-  background: transparent;
-  border: none;
+  background: #111111;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
   cursor: pointer;
   text-align: left;
-  transition: background 0.15s;
+  transition:
+    border-color 0.2s,
+    background 0.15s,
+    box-shadow 0.2s;
 }
-.bt-card-row:hover {
-  background: rgba(255, 255, 255, 0.03);
+.bt-card:hover {
+  background: #161616;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+.bt-card--selected {
+  border-color: rgba(74, 222, 128, 0.45);
+  background: rgba(74, 222, 128, 0.04);
+  box-shadow:
+    0 0 0 1px rgba(74, 222, 128, 0.12),
+    0 4px 18px rgba(0, 0, 0, 0.5);
 }
 
+/* Bus badge */
 .bt-bus-badge {
   flex-shrink: 0;
-  width: 52px;
-  height: 54px;
+  width: 50px;
+  height: 52px;
   border-radius: 11px;
   background: #1e1e1e;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -423,10 +425,12 @@
   justify-content: center;
   gap: 2px;
   color: #cbd5e1;
+  transition: border-color 0.2s;
 }
 .bt-bus-badge i {
   font-size: 22px;
   line-height: 1;
+  transition: color 0.2s;
 }
 .bt-bus-badge span {
   font-size: 8.5px;
@@ -440,9 +444,8 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
 }
-
 .bt-card-top {
   display: flex;
   align-items: center;
@@ -465,13 +468,6 @@
   border-radius: 20px;
   white-space: nowrap;
 }
-.bt-card-next {
-  font-size: 12px;
-  color: #94a3b8;
-}
-.bt-card-next strong {
-  color: #cbd5e1;
-}
 .bt-card-meta {
   display: flex;
   align-items: center;
@@ -483,172 +479,19 @@
   font-size: 12px;
 }
 .bt-sep {
-  opacity: 0.5;
+  opacity: 0.4;
 }
 
+/* Chevron */
 .bt-chevron {
   font-size: 20px;
-  color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.2);
   flex-shrink: 0;
-  transition: transform 0.25s ease;
+  transition:
+    color 0.2s,
+    transform 0.2s;
 }
-.bt-chevron--up {
-  transform: rotate(180deg);
-  color: rgba(255, 255, 255, 0.5);
-}
-
-/* ── EXPANDED CONTENT ── */
-.bt-expand {
-  padding: 0 14px 14px;
-  animation: expandIn 0.25s ease;
-}
-@keyframes expandIn {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.bt-expand-divider {
-  height: 1px;
-  background: rgba(255, 255, 255, 0.07);
-  margin-bottom: 14px;
-}
-
-/* Detail grid */
-.bt-detail-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-bottom: 10px;
-}
-.bt-dcell {
-  background: #161616;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 10px;
-  padding: 10px 10px 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-}
-.bt-dcell i {
-  font-size: 15px;
-  color: #6b7280;
-  margin-bottom: 2px;
-}
-.bt-dlabel {
-  font-size: 9.5px;
-  color: #4b5563;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-.bt-dval {
-  font-size: 12.5px;
-  font-weight: 600;
-  color: #d1d5db;
-}
-.bt-dval--hi {
-  color: #e2e8f0;
-}
-
-/* Extra rows */
-.bt-extra-list {
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 12px;
-}
-.bt-erow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 13px;
-  font-size: 13px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-.bt-erow:last-child {
-  border-bottom: none;
-}
-.bt-erow i {
-  font-size: 15px;
-  color: #4b5563;
-  width: 18px;
-}
-.bt-erow span:nth-child(2) {
-  flex: 1;
-  color: #6b7280;
-}
-.bt-erow span:nth-child(3) {
-  color: #cbd5e1;
-  font-weight: 500;
-}
-
-/* Action buttons */
-.bt-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-.bt-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 11px 10px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-}
-.bt-btn i {
-  font-size: 16px;
-}
-
-/* Track on Map — white/silver */
-.bt-btn--map {
-  background: #e2e8f0;
-  color: #0a0a0a;
-}
-.bt-btn--map:hover {
-  background: #f1f5f9;
-}
-
-/* Active route state — green tint */
-.bt-btn--map-active {
-  background: rgba(74, 222, 128, 0.12);
-  border: 1px solid rgba(74, 222, 128, 0.35);
+.bt-chevron--active {
   color: #4ade80;
-}
-.bt-btn--map-active:hover {
-  background: rgba(74, 222, 128, 0.2);
-}
-
-/* Notify Me — outlined */
-.bt-btn--notify {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: #9ca3af;
-}
-.bt-btn--notify:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: #e2e8f0;
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-/* Notified/active state */
-.bt-btn--notified {
-  background: rgba(74, 222, 128, 0.1);
-  border: 1px solid rgba(74, 222, 128, 0.35);
-  color: #4ade80;
-}
-.bt-btn--notified:hover {
-  background: rgba(74, 222, 128, 0.18);
+  transform: translateX(2px);
 }

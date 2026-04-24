@@ -22,13 +22,14 @@ import Profile from "./pages/Profile";
 import Bus from "./pages/Bus";
 import FacultyProfile from "./pages/FacultyProfile";
 import Settings from "./pages/Settings";
-import Help from "./pages/Help"; // ← keep this as the real import
+import Help from "./pages/Help";
 import SearchPage from "./pages/SearchPage";
 
 import SupportUs from "./pages/SupportUs";
 import Syllabus from "./pages/Syllabus";
 import RaiseComplaint from "./pages/RaiseComplaint";
 import Placements from "./pages/Placements";
+import AdminPlacements from "./pages/AdminPlacements";
 
 import ComingSoon from "./pages/ComingSoon";
 
@@ -36,6 +37,7 @@ import ComingSoon from "./pages/ComingSoon";
 const isAuthenticated = () => localStorage.getItem("token") !== null;
 const ProtectedLayout = () =>
   isAuthenticated() ? <Layout /> : <Navigate to="/login" replace />;
+
 function App() {
   // TEMP DEBUG — remove after fix
   const components = {
@@ -58,6 +60,7 @@ function App() {
     Syllabus,
     RaiseComplaint,
     Placements,
+    AdminPlacements,
     ComingSoon,
   };
   Object.entries(components).forEach(([name, comp]) => {
@@ -82,23 +85,20 @@ function App() {
           <Route path="/explorer" element={<Explorer />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/bus" element={<Bus />} />
-
-          {/* ✅ Chat is an overlay triggered from bottom nav.
-              Redirect /chat to explorer so the URL never breaks. */}
           <Route path="/chat" element={<Navigate to="/explorer" replace />} />
-
           <Route path="/search" element={<SearchPage />} />
           <Route path="/admin-explorer" element={<AdminExplorer />} />
           <Route path="/faculty-profile" element={<FacultyProfile />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/help" element={<Help />} />
-
           {/* More section */}
           <Route path="/support-us" element={<SupportUs />} />
           <Route path="/syllabus" element={<Syllabus />} />
           <Route path="/complaint" element={<RaiseComplaint />} />
           <Route path="/placements" element={<Placements />} />
-
+          {/* Admin pages — Firebase will add role guard here later */}
+          // ✅ flat path — no slash ambiguity
+          <Route path="/admin-placements" element={<AdminPlacements />} />
           {/* Coming Soon */}
           <Route path="/clubs" element={<ComingSoon />} />
           <Route path="/facilities" element={<ComingSoon />} />

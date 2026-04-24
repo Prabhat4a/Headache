@@ -4,7 +4,6 @@ import "../styles/Bus.css";
 const LEAFLET_CSS = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
 const LEAFLET_JS = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
 
-// MITS Nowrangapur
 const COLLEGE_CENTER = [19.2304, 82.5483];
 
 const busData = [
@@ -96,7 +95,7 @@ const statusConfig = {
   offline: { label: "Offline", color: "#6b7280", bg: "rgba(107,114,128,0.12)" },
 };
 
-/* ── Leaflet loader hook ── */
+/* ── Leaflet loader ── */
 function useLeaflet() {
   const [ready, setReady] = useState(!!window.L);
   useEffect(() => {
@@ -118,26 +117,24 @@ function useLeaflet() {
   return ready;
 }
 
-/* ── Haversine distance ── */
+/* ── Haversine ── */
 function haversineKm(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.sin(dLat / 2) ** 2 +
     Math.cos((lat1 * Math.PI) / 180) *
       Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))).toFixed(2);
+      Math.sin(dLon / 2) ** 2;
+  return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))).toFixed(1);
 }
 
-/* ── Map Component ── */
+/* ── Map ── */
 function BusMap({
   buses,
   selectedId,
   onSelectBus,
-  flyToRef,
   userLocation,
   mapRef: externalMapRef,
 }) {
@@ -145,14 +142,16 @@ function BusMap({
   const mapRef = useRef(null);
   const markersRef = useRef({});
   const userMarkerRef = useRef(null);
+  const polylineRef = useRef(null);
+  const distLabelRef = useRef(null);
   const leafletReady = useLeaflet();
 
-  const buildIcon = (bus, isSelected) => {
+  const buildIcon = (bus, isSelected, isHidden) => {
     const L = window.L;
     const st = statusConfig[bus.status];
     return L.divIcon({
       className: "",
-      html: `<div class="bt-marker${isSelected ? " bt-marker--sel" : ""}" style="--mc:${st.color}">
+      html: `<div class="bt-marker${isSelected ? " bt-marker--sel" : ""}${isHidden ? " bt-marker--hidden" : ""}" style="--mc:${st.color}">
                <i class='bx bxs-bus'></i><span>${bus.id}</span>
              </div>`,
       iconSize: [54, 46],
@@ -170,17 +169,16 @@ function BusMap({
     });
   };
 
+  /* Init map */
   useEffect(() => {
     if (!leafletReady || !divRef.current || mapRef.current) return;
     const L = window.L;
-
     const map = L.map(divRef.current, {
       center: COLLEGE_CENTER,
       zoom: 15,
       zoomControl: false,
       attributionControl: false,
     });
-
     L.tileLayer(
       "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
       { maxZoom: 19 },
@@ -188,7 +186,9 @@ function BusMap({
     L.control.zoom({ position: "bottomright" }).addTo(map);
 
     buses.forEach((bus) => {
-      const marker = L.marker(bus.coords, { icon: buildIcon(bus, false) })
+      const marker = L.marker(bus.coords, {
+        icon: buildIcon(bus, false, false),
+      })
         .addTo(map)
         .on("click", () => onSelectBus(bus.id));
       markersRef.current[bus.id] = marker;
@@ -196,20 +196,83 @@ function BusMap({
 
     mapRef.current = map;
     externalMapRef.current = map;
-    flyToRef.current = (coords) => map.flyTo(coords, 17, { duration: 1.2 });
   }, [leafletReady]);
 
-  // Update marker styles when selection changes
+  /* React to selection change */
   useEffect(() => {
     if (!leafletReady || !mapRef.current) return;
-    buses.forEach((bus) => {
-      markersRef.current[bus.id]?.setIcon(
-        buildIcon(bus, bus.id === selectedId),
-      );
-    });
-  }, [selectedId, leafletReady]);
+    const L = window.L;
+    const map = mapRef.current;
 
-  // Add / move user location marker
+    /* Remove old polyline & distance label */
+    if (polylineRef.current) {
+      map.removeLayer(polylineRef.current);
+      polylineRef.current = null;
+    }
+    if (distLabelRef.current) {
+      map.removeLayer(distLabelRef.current);
+      distLabelRef.current = null;
+    }
+
+    if (!selectedId) {
+      /* Show all buses, zoom out */
+      buses.forEach((bus) =>
+        markersRef.current[bus.id]?.setIcon(buildIcon(bus, false, false)),
+      );
+      map.flyTo(COLLEGE_CENTER, 15, { duration: 1.0 });
+      return;
+    }
+
+    /* Hide others, highlight selected */
+    buses.forEach((bus) => {
+      const isSelected = bus.id === selectedId;
+      const isHidden = !isSelected;
+      markersRef.current[bus.id]?.setIcon(buildIcon(bus, isSelected, isHidden));
+    });
+
+    const selBus = buses.find((b) => b.id === selectedId);
+    const userLatLng = userLocation || COLLEGE_CENTER;
+
+    /* Draw dashed polyline */
+    const poly = L.polyline([selBus.coords, userLatLng], {
+      color: "#4ade80",
+      weight: 3,
+      dashArray: "8 6",
+      lineCap: "round",
+    }).addTo(map);
+    polylineRef.current = poly;
+
+    /* Distance label at midpoint */
+    const midLat = (selBus.coords[0] + userLatLng[0]) / 2;
+    const midLng = (selBus.coords[1] + userLatLng[1]) / 2;
+    const distKm = haversineKm(
+      selBus.coords[0],
+      selBus.coords[1],
+      userLatLng[0],
+      userLatLng[1],
+    );
+
+    const distIcon = L.divIcon({
+      className: "",
+      html: `<div class="bt-dist-label"><i class='bx bx-ruler'></i> ${distKm} km</div>`,
+      iconSize: [90, 28],
+      iconAnchor: [45, 14],
+    });
+    distLabelRef.current = L.marker([midLat, midLng], {
+      icon: distIcon,
+      interactive: false,
+    }).addTo(map);
+
+    /* Fit both in view */
+    map.fitBounds(L.latLngBounds([selBus.coords, userLatLng]), {
+      padding: [60, 60],
+      maxZoom: 17,
+      animate: true,
+      duration: 0.9,
+    });
+  }, [selectedId, leafletReady, userLocation]);
+
+  /* User location marker */
   useEffect(() => {
     if (!leafletReady || !mapRef.current || !userLocation) return;
     const L = window.L;
@@ -225,7 +288,10 @@ function BusMap({
   }, [userLocation, leafletReady]);
 
   return (
-    <div ref={divRef} className="bt-leaflet-map">
+    <div
+      ref={divRef}
+      className={`bt-leaflet-map${selectedId ? " bt-leaflet-map--expanded" : ""}`}
+    >
       {!leafletReady && (
         <div className="bt-map-loading">
           <i className="bx bx-loader-alt bx-spin" />
@@ -236,90 +302,22 @@ function BusMap({
   );
 }
 
-/* ── Notify hook ── */
-function useNotify() {
-  const [notified, setNotified] = useState({});
-  const [toasts, setToasts] = useState([]);
-
-  const addToast = (msg, type = "info") => {
-    const id = Date.now();
-    setToasts((t) => [...t, { id, msg, type }]);
-    setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 4000);
-  };
-
-  const toggle = async (bus) => {
-    if (notified[bus.id]) {
-      clearTimeout(notified[bus.id]);
-      setNotified((n) => {
-        const c = { ...n };
-        delete c[bus.id];
-        return c;
-      });
-      addToast(`Notification cancelled for ${bus.id}`, "cancel");
-      return;
-    }
-    if (bus.eta === "—") {
-      addToast(`${bus.id} hasn't started yet`, "error");
-      return;
-    }
-
-    let perm = Notification.permission;
-    if (perm === "default") perm = await Notification.requestPermission();
-    if (perm === "denied") {
-      addToast("Enable notifications in browser settings", "error");
-      return;
-    }
-
-    const notifyBefore = 2;
-    const delayMin = Math.max(parseInt(bus.eta) - notifyBefore, 0);
-    const delayMs = delayMin > 0 ? delayMin * 60 * 1000 : 8000;
-
-    const tid = setTimeout(() => {
-      new Notification(`🚌 ${bus.id} arriving in ~${notifyBefore} min!`, {
-        body: `${bus.route} — next stop: ${bus.nextStop}`,
-        icon: "/favicon.ico",
-      });
-      setNotified((n) => {
-        const c = { ...n };
-        delete c[bus.id];
-        return c;
-      });
-      addToast(`${bus.id} is almost at ${bus.nextStop}!`, "success");
-    }, delayMs);
-
-    setNotified((n) => ({ ...n, [bus.id]: tid }));
-    addToast(
-      delayMin > 0
-        ? `You'll be notified ${delayMin} min before ${bus.id} arrives ✓`
-        : `Demo: notification fires in ~8 sec for ${bus.id} ✓`,
-      "success",
-    );
-  };
-
-  return { notified, toggle, toasts };
-}
-
 /* ── Main ── */
 export default function BusTracking() {
-  const [expanded, setExpanded] = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
   const [liveTime, setLiveTime] = useState(new Date());
   const [userLocation, setUserLocation] = useState(null);
   const [locationLabel, setLocationLabel] = useState(null);
-  const [activeRoute, setActiveRoute] = useState(null);
-  const { notified, toggle, toasts } = useNotify();
-  const flyToRef = useRef(null);
   const leafletMapRef = useRef(null);
-  const polylineRef = useRef(null);
+  const listRef = useRef(null);
 
   useEffect(() => {
     const t = setInterval(() => setLiveTime(new Date()), 1000);
     return () => clearInterval(t);
   }, []);
 
-  // Watch user GPS location
   useEffect(() => {
     if (!navigator.geolocation) {
-      // fallback demo location near college
       setUserLocation([19.2295, 82.5478]);
       setLocationLabel("Demo location");
       return;
@@ -338,66 +336,24 @@ export default function BusTracking() {
     return () => navigator.geolocation.clearWatch(id);
   }, []);
 
-  const clearRoute = () => {
-    if (polylineRef.current && leafletMapRef.current) {
-      leafletMapRef.current.removeLayer(polylineRef.current);
-      polylineRef.current = null;
+  const handleSelectBus = (id) => {
+    const next = selectedId === id ? null : id;
+    setSelectedId(next);
+    /* Scroll list into view when selecting */
+    if (next && listRef.current) {
+      setTimeout(
+        () =>
+          listRef.current.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          }),
+        300,
+      );
     }
-    setActiveRoute(null);
-  };
-
-  const handleTrackOnMap = (bus) => {
-    const map = leafletMapRef.current;
-    if (!map || !window.L) return;
-
-    // Remove old route
-    if (polylineRef.current) {
-      map.removeLayer(polylineRef.current);
-      polylineRef.current = null;
-    }
-
-    const L = window.L;
-    const userLatLng = userLocation || COLLEGE_CENTER;
-
-    // Dashed polyline: bus → user
-    const poly = L.polyline([bus.coords, userLatLng], {
-      color: "#4ade80",
-      weight: 3,
-      dashArray: "8 6",
-      lineCap: "round",
-    }).addTo(map);
-    polylineRef.current = poly;
-
-    const distKm = haversineKm(
-      bus.coords[0],
-      bus.coords[1],
-      userLatLng[0],
-      userLatLng[1],
-    );
-    setActiveRoute({ busId: bus.id, distKm });
-
-    // Fit both markers in view
-    map.fitBounds(L.latLngBounds([bus.coords, userLatLng]), {
-      padding: [40, 40],
-      maxZoom: 17,
-    });
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
     <div className="bt-root">
-      {/* Toasts */}
-      <div className="bt-toasts">
-        {toasts.map((t) => (
-          <div key={t.id} className={`bt-toast bt-toast--${t.type}`}>
-            <i
-              className={`bx ${t.type === "success" ? "bx-check-circle" : t.type === "cancel" ? "bx-bell-off" : "bx-error-circle"}`}
-            />
-            {t.msg}
-          </div>
-        ))}
-      </div>
-
       {/* Header */}
       <div className="bt-header">
         <button className="bt-icon-btn">
@@ -412,32 +368,13 @@ export default function BusTracking() {
       {/* Map */}
       <BusMap
         buses={busData}
-        selectedId={expanded}
-        onSelectBus={(id) => setExpanded((p) => (p === id ? null : id))}
-        flyToRef={flyToRef}
+        selectedId={selectedId}
+        onSelectBus={handleSelectBus}
         userLocation={userLocation}
         mapRef={leafletMapRef}
       />
 
-      {/* Route info bar — only when a route is active */}
-      {activeRoute && (
-        <div className="bt-route-bar">
-          <i className="bx bx-navigation" />
-          <div className="bt-route-bar-info">
-            <span className="bt-route-bar-dist">
-              {activeRoute.distKm} km away
-            </span>
-            <span className="bt-route-bar-label">
-              {activeRoute.busId} → Your Location
-            </span>
-          </div>
-          <button className="bt-route-bar-close" onClick={clearRoute}>
-            <i className="bx bx-x" />
-          </button>
-        </div>
-      )}
-
-      {/* Location label strip */}
+      {/* Location strip */}
       {locationLabel && (
         <div className="bt-loc-strip">
           <i className="bx bx-map-pin" />
@@ -445,12 +382,58 @@ export default function BusTracking() {
         </div>
       )}
 
+      {/* Selected bus info strip */}
+      {selectedId &&
+        (() => {
+          const bus = busData.find((b) => b.id === selectedId);
+          const st = statusConfig[bus.status];
+          const userLatLng = userLocation || COLLEGE_CENTER;
+          const dist =
+            bus.status !== "notstarted"
+              ? haversineKm(
+                  bus.coords[0],
+                  bus.coords[1],
+                  userLatLng[0],
+                  userLatLng[1],
+                )
+              : null;
+          return (
+            <div className="bt-selected-strip">
+              <div className="bt-ss-left">
+                <span className="bt-ss-id">{bus.id}</span>
+                <div className="bt-ss-info">
+                  <span className="bt-ss-route">{bus.route}</span>
+                  <div className="bt-ss-meta">
+                    <span
+                      className="bt-status"
+                      style={{ color: st.color, background: st.bg }}
+                    >
+                      {st.label}
+                    </span>
+                    {dist && (
+                      <span className="bt-ss-dist">
+                        <i className="bx bx-ruler" /> {dist} km from you
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <button
+                className="bt-ss-close"
+                onClick={() => setSelectedId(null)}
+              >
+                <i className="bx bx-x" />
+              </button>
+            </div>
+          );
+        })()}
+
       <div className="bt-pull-handle">
         <span />
       </div>
 
-      {/* List */}
-      <div className="bt-list-section">
+      {/* Bus list */}
+      <div className="bt-list-section" ref={listRef}>
         <div className="bt-list-header">
           <span className="bt-list-title">All Buses</span>
           <span className="bt-list-clock">
@@ -466,157 +449,55 @@ export default function BusTracking() {
         <div className="bt-buses">
           {busData.map((bus) => {
             const st = statusConfig[bus.status];
-            const isOpen = expanded === bus.id;
-            const isSet = !!notified[bus.id];
-            const isRouted = activeRoute?.busId === bus.id;
+            const isSelected = selectedId === bus.id;
 
             return (
-              <div
+              <button
                 key={bus.id}
-                className={`bt-card ${isOpen ? "bt-card--open" : ""} ${isRouted ? "bt-card--routed" : ""}`}
+                className={`bt-card ${isSelected ? "bt-card--selected" : ""}`}
+                onClick={() => handleSelectBus(bus.id)}
               >
-                {/* Collapsed row */}
-                <button
-                  className="bt-card-row"
-                  onClick={() =>
-                    setExpanded((p) => (p === bus.id ? null : bus.id))
-                  }
+                <div
+                  className="bt-bus-badge"
+                  style={{ borderColor: isSelected ? st.color : undefined }}
                 >
-                  <div className="bt-bus-badge">
-                    <i className="bx bxs-bus" />
-                    <span>{bus.id}</span>
-                  </div>
-
-                  <div className="bt-card-info">
-                    <div className="bt-card-top">
-                      <span className="bt-card-route">{bus.route}</span>
-                      <span
-                        className="bt-status"
-                        style={{ color: st.color, background: st.bg }}
-                      >
-                        {st.label}
-                      </span>
-                    </div>
-                    {bus.status !== "notstarted" ? (
-                      <>
-                        <div className="bt-card-next">
-                          <strong>Next:</strong> {bus.nextStop}
-                        </div>
-                        <div className="bt-card-meta">
-                          <i className="bx bx-time-five" /> {bus.eta} min
-                          <span className="bt-sep">·</span>
-                          <i className="bx bx-map-pin" /> {bus.distance}
-                        </div>
-                      </>
-                    ) : (
-                      <div className="bt-card-meta">
-                        <i className="bx bx-time" /> {bus.departure} →{" "}
-                        {bus.arrival}
-                      </div>
-                    )}
-                  </div>
-
                   <i
-                    className={`bx bx-chevron-down bt-chevron ${isOpen ? "bt-chevron--up" : ""}`}
+                    className="bx bxs-bus"
+                    style={{ color: isSelected ? st.color : undefined }}
                   />
-                </button>
+                  <span>{bus.id}</span>
+                </div>
 
-                {/* Expanded details — accordion */}
-                {isOpen && (
-                  <div className="bt-expand">
-                    <div className="bt-expand-divider" />
-
-                    <div className="bt-detail-grid">
-                      {[
-                        {
-                          icon: "bx-time-five",
-                          label: "Departure",
-                          val: bus.departure,
-                        },
-                        { icon: "bx-flag", label: "Arrival", val: bus.arrival },
-                        {
-                          icon: "bx-map-pin",
-                          label: "Next Stop",
-                          val: bus.nextStop,
-                        },
-                        {
-                          icon: "bx-timer",
-                          label: "ETA",
-                          val: bus.eta === "—" ? "—" : `${bus.eta} min`,
-                          hi: true,
-                        },
-                        {
-                          icon: "bx-route",
-                          label: "Distance",
-                          val: bus.distance,
-                        },
-                        { icon: "bx-run", label: "Speed", val: bus.speed },
-                      ].map(({ icon, label, val, hi }) => (
-                        <div key={label} className="bt-dcell">
-                          <i className={`bx ${icon}`} />
-                          <span className="bt-dlabel">{label}</span>
-                          <span
-                            className={`bt-dval ${hi ? "bt-dval--hi" : ""}`}
-                          >
-                            {val}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="bt-extra-list">
-                      <div className="bt-erow">
-                        <i className="bx bx-user" />
-                        <span>Driver</span>
-                        <span>{bus.driver}</span>
-                      </div>
-                      <div className="bt-erow">
-                        <i className="bx bx-stop-circle" />
-                        <span>Total Stops</span>
-                        <span>{bus.totalStops} stops</span>
-                      </div>
-                      {userLocation && bus.status !== "notstarted" && (
-                        <div className="bt-erow">
-                          <i className="bx bx-current-location" />
-                          <span>From You</span>
-                          <span>
-                            {haversineKm(
-                              bus.coords[0],
-                              bus.coords[1],
-                              userLocation[0],
-                              userLocation[1],
-                            )}{" "}
-                            km
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="bt-actions">
-                      <button
-                        className={`bt-btn ${isRouted ? "bt-btn--map-active" : "bt-btn--map"}`}
-                        onClick={() =>
-                          isRouted ? clearRoute() : handleTrackOnMap(bus)
-                        }
-                      >
-                        <i
-                          className={`bx ${isRouted ? "bx-x" : "bx-map-alt"}`}
-                        />
-                        {isRouted ? "Clear Route" : "Track on Map"}
-                      </button>
-                      <button
-                        className={`bt-btn ${isSet ? "bt-btn--notified" : "bt-btn--notify"}`}
-                        onClick={() => toggle(bus)}
-                      >
-                        <i
-                          className={`bx ${isSet ? "bx-bell-off" : "bx-bell"}`}
-                        />
-                        {isSet ? "Cancel" : "Notify Me"}
-                      </button>
-                    </div>
+                <div className="bt-card-info">
+                  <div className="bt-card-top">
+                    <span className="bt-card-route">{bus.route}</span>
+                    <span
+                      className="bt-status"
+                      style={{ color: st.color, background: st.bg }}
+                    >
+                      {st.label}
+                    </span>
                   </div>
-                )}
-              </div>
+                  {bus.status !== "notstarted" ? (
+                    <div className="bt-card-meta">
+                      <i className="bx bx-time-five" /> {bus.eta} min
+                      <span className="bt-sep">·</span>
+                      <i className="bx bx-map-pin" /> {bus.distance}
+                      <span className="bt-sep">·</span>
+                      <i className="bx bx-navigation" /> {bus.nextStop}
+                    </div>
+                  ) : (
+                    <div className="bt-card-meta">
+                      <i className="bx bx-time" /> {bus.departure} →{" "}
+                      {bus.arrival}
+                    </div>
+                  )}
+                </div>
+
+                <i
+                  className={`bx bx-chevron-right bt-chevron${isSelected ? " bt-chevron--active" : ""}`}
+                />
+              </button>
             );
           })}
         </div>
