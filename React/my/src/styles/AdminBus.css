@@ -1,0 +1,603 @@
+/* ═══════════════════════════════════════
+   ADMIN BUS - Refined Dark Theme
+   Matches the uploaded image aesthetic
+═══════════════════════════════════════ */
+.ad-root {
+  min-height: 100dvh;
+  background: #0a0a0a;
+  font-family:
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  color: #e2e8f0;
+  padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ═══════════════════════════════════════
+   HEADER
+═══════════════════════════════════════ */
+.ad-header {
+  position: sticky;
+  top: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(10, 10, 10, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.ad-header__back {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 18px;
+}
+.ad-header__back:active {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(0.95);
+}
+.ad-header__center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.ad-header__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f8fafc;
+  letter-spacing: -0.3px;
+}
+.ad-header__count {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 500;
+}
+.ad-header__add {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6366f1, #818cf8);
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+.ad-header__add:active {
+  transform: scale(0.95);
+}
+
+/* ═══════════════════════════════════════
+   BUS LIST
+═══════════════════════════════════════ */
+.ad-list {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ad-bus-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 12px 14px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+.ad-bus-card:active {
+  background: rgba(255, 255, 255, 0.05);
+}
+.ad-bus-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  background: var(--sc, #4ade80);
+  border-radius: 14px 14px 0 0;
+}
+
+.ad-bus-card__top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.ad-bus-card__icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 2px solid var(--sc, #4ade80);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 17px;
+  gap: 1px;
+  margin-top: 2px;
+}
+.ad-bus-card__icon span {
+  font-size: 7px;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.3px;
+}
+.ad-bus-card__info {
+  flex: 1;
+  min-width: 0;
+  padding-top: 2px;
+}
+.ad-bus-card__route {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f1f5f9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.2px;
+}
+.ad-bus-card__meta {
+  font-size: 11px;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+.ad-bus-card__meta i {
+  font-size: 12px;
+  color: #334155;
+}
+.ad-dot {
+  color: #334155;
+  font-size: 11px;
+}
+
+.ad-bus-card__actions {
+  display: flex;
+  gap: 5px;
+  margin-top: 2px;
+}
+.ad-action-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.15s;
+}
+.ad-action-btn:active {
+  transform: scale(0.9);
+}
+.ad-action-btn--edit {
+  background: rgba(99, 102, 241, 0.1);
+  color: #818cf8;
+}
+.ad-action-btn--edit:active {
+  background: rgba(99, 102, 241, 0.2);
+}
+.ad-action-btn--delete {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+.ad-action-btn--delete:active {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.ad-bus-card__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+.ad-bus-card__badge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+.ad-bus-card__next {
+  font-size: 11px;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 500;
+}
+.ad-bus-card__next i {
+  font-size: 12px;
+  color: #334155;
+}
+
+/* ═══════════════════════════════════════
+   FORM SHEET
+═══════════════════════════════════════ */
+.ad-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  z-index: 500;
+}
+.ad-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 600;
+  background: #111118;
+  border-radius: 20px 20px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: sheetUp 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+@keyframes sheetUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.ad-sheet__handle-zone {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  padding-top: 4px;
+}
+.ad-sheet__handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.15);
+}
+.ad-sheet__header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.ad-sheet__header h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+.ad-sheet__close {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+}
+.ad-sheet__close:active {
+  background: rgba(255, 255, 255, 0.1);
+}
+.ad-sheet__form {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ═══════════════════════════════════════
+   FORM ELEMENTS
+═══════════════════════════════════════ */
+.ad-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.ad-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: none;
+}
+.ad-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #f1f5f9;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.2s;
+}
+.ad-input::placeholder {
+  color: #475569;
+}
+.ad-input:focus {
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
+  background: rgba(255, 255, 255, 0.06);
+}
+.ad-input--custom {
+  margin-top: 8px;
+}
+
+.ad-form-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+.ad-form-row .ad-form-group {
+  flex: 1;
+}
+.ad-swap-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  color: #818cf8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  margin-bottom: 1px;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.ad-swap-btn:active {
+  background: rgba(99, 102, 241, 0.2);
+  transform: scale(0.95);
+}
+
+.ad-status-options {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.ad-status-btn {
+  flex: 1;
+  min-width: 70px;
+  padding: 10px 8px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.ad-status-btn--active {
+  background: rgba(255, 255, 255, 0.08);
+}
+.ad-status-btn:active {
+  transform: scale(0.96);
+}
+
+.ad-submit-btn {
+  margin-top: 8px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #6366f1, #818cf8);
+  border: none;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.25);
+}
+.ad-submit-btn:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15);
+}
+
+/* ═══════════════════════════════════════
+   DELETE MODAL
+═══════════════════════════════════════ */
+.ad-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  z-index: 700;
+}
+.ad-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 800;
+  background: #111118;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 24px;
+  width: 85%;
+  max-width: 300px;
+  text-align: center;
+  animation: modalIn 0.2s ease;
+}
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+.ad-modal__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin: 0 auto 12px;
+}
+.ad-modal__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 8px;
+}
+.ad-modal__text {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+.ad-modal__actions {
+  display: flex;
+  gap: 10px;
+}
+.ad-modal__btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+.ad-modal__btn--cancel {
+  background: rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
+}
+.ad-modal__btn--confirm {
+  background: #ef4444;
+  color: #fff;
+}
+.ad-modal__btn:active {
+  transform: scale(0.96);
+}
+
+/* ═══════════════════════════════════════
+   TOAST
+═══════════════════════════════════════ */
+.ad-toast {
+  position: fixed;
+  bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  padding: 12px 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  animation: toastIn 0.3s ease;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+}
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+.ad-toast--success {
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid rgba(74, 222, 128, 0.2);
+  color: #4ade80;
+}
+.ad-toast--error {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════ */
+@media (min-width: 768px) {
+  .ad-list {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 16px 24px;
+  }
+  .ad-sheet {
+    max-width: 480px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .ad-header {
+    padding: 14px 24px;
+  }
+}
+
+@media (max-width: 380px) {
+  .ad-list {
+    padding: 10px 12px;
+    gap: 6px;
+  }
+  .ad-bus-card {
+    padding: 10px 12px;
+  }
+  .ad-bus-card__route {
+    font-size: 12px;
+  }
+  .ad-bus-card__meta {
+    font-size: 10px;
+  }
+  .ad-action-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+}

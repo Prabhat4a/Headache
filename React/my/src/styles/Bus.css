@@ -1,369 +1,197 @@
-/* ================================================
-   Bus.css  —  STUVO5  |  Uber-style Bus Tracking
-   ================================================ */
-
+/* ═══════════════════════════════════════
+   ROOT & BASE
+═══════════════════════════════════════ */
 .bt-root {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background: #0a0a0a;
-  color: #e2e8f0;
-  font-family: "Segoe UI", system-ui, sans-serif;
-  padding-bottom: 80px;
-}
-
-/* ── HEADER ── */
-.bt-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 18px;
-  background: #0a0a0a;
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 200;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-}
-.bt-title {
-  font-size: 17px;
-  font-weight: 700;
-  color: #f1f5f9;
-  letter-spacing: 0.2px;
-}
-.bt-icon-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #9ca3af;
-  font-size: 20px;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  transition:
-    background 0.2s,
-    color 0.2s;
-}
-.bt-icon-btn:hover {
-  background: #242424;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #080b12;
+  font-family: "Segoe UI", system-ui, sans-serif;
   color: #e2e8f0;
+  overflow: hidden;
 }
 
-/* ── MAP ── */
-.bt-leaflet-map {
-  width: 100%;
-  height: 240px;
-  background: #111;
-  position: relative;
-  z-index: 1;
-  transition: height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-}
-/* Uber-style: map expands when a bus is selected */
-.bt-leaflet-map--expanded {
-  height: 420px;
-}
-
-.bt-leaflet-map .leaflet-control-zoom a {
-  background: #1a1a1a !important;
-  color: #9ca3af !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-}
-.bt-leaflet-map .leaflet-control-zoom a:hover {
-  background: #242424 !important;
-  color: #e2e8f0 !important;
-}
-
-.bt-map-loading {
+/* ═══════════════════════════════════════
+   MAP
+═══════════════════════════════════════ */
+.btm-map {
   position: absolute;
   inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  color: #4b5563;
+  z-index: 1;
+  background: #0d1117;
 }
-.bt-map-loading i {
-  font-size: 28px;
+.btm-map .leaflet-control-zoom {
+  border: none !important;
+  box-shadow: none !important;
 }
-.bt-map-loading span {
-  font-size: 13px;
+.btm-map .leaflet-control-zoom a {
+  background: rgba(12, 15, 26, 0.96) !important;
+  color: #94a3b8 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  width: 34px !important;
+  height: 34px !important;
+  line-height: 34px !important;
+  font-size: 15px !important;
+  border-radius: 8px !important;
+  margin-bottom: 4px !important;
 }
 
-/* ── BUS MARKERS ── */
-.bt-marker {
+/* Bus pin marker */
+.btm-pin {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 54px;
-  height: 40px;
-  border-radius: 10px;
-  background: #1a1a1a;
-  border: 2px solid var(--mc, #9ca3af);
-  color: var(--mc, #9ca3af);
+  width: 52px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(10, 13, 22, 0.96);
+  border: 2px solid var(--c, #94a3b8);
+  color: var(--c, #94a3b8);
   font-size: 18px;
   gap: 1px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.6);
-  transition:
-    transform 0.2s,
-    opacity 0.3s;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65);
   cursor: pointer;
   position: relative;
+  transition: transform 0.25s;
 }
-.bt-marker span {
-  font-size: 8px;
-  font-weight: 700;
+.btm-pin span {
+  font-size: 7px;
+  font-weight: 800;
+  color: #94a3b8;
   letter-spacing: 0.3px;
-  line-height: 1;
-  color: #e2e8f0;
 }
-.bt-marker i {
-  line-height: 1;
-}
-.bt-marker::after {
+.btm-pin::after {
   content: "";
   position: absolute;
   bottom: -8px;
   left: 50%;
   transform: translateX(-50%);
   border: 5px solid transparent;
-  border-top-color: var(--mc, #9ca3af);
+  border-top-color: var(--c, #94a3b8);
 }
-
-/* Hidden (other buses when one is selected) */
-.bt-marker--hidden {
-  opacity: 0;
-  pointer-events: none;
-  transform: scale(0.6);
-}
-
-/* Selected bus marker */
-.bt-marker--sel {
+.btm-pin--sel {
   background: #fff;
-  color: #0a0a0a;
+  color: #0a0d16;
   border-color: #fff;
   transform: scale(1.25);
   box-shadow:
-    0 0 0 4px rgba(255, 255, 255, 0.18),
-    0 4px 20px rgba(0, 0, 0, 0.8);
+    0 0 0 4px rgba(255, 255, 255, 0.14),
+    0 6px 20px rgba(0, 0, 0, 0.8);
 }
-.bt-marker--sel span {
-  color: #0a0a0a;
+.btm-pin--sel span {
+  color: #0a0d16;
 }
-.bt-marker--sel::after {
+.btm-pin--sel::after {
   border-top-color: #fff;
 }
 
-/* ── DISTANCE LABEL ON MAP ── */
-.bt-dist-label {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  background: rgba(10, 10, 10, 0.92);
-  border: 1px solid rgba(74, 222, 128, 0.4);
-  color: #4ade80;
-  font-size: 11.5px;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 20px;
-  white-space: nowrap;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-}
-.bt-dist-label i {
-  font-size: 13px;
-}
-
-/* ── USER LOCATION MARKER ── */
-.bt-user-marker {
+/* User location dot */
+.btm-user {
   position: relative;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.bt-user-dot {
-  width: 14px;
-  height: 14px;
+.btm-user__dot {
+  width: 13px;
+  height: 13px;
   border-radius: 50%;
-  background: #4ade80;
-  border: 2.5px solid #fff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  background: #6366f1;
+  border: 3px solid #fff;
   position: relative;
   z-index: 2;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.55);
 }
-.bt-user-pulse {
+.btm-user__pulse {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: rgba(74, 222, 128, 0.25);
-  animation: bt-pulse 1.8s ease-out infinite;
+  background: rgba(99, 102, 241, 0.22);
+  animation: pulse 2s ease-out infinite;
 }
-@keyframes bt-pulse {
+@keyframes pulse {
   0% {
-    transform: scale(0.6);
+    transform: scale(0.5);
     opacity: 1;
   }
   100% {
-    transform: scale(1.8);
+    transform: scale(2.4);
     opacity: 0;
   }
 }
 
-/* ── SELECTED BUS INFO STRIP (below map) ── */
-.bt-selected-strip {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background: #111;
-  border-bottom: 1px solid rgba(74, 222, 128, 0.2);
-  animation: bt-slideDown 0.25s ease;
-}
-@keyframes bt-slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.bt-ss-left {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
-.bt-ss-id {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  color: #f1f5f9;
-  background: #1e1e1e;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 4px 8px;
-  border-radius: 7px;
-  white-space: nowrap;
-}
-.bt-ss-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-}
-.bt-ss-route {
-  font-size: 13px;
-  font-weight: 600;
-  color: #f1f5f9;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.bt-ss-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.bt-ss-dist {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 11.5px;
-  color: #6b7280;
-}
-.bt-ss-dist i {
-  font-size: 12px;
-  color: #4ade80;
-}
-.bt-ss-close {
-  background: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  width: 32px;
-  height: 32px;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  color: #9ca3af;
-  font-size: 20px;
-  flex-shrink: 0;
-  transition:
-    background 0.15s,
-    color 0.15s;
-}
-.bt-ss-close:hover {
-  background: #242424;
-  color: #e2e8f0;
-}
-
-/* ── LOCATION STRIP ── */
-.bt-loc-strip {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 16px;
-  background: rgba(251, 146, 60, 0.08);
-  border-bottom: 1px solid rgba(251, 146, 60, 0.15);
-  font-size: 11.5px;
-  color: #fb923c;
-}
-.bt-loc-strip i {
-  font-size: 13px;
-}
-
-/* ── PULL HANDLE ── */
-.bt-pull-handle {
-  display: flex;
-  justify-content: center;
-  padding: 8px 0;
-  background: #0a0a0a;
-}
-.bt-pull-handle span {
-  width: 36px;
-  height: 4px;
-  border-radius: 2px;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-/* ── LIST SECTION ── */
-.bt-list-section {
-  padding: 0 14px 16px;
-}
-.bt-list-header {
+/* ═══════════════════════════════════════
+   HEADER
+═══════════════════════════════════════ */
+.bt-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 300;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  padding: 12px 14px;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 11, 18, 0.98) 0%,
+    rgba(8, 11, 18, 0.7) 100%
+  );
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
-.bt-list-title {
-  font-size: 16px;
+.bt-header__left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.bt-header__icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #818cf8;
+  font-size: 18px;
+}
+.bt-header__title {
+  font-size: 15px;
   font-weight: 700;
   color: #f1f5f9;
 }
-.bt-list-clock {
+.bt-header__sub {
+  font-size: 10px;
+  color: #475569;
+  margin-top: 1px;
+}
+.bt-header__live {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 11.5px;
-  color: #6b7280;
-  font-variant-numeric: tabular-nums;
-  background: #141414;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  padding: 4px 10px;
-  border-radius: 8px;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #4ade80;
+  letter-spacing: 0.6px;
+  background: rgba(74, 222, 128, 0.08);
+  border: 1px solid rgba(74, 222, 128, 0.2);
+  padding: 4px 11px;
+  border-radius: 20px;
 }
-.bt-live-dot {
-  width: 7px;
-  height: 7px;
+.bt-header__dot {
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: #4ade80;
+  flex-shrink: 0;
   animation: liveblink 1.4s ease-in-out infinite;
 }
 @keyframes liveblink {
@@ -372,126 +200,494 @@
     opacity: 1;
   }
   50% {
-    opacity: 0.25;
+    opacity: 0.3;
   }
 }
 
-.bt-buses {
+/* ═══════════════════════════════════════
+   BOTTOM SHEET — FIXED (no gap)
+═══════════════════════════════════════ */
+.bt-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 400;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  background: #0c0f1a;
+  border-radius: 22px 22px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.55);
+  transition: max-height 0.38s cubic-bezier(0.32, 0.72, 0, 1);
+  overflow: hidden;
+  /* Account for bottom navbar */
+  padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+  /* Default: fit to actual content, never force extra space */
+  max-height: fit-content;
 }
 
-/* ── BUS CARD ── (now a flat tap target, no accordion) */
-.bt-card {
-  width: 100%;
+/* Collapsed: show ~3.5 bus items, no empty gap above */
+.bt-sheet--col {
+  max-height: 320px;
+}
+
+/* Expanded: show all items */
+.bt-sheet--exp {
+  max-height: calc(100vh - 120px);
+}
+
+/* Selected bus detail: fit the card */
+.bt-sheet--sel {
+  max-height: 380px;
+}
+
+/* Scrollable area */
+.bt-sheet__scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px;
+  overscroll-behavior: contain;
+  min-height: 0;
+}
+
+.bt-sheet__scroll::-webkit-scrollbar {
+  width: 3px;
+}
+.bt-sheet__scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+/* Drag handle zone */
+.bt-sheet__handle-zone {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 13px 13px 13px 14px;
-  background: #111111;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  cursor: pointer;
-  text-align: left;
+  justify-content: center;
+  height: 28px;
+  cursor: grab;
+  touch-action: none;
+}
+.bt-sheet__handle-zone:active {
+  cursor: grabbing;
+}
+.bt-sheet__handle {
+  width: 38px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.18);
   transition:
-    border-color 0.2s,
-    background 0.15s,
-    box-shadow 0.2s;
+    width 0.2s,
+    background 0.2s;
 }
-.bt-card:hover {
-  background: #161616;
-  border-color: rgba(255, 255, 255, 0.15);
-}
-.bt-card--selected {
-  border-color: rgba(74, 222, 128, 0.45);
-  background: rgba(74, 222, 128, 0.04);
-  box-shadow:
-    0 0 0 1px rgba(74, 222, 128, 0.12),
-    0 4px 18px rgba(0, 0, 0, 0.5);
+.bt-sheet__handle-zone:hover .bt-sheet__handle {
+  width: 48px;
+  background: rgba(255, 255, 255, 0.32);
 }
 
-/* Bus badge */
-.bt-bus-badge {
+/* Sheet header */
+.bt-sheet__header {
   flex-shrink: 0;
-  width: 50px;
-  height: 52px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 0 14px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.bt-sheet__title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #f1f5f9;
+}
+.bt-sheet__sub {
+  font-size: 10px;
+  color: #475569;
+  margin-top: 1px;
+}
+.bt-sheet__clock {
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 4px 9px;
+  border-radius: 7px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════
+   SELECTED BUS DETAIL CARD
+═══════════════════════════════════════ */
+.bt-card {
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  animation: cardIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex-shrink: 0;
+}
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.bt-card__accent {
+  height: 3px;
+  background: var(--sc, #4ade80);
+}
+.bt-card__body {
+  padding: 11px 12px;
+}
+
+/* top row */
+.bt-card__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.bt-card__icon {
+  flex-shrink: 0;
+  width: 42px;
+  height: 44px;
   border-radius: 11px;
-  background: #1e1e1e;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid var(--sc, #4ade80);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  color: var(--sc, #4ade80);
+  font-size: 17px;
+  gap: 1px;
+}
+.bt-card__icon span {
+  font-size: 7px;
+  font-weight: 800;
   color: #cbd5e1;
-  transition: border-color 0.2s;
 }
-.bt-bus-badge i {
-  font-size: 22px;
-  line-height: 1;
-  transition: color 0.2s;
-}
-.bt-bus-badge span {
-  font-size: 8.5px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  color: #9ca3af;
-}
-
-.bt-card-info {
+.bt-card__info {
   flex: 1;
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
 }
-.bt-card-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-.bt-card-route {
-  font-size: 14px;
-  font-weight: 600;
+.bt-card__route {
+  font-size: 13px;
+  font-weight: 700;
   color: #f1f5f9;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.bt-status {
+.bt-card__driver {
+  font-size: 11px;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 2px;
+}
+.bt-card__close {
   flex-shrink: 0;
-  font-size: 10px;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.18s;
+}
+.bt-card__close:active {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(0.9);
+}
+
+/* stats */
+.bt-card__stats {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.bt-card__stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 4px;
+}
+.bt-card__divider {
+  width: 1px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+}
+.bt-card__stat-val {
+  font-size: 13px;
+  font-weight: 800;
+  color: #f1f5f9;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.bt-card__stat-lbl {
+  font-size: 9px;
+  color: #475569;
+  font-weight: 600;
+  margin-top: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* progress track */
+.bt-card__track {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+.bt-card__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--sc, #4ade80);
+  box-shadow: 0 0 5px var(--sc, #4ade80);
+}
+.bt-card__dot--dim {
+  background: transparent;
+  box-shadow: none;
+  border: 1.5px solid #334155;
+}
+.bt-card__bar-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.bt-card__bar {
+  height: 3px;
+  border-radius: 2px;
+  background: #1e293b;
+  overflow: hidden;
+}
+.bt-card__fill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--sc, #4ade80);
+}
+.bt-card__stops {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: #475569;
+}
+
+/* ═══════════════════════════════════════
+   BUS LIST ITEMS
+═══════════════════════════════════════ */
+.bt-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 11px;
+  margin-bottom: 7px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 13px;
+  cursor: pointer;
+  transition:
+    transform 0.18s,
+    background 0.18s;
+  flex-shrink: 0;
+}
+.bt-item:last-child {
+  margin-bottom: 0;
+}
+.bt-item:active {
+  transform: scale(0.98);
+}
+.bt-item--sel {
+  background: rgba(99, 102, 241, 0.06);
+  border-color: rgba(99, 102, 241, 0.22);
+}
+
+.bt-item__left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+.bt-item__icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 48px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-top: 2px solid var(--sc, #4ade80);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 19px;
+  gap: 1px;
+}
+.bt-item__icon span {
+  font-size: 7px;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.3px;
+}
+.bt-item__text {
+  flex: 1;
+  min-width: 0;
+}
+.bt-item__route {
+  font-size: 12.5px;
   font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 20px;
+  color: #e2e8f0;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bt-item__meta {
+  font-size: 10.5px;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  overflow: hidden;
   white-space: nowrap;
 }
-.bt-card-meta {
+.bt-item__meta i {
+  font-size: 11px;
+}
+.bt-item__dot {
+  color: #2d3748;
+  margin: 0 1px;
+}
+
+.bt-item__right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.bt-item__badge {
+  font-size: 9px;
+  font-weight: 800;
+  padding: 3px 7px;
+  border-radius: 6px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.bt-item__eta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 26px;
+}
+.bt-item__eta-n {
+  font-size: 17px;
+  font-weight: 800;
+  color: #f1f5f9;
+  line-height: 1;
+  letter-spacing: -0.5px;
+  font-variant-numeric: tabular-nums;
+}
+.bt-item__eta-l {
+  font-size: 8px;
+  color: #475569;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════
+   CATEGORY TABS
+═══════════════════════════════════════ */
+.bt-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 8px 10px 4px;
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+.bt-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.bt-tab {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 11.5px;
-  color: #6b7280;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s;
+  flex-shrink: 0;
 }
-.bt-card-meta i {
-  font-size: 12px;
+.bt-tab:active {
+  transform: scale(0.96);
 }
-.bt-sep {
-  opacity: 0.4;
+.bt-tab--active {
+  color: #f1f5f9;
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.35);
+}
+.bt-tab__count {
+  font-size: 9px;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1px 5px;
+  border-radius: 10px;
+  color: #64748b;
+}
+.bt-tab--active .bt-tab__count {
+  background: rgba(99, 102, 241, 0.2);
+  color: #818cf8;
 }
 
-/* Chevron */
-.bt-chevron {
-  font-size: 20px;
-  color: rgba(255, 255, 255, 0.2);
-  flex-shrink: 0;
-  transition:
-    color 0.2s,
-    transform 0.2s;
+/* Empty state */
+.bt-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 30px 0;
+  color: #334155;
 }
-.bt-chevron--active {
-  color: #4ade80;
-  transform: translateX(2px);
+.bt-empty i {
+  font-size: 32px;
+}
+.bt-empty span {
+  font-size: 12px;
+  font-weight: 600;
 }
