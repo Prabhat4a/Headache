@@ -29,6 +29,7 @@ import SupportUs from "./pages/SupportUs";
 import Syllabus from "./pages/Syllabus";
 import RaiseComplaint from "./pages/RaiseComplaint";
 import Placements from "./pages/Placements";
+import Attendancepage from "./pages/Attendance";
 import AdminPlacements from "./pages/AdminPlacements";
 import LostFound from "./pages/LostFound";
 
