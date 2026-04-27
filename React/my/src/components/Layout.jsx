@@ -39,8 +39,7 @@ const BROWSE_ITEMS = [
     path: "/complaint",
     name: "Raise Complaint",
   },
-  { icon: "bx-group", label: "Clubs", path: "/clubs", name: "Clubs" },
-  {
+{ icon: "bx-search-alt-2", label: "Lost & Found", path: "/lost-found", name: "Lost & Found" },  {
     icon: "bx-briefcase",
     label: "Placements",
     path: "/placements",
