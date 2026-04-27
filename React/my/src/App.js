@@ -30,11 +30,9 @@ import Syllabus from "./pages/Syllabus";
 import RaiseComplaint from "./pages/RaiseComplaint";
 import Placements from "./pages/Placements";
 import AdminPlacements from "./pages/AdminPlacements";
+import LostFound from "./pages/LostFound";
 
 import ComingSoon from "./pages/ComingSoon";
-
-// ── Admin Bus ──
-import AdminBus from "./pages/AdminBus";
 
 // ── THEN constants/functions ──
 const isAuthenticated = () => localStorage.getItem("token") !== null;
@@ -42,6 +40,37 @@ const ProtectedLayout = () =>
   isAuthenticated() ? <Layout /> : <Navigate to="/login" replace />;
 
 function App() {
+  // TEMP DEBUG — remove after fix
+  const components = {
+    AdminExplorer,
+    Layout,
+    Explorer,
+    Home,
+    Login,
+    Register,
+    ForgotPassword,
+    CompleteRegister,
+    LinkAccount,
+    Profile,
+    Bus,
+    FacultyProfile,
+    Settings,
+    Help,
+    SearchPage,
+    SupportUs,
+    Syllabus,
+    RaiseComplaint,
+    Placements,
+    AdminPlacements,
+    LostFound,
+    ComingSoon,
+  };
+  Object.entries(components).forEach(([name, comp]) => {
+    if (typeof comp !== "function") {
+      console.error(`❌ BAD IMPORT: ${name} is`, typeof comp, comp);
+    }
+  });
+
   return (
     <Router>
       <Routes>
@@ -58,20 +87,27 @@ function App() {
           <Route path="/explorer" element={<Explorer />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/bus" element={<Bus />} />
+
           <Route path="/chat" element={<Navigate to="/explorer" replace />} />
+
           <Route path="/search" element={<SearchPage />} />
           <Route path="/admin-explorer" element={<AdminExplorer />} />
-          <Route path="/admin-bus" element={<AdminBus />} />
           <Route path="/faculty-profile" element={<FacultyProfile />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/help" element={<Help />} />
+
           {/* More section */}
           <Route path="/support-us" element={<SupportUs />} />
           <Route path="/syllabus" element={<Syllabus />} />
           <Route path="/complaint" element={<RaiseComplaint />} />
           <Route path="/placements" element={<Placements />} />
-          {/* Admin pages */}
-          <Route path="/admin-placements" element={<AdminPlacements />} />
+
+          {/* Admin pages — Firebase will add role guard here later */}
+          <Route path="/admin/placements" element={<AdminPlacements />} />
+
+          {/* Lost & Found */}
+          <Route path="/lost-found" element={<LostFound />} />
+
           {/* Coming Soon */}
           <Route path="/clubs" element={<ComingSoon />} />
           <Route path="/facilities" element={<ComingSoon />} />
