@@ -1,6 +1,5 @@
 /* ================================================
-   LostFound.css — STUVO5 | Matches app dark theme
-   Same palette as Raise a Complaint screen
+   LostFound.css  —  STUVO5  |  Grey/Black theme
    ================================================ */
 
 /* ── ROOT ── */
@@ -11,145 +10,64 @@
   background: #0a0a0a;
   color: #e2e8f0;
   font-family: "Segoe UI", system-ui, sans-serif;
-  padding-bottom: 90px;
+  padding-bottom: 80px;
 }
 
-/* ════════════════════════════════
-   PAGE HEADER  (matches Raise a Complaint header style)
-   ════════════════════════════════ */
-.lf-page-header {
+/* ── HEADER ── */
+.lf-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 18px 16px;
+  padding: 14px 18px;
   background: #0a0a0a;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-.lf-page-header-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-/* Icon box — same red square style as Complaint page */
-.lf-page-icon {
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
-  background: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.06), 0 0 0 1px rgba(255,255,255,0.04);
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-}
-
-.lf-page-icon i {
-  font-size: 22px;
-  color: #e2e8f0;
-}
-
-.lf-page-title {
-  font-size: 20px;
+.lf-title {
+  font-size: 17px;
   font-weight: 700;
   color: #f1f5f9;
-  margin: 0 0 2px;
-  letter-spacing: -0.2px;
+  letter-spacing: 0.2px;
 }
 
-.lf-page-sub {
-  font-size: 11.5px;
-  color: #4b5563;
-  margin: 0;
-}
-
-/* Post button — matches app's amber/orange CTA */
 .lf-post-btn {
   display: flex;
   align-items: center;
   gap: 5px;
-  padding: 9px 16px;
-  border-radius: 12px;
-  background: #e85d26;
+  padding: 7px 14px;
+  border-radius: 10px;
+  background: #e2e8f0;
   border: none;
-  color: #fff;
+  color: #0a0a0a;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  flex-shrink: 0;
-  transition: background 0.15s, box-shadow 0.15s;
-  box-shadow: 0 0 14px rgba(232, 93, 38, 0.35);
+  transition: background 0.15s;
 }
 
-.lf-post-btn i { font-size: 16px; }
-.lf-post-btn:hover { background: #f06030; }
-
-/* ════════════════════════════════
-   STATS ROW
-   ════════════════════════════════ */
-.lf-stats-row {
-  display: flex;
-  gap: 10px;
-  padding: 14px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+.lf-post-btn i {
+  font-size: 16px;
 }
 
-.lf-stat-box {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  padding: 12px 8px;
-  border-radius: 12px;
-  background: #141414;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.04);
-  transition: box-shadow 0.2s;
+.lf-post-btn:hover {
+  background: #f1f5f9;
 }
 
-.lf-stat-box:hover {
-  box-shadow: 0 0 14px rgba(255, 255, 255, 0.09);
-}
-
-.lf-stat-num {
-  font-size: 22px;
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: -0.5px;
-}
-
-.lf-stat-label {
-  font-size: 10px;
-  font-weight: 600;
-  color: #4b5563;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-}
-
-.lf-stat-box--lost  .lf-stat-num { color: #f87171; }
-.lf-stat-box--found .lf-stat-num { color: #4ade80; }
-.lf-stat-box--done  .lf-stat-num { color: #e85d26; }
-
-.lf-stat-box--lost  { border-color: rgba(248, 113, 113, 0.2); }
-.lf-stat-box--found { border-color: rgba(74, 222, 128, 0.2); }
-.lf-stat-box--done  { border-color: rgba(232, 93, 38, 0.2); }
-
-/* ════════════════════════════════
-   SEARCH
-   ════════════════════════════════ */
+/* ── SEARCH ── */
 .lf-search-wrap {
   position: relative;
   display: flex;
   align-items: center;
-  padding: 12px 16px;
+  padding: 10px 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .lf-search-icon {
   position: absolute;
-  left: 28px;
+  left: 26px;
   font-size: 15px;
   color: #4b5563;
   pointer-events: none;
@@ -158,27 +76,26 @@
 .lf-search {
   width: 100%;
   background: #141414;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 10px 36px 10px 36px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 8px 36px 8px 34px;
   font-size: 13px;
   color: #e2e8f0;
   outline: none;
-  font-family: inherit;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  box-shadow: 0 0 0px rgba(255,255,255,0);
+  transition: border-color 0.15s;
 }
 
-.lf-search::placeholder { color: #4b5563; }
+.lf-search::placeholder {
+  color: #4b5563;
+}
 
 .lf-search:focus {
-  border-color: rgba(255, 255, 255, 0.22);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
 .lf-search-clear {
   position: absolute;
-  right: 28px;
+  right: 26px;
   background: none;
   border: none;
   color: #6b7280;
@@ -189,11 +106,12 @@
   padding: 0;
   transition: color 0.15s;
 }
-.lf-search-clear:hover { color: #e2e8f0; }
 
-/* ════════════════════════════════
-   TABS  (matches Severity Level style from app)
-   ════════════════════════════════ */
+.lf-search-clear:hover {
+  color: #e2e8f0;
+}
+
+/* ── TABS ── */
 .lf-tabs {
   display: flex;
   gap: 8px;
@@ -205,85 +123,95 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 9px 20px;
-  border-radius: 10px;
+  padding: 8px 18px;
+  border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  background: #141414;
+  background: #1a1a1a;
   color: #6b7280;
-  font-family: inherit;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.18s;
-  box-shadow: 0 0 6px rgba(255,255,255,0.03);
+  transition: all 0.2s;
+  white-space: nowrap;
 }
 
-.lf-tab i { font-size: 15px; }
+.lf-tab i {
+  font-size: 15px;
+}
 
 .lf-tab:hover {
-  background: #1a1a1a;
+  background: #242424;
   color: #cbd5e1;
-  box-shadow: 0 0 10px rgba(255,255,255,0.07);
 }
 
-/* Active lost — red tint like Medium severity (amber) in app but red */
 .lf-tab--active.lf-tab--lost {
-  background: rgba(248, 113, 113, 0.08);
-  border-color: rgba(248, 113, 113, 0.4);
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.35);
   color: #f87171;
-  box-shadow: 0 0 12px rgba(248, 113, 113, 0.15);
 }
 
-/* Active found — green */
 .lf-tab--active.lf-tab--found {
-  background: rgba(74, 222, 128, 0.08);
-  border-color: rgba(74, 222, 128, 0.4);
+  background: rgba(74, 222, 128, 0.1);
+  border-color: rgba(74, 222, 128, 0.35);
   color: #4ade80;
-  box-shadow: 0 0 12px rgba(74, 222, 128, 0.15);
 }
 
-.lf-tab-badge {
+.lf-tab-count {
+  background: rgba(248, 113, 113, 0.2);
+  color: #f87171;
   font-size: 10px;
   font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 8px;
+  padding: 1px 6px;
+  border-radius: 10px;
   min-width: 18px;
   text-align: center;
 }
 
-.lf-tab-badge--lost  { background: rgba(248,113,113,0.18); color: #f87171; }
-.lf-tab-badge--found { background: rgba(74,222,128,0.18);  color: #4ade80; }
+.lf-tab-count--found {
+  background: rgba(74, 222, 128, 0.2);
+  color: #4ade80;
+}
 
-/* ════════════════════════════════
-   LIST
-   ════════════════════════════════ */
+/* ── PULL HANDLE ── */
+.lf-pull-handle {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.lf-pull-handle span {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ── LIST ── */
 .lf-list {
-  padding: 14px 14px 16px;
+  padding: 0 14px 16px;
 }
 
 .lf-list-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .lf-list-title {
-  font-size: 11px;
+  font-size: 16px;
   font-weight: 700;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
+  color: #f1f5f9;
 }
 
-.lf-count-chip {
-  font-size: 11px;
+.lf-count-badge {
+  font-size: 11.5px;
   font-weight: 600;
   color: #6b7280;
   background: #141414;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   padding: 3px 10px;
-  border-radius: 20px;
+  border-radius: 8px;
 }
 
 /* ── EMPTY ── */
@@ -291,34 +219,25 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 52px 16px;
-  text-align: center;
+  gap: 10px;
+  padding: 48px 16px;
+  color: #374151;
 }
 
-.lf-empty-icon {
-  width: 58px;
-  height: 58px;
-  border-radius: 16px;
-  background: #141414;
-  border: 1px solid rgba(255,255,255,0.1);
-  box-shadow: 0 0 10px rgba(255,255,255,0.05);
-  display: grid;
-  place-items: center;
-  margin-bottom: 4px;
+.lf-empty i {
+  font-size: 38px;
 }
 
-.lf-empty-icon i { font-size: 26px; color: #374151; }
-.lf-empty-title { font-size: 15px; font-weight: 700; color: #4b5563; margin: 0; }
-.lf-empty-sub   { font-size: 12px; color: #374151; margin: 0; }
+.lf-empty span {
+  font-size: 13px;
+}
 
 .lf-empty-btn {
-  margin-top: 8px;
-  padding: 9px 20px;
+  margin-top: 4px;
+  padding: 8px 18px;
   border-radius: 10px;
-  background: #1a1a1a;
-  border: 1px solid rgba(255,255,255,0.12);
-  box-shadow: 0 0 8px rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: #9ca3af;
   font-size: 13px;
   font-weight: 600;
@@ -327,51 +246,43 @@
 }
 
 .lf-empty-btn:hover {
-  background: #242424;
+  background: rgba(255, 255, 255, 0.1);
   color: #e2e8f0;
-  box-shadow: 0 0 14px rgba(255,255,255,0.09);
 }
 
-/* ════════════════════════════════
-   CARDS
-   ════════════════════════════════ */
+/* ── CARDS ── */
 .lf-cards {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-/* ── CARD  (matches the category boxes with glowing white border) ── */
+/* ── CARD ── */
 .lf-card {
   background: #111111;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
   overflow: hidden;
-  transition: border-color 0.2s, box-shadow 0.25s, transform 0.15s;
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.04);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .lf-card:hover {
-  border-color: rgba(255, 255, 255, 0.22);
-  box-shadow: 0 0 18px rgba(255, 255, 255, 0.09), 0 4px 20px rgba(0,0,0,0.4);
-  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
-/* Type-tinted left border */
-.lf-card--lost  { border-left: 3px solid rgba(248, 113, 113, 0.5); }
-.lf-card--found { border-left: 3px solid rgba(74,  222, 128, 0.5); }
-
 .lf-card--resolved {
-  opacity: 0.5;
-  box-shadow: none;
+  opacity: 0.55;
 }
 
 /* Card image */
 .lf-card-img-wrap {
   position: relative;
   width: 100%;
-  overflow: hidden;
   max-height: 200px;
+  overflow: hidden;
 }
 
 .lf-card-img {
@@ -384,7 +295,7 @@
 .lf-resolved-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -393,86 +304,87 @@
   font-size: 15px;
   font-weight: 700;
 }
-.lf-resolved-overlay i { font-size: 22px; }
+
+.lf-resolved-overlay i {
+  font-size: 22px;
+}
 
 /* Card body */
 .lf-card-body {
   padding: 13px 14px;
   display: flex;
   flex-direction: column;
+  gap: 7px;
+}
+
+.lf-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: 8px;
 }
 
-/* Chips row */
-.lf-card-chips {
+.lf-card-title-row {
   display: flex;
   align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
+  gap: 7px;
+  flex: 1;
+  min-width: 0;
 }
 
-.lf-type-chip {
-  font-size: 10px;
-  font-weight: 700;
-  padding: 3px 9px;
-  border-radius: 20px;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
+.lf-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f1f5f9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.lf-type-chip--lost {
-  background: rgba(248,113,113,0.1);
-  color: #f87171;
-  border: 1px solid rgba(248,113,113,0.3);
-}
-
-.lf-type-chip--found {
-  background: rgba(74,222,128,0.1);
-  color: #4ade80;
-  border: 1px solid rgba(74,222,128,0.3);
-}
-
-.lf-resolved-chip {
-  display: inline-flex;
+.lf-resolved-pill {
+  display: flex;
   align-items: center;
   gap: 3px;
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: rgba(74, 222, 128, 0.1);
+  color: #4ade80;
+}
+
+.lf-resolved-pill i {
+  font-size: 12px;
+}
+
+.lf-type-pill {
+  flex-shrink: 0;
   font-size: 10px;
   font-weight: 700;
   padding: 3px 8px;
   border-radius: 20px;
-  background: rgba(74,222,128,0.08);
+  white-space: nowrap;
+}
+
+.lf-type-pill--lost {
+  background: rgba(248, 113, 113, 0.12);
+  color: #f87171;
+}
+
+.lf-type-pill--found {
+  background: rgba(74, 222, 128, 0.12);
   color: #4ade80;
-  border: 1px solid rgba(74,222,128,0.25);
-}
-.lf-resolved-chip i { font-size: 12px; }
-
-/* "Your Post" owner badge */
-.lf-owner-chip {
-  font-size: 10px;
-  font-weight: 700;
-  padding: 3px 9px;
-  border-radius: 20px;
-  background: rgba(232, 93, 38, 0.1);
-  color: #e85d26;
-  border: 1px solid rgba(232, 93, 38, 0.3);
-  letter-spacing: 0.3px;
-}
-
-.lf-card-title {
-  font-size: 14.5px;
-  font-weight: 700;
-  color: #f1f5f9;
-  margin: 0;
 }
 
 .lf-card-desc {
   font-size: 12.5px;
-  color: #6b7280;
-  line-height: 1.55;
+  color: #94a3b8;
+  line-height: 1.5;
   margin: 0;
 }
 
-/* Meta */
+/* Meta row */
 .lf-card-meta {
   display: flex;
   flex-wrap: wrap;
@@ -483,39 +395,23 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 11px;
-  color: #4b5563;
+  font-size: 11.5px;
+  color: #6b7280;
 }
-.lf-meta-item i { font-size: 13px; }
+
+.lf-meta-item i {
+  font-size: 13px;
+}
 
 /* Card actions */
 .lf-card-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
-/* Locked slot when user is NOT the owner */
-.lf-resolve-locked {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  padding: 9px 8px;
-  border-radius: 9px;
-  background: rgba(255,255,255,0.02);
-  border: 1px dashed rgba(255,255,255,0.07);
-  font-size: 11px;
-  color: #374151;
-  cursor: not-allowed;
-  user-select: none;
-}
-.lf-resolve-locked i { font-size: 13px; }
-
-/* ════════════════════════════════
-   BUTTONS
-   ════════════════════════════════ */
+/* ── BUTTONS ── */
 .lf-btn {
   display: flex;
   align-items: center;
@@ -523,123 +419,123 @@
   gap: 6px;
   padding: 9px 10px;
   border-radius: 9px;
-  font-family: inherit;
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
   border: none;
   transition: all 0.15s;
 }
-.lf-btn i { font-size: 15px; }
+
+.lf-btn i {
+  font-size: 15px;
+}
 
 .lf-btn--contact {
   background: #1a1a1a;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   color: #9ca3af;
-  box-shadow: 0 0 6px rgba(255,255,255,0.03);
 }
+
 .lf-btn--contact:hover {
   background: #242424;
   color: #e2e8f0;
-  border-color: rgba(255,255,255,0.2);
-  box-shadow: 0 0 10px rgba(255,255,255,0.07);
+  border-color: rgba(255, 255, 255, 0.22);
 }
 
 .lf-btn--resolve {
-  background: rgba(74,222,128,0.07);
-  border: 1px solid rgba(74,222,128,0.28);
+  background: rgba(74, 222, 128, 0.08);
+  border: 1px solid rgba(74, 222, 128, 0.25);
   color: #4ade80;
 }
+
 .lf-btn--resolve:hover {
-  background: rgba(74,222,128,0.14);
-  border-color: rgba(74,222,128,0.5);
-  box-shadow: 0 0 10px rgba(74,222,128,0.15);
+  background: rgba(74, 222, 128, 0.15);
+  border-color: rgba(74, 222, 128, 0.45);
 }
 
 .lf-btn--cancel {
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   color: #6b7280;
 }
+
 .lf-btn--cancel:hover {
-  background: rgba(255,255,255,0.04);
+  background: rgba(255, 255, 255, 0.05);
   color: #9ca3af;
 }
 
-/* Submit — matches app's red/orange CTA */
 .lf-btn--submit {
-  background: #e85d26;
-  color: #fff;
-  font-weight: 700;
-  box-shadow: 0 0 12px rgba(232,93,38,0.3);
+  background: #e2e8f0;
+  color: #0a0a0a;
 }
+
 .lf-btn--submit:hover {
-  background: #f06030;
-  box-shadow: 0 0 18px rgba(232,93,38,0.4);
+  background: #f1f5f9;
 }
 
 .lf-btn--submit-lost {
-  background: rgba(248,113,113,0.12);
-  border: 1px solid rgba(248,113,113,0.35);
+  background: rgba(248, 113, 113, 0.15);
+  border: 1px solid rgba(248, 113, 113, 0.35);
   color: #f87171;
-  box-shadow: 0 0 10px rgba(248,113,113,0.12);
 }
+
 .lf-btn--submit-lost:hover {
-  background: rgba(248,113,113,0.2);
-  box-shadow: 0 0 14px rgba(248,113,113,0.2);
+  background: rgba(248, 113, 113, 0.25);
 }
 
 .lf-btn--submit-found {
-  background: rgba(74,222,128,0.1);
-  border: 1px solid rgba(74,222,128,0.35);
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid rgba(74, 222, 128, 0.35);
   color: #4ade80;
-  box-shadow: 0 0 10px rgba(74,222,128,0.1);
-}
-.lf-btn--submit-found:hover {
-  background: rgba(74,222,128,0.18);
-  box-shadow: 0 0 14px rgba(74,222,128,0.18);
 }
 
-/* ════════════════════════════════
-   OVERLAY BACKDROP
-   ════════════════════════════════ */
+.lf-btn--submit-found:hover {
+  background: rgba(74, 222, 128, 0.2);
+}
+
+/* ── MODAL OVERLAY ── */
 .lf-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.78);
+  background: rgba(0, 0, 0, 0.75);
   display: flex;
   align-items: flex-end;
   justify-content: center;
   z-index: 500;
   animation: lf-fadeIn 0.2s ease;
-  backdrop-filter: blur(3px);
 }
 
 @keyframes lf-fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-/* ════════════════════════════════
-   POST MODAL  (glowing white border like category boxes)
-   ════════════════════════════════ */
+/* ── POST MODAL ── */
 .lf-modal {
   width: 100%;
   max-width: 480px;
   background: #111;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px 20px 0 0;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
   animation: lf-slideUp 0.25s ease;
-  box-shadow: 0 0 30px rgba(255,255,255,0.07), 0 -4px 40px rgba(0,0,0,0.6);
 }
 
 @keyframes lf-slideUp {
-  from { transform: translateY(40px); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .lf-modal-header {
@@ -648,7 +544,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 16px 18px 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .lf-modal-title {
@@ -662,18 +558,20 @@
   height: 30px;
   border-radius: 8px;
   background: #1a1a1a;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: #9ca3af;
   font-size: 18px;
   display: grid;
   place-items: center;
   cursor: pointer;
-  transition: all 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
+
 .lf-modal-close:hover {
   background: #242424;
   color: #e2e8f0;
-  box-shadow: 0 0 8px rgba(255,255,255,0.07);
 }
 
 .lf-modal-body {
@@ -684,15 +582,18 @@
   flex-direction: column;
   gap: 12px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.08) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
 }
-.lf-modal-body::-webkit-scrollbar { width: 4px; }
+
+.lf-modal-body::-webkit-scrollbar {
+  width: 4px;
+}
 .lf-modal-body::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
 }
 
-/* Type toggle — like Low/Medium/High severity buttons */
+/* Type toggle */
 .lf-type-toggle {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -704,32 +605,31 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 11px 8px;
+  padding: 10px 8px;
   border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   background: #1a1a1a;
   color: #6b7280;
-  font-family: inherit;
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
-  box-shadow: 0 0 6px rgba(255,255,255,0.03);
 }
-.lf-type-btn i { font-size: 15px; }
+
+.lf-type-btn i {
+  font-size: 15px;
+}
 
 .lf-type-btn--lost {
-  background: rgba(248,113,113,0.08);
-  border-color: rgba(248,113,113,0.4);
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.35);
   color: #f87171;
-  box-shadow: 0 0 12px rgba(248,113,113,0.12);
 }
 
 .lf-type-btn--found {
-  background: rgba(74,222,128,0.08);
-  border-color: rgba(74,222,128,0.4);
+  background: rgba(74, 222, 128, 0.1);
+  border-color: rgba(74, 222, 128, 0.35);
   color: #4ade80;
-  box-shadow: 0 0 12px rgba(74,222,128,0.12);
 }
 
 /* Image upload */
@@ -739,23 +639,37 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  height: 88px;
+  height: 90px;
   border-radius: 10px;
-  border: 1.5px dashed rgba(255,255,255,0.12);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
   background: #161616;
   cursor: pointer;
-  transition: all 0.15s;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
   overflow: hidden;
   position: relative;
 }
+
 .lf-img-upload:hover {
-  border-color: rgba(255,255,255,0.25);
+  border-color: rgba(255, 255, 255, 0.28);
   background: #1a1a1a;
-  box-shadow: 0 0 10px rgba(255,255,255,0.05);
 }
-.lf-img-upload i    { font-size: 24px; color: #4b5563; }
-.lf-img-upload span { font-size: 12px; color: #6b7280; }
-.lf-img-upload em   { font-style: normal; color: #374151; }
+
+.lf-img-upload i {
+  font-size: 24px;
+  color: #4b5563;
+}
+
+.lf-img-upload span {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.lf-img-upload em {
+  font-style: normal;
+  color: #4b5563;
+}
 
 .lf-img-preview {
   width: 100%;
@@ -765,7 +679,9 @@
   inset: 0;
 }
 
-.lf-file-input { display: none; }
+.lf-file-input {
+  display: none;
+}
 
 .lf-remove-img {
   display: flex;
@@ -779,7 +695,10 @@
   padding: 0;
   margin-top: -4px;
 }
-.lf-remove-img:hover { color: #fca5a5; }
+
+.lf-remove-img:hover {
+  color: #fca5a5;
+}
 
 /* Fields */
 .lf-field {
@@ -789,37 +708,50 @@
 }
 
 .lf-label {
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 10.5px;
+  font-weight: 600;
   color: #4b5563;
   text-transform: uppercase;
-  letter-spacing: 0.7px;
+  letter-spacing: 0.5px;
 }
 
-/* Input — same style as Complaint page inputs */
 .lf-input {
   width: 100%;
   background: #161616;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
   padding: 10px 12px;
   font-size: 13px;
   color: #e2e8f0;
-  font-family: inherit;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.15s;
   box-sizing: border-box;
+  font-family: inherit;
 }
-.lf-input::placeholder { color: #374151; }
+
+.lf-input::placeholder {
+  color: #374151;
+}
+
 .lf-input:focus {
-  border-color: rgba(255,255,255,0.22);
-  box-shadow: 0 0 10px rgba(255,255,255,0.06);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
-.lf-textarea { resize: none; height: 80px; line-height: 1.5; }
+.lf-textarea {
+  resize: none;
+  height: 80px;
+  line-height: 1.5;
+}
 
-.lf-select { appearance: none; cursor: pointer; }
-.lf-select option { background: #1a1a1a; color: #e2e8f0; }
+.lf-select {
+  appearance: none;
+  cursor: pointer;
+}
+
+.lf-select option {
+  background: #1a1a1a;
+  color: #e2e8f0;
+}
 
 .lf-modal-footer {
   flex-shrink: 0;
@@ -827,24 +759,21 @@
   grid-template-columns: 1fr 1fr;
   gap: 8px;
   padding: 12px 18px 18px;
-  border-top: 1px solid rgba(255,255,255,0.07);
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-/* ════════════════════════════════
-   CONTACT MODAL
-   ════════════════════════════════ */
+/* ── CONTACT MODAL ── */
 .lf-contact-modal {
   width: 100%;
   max-width: 400px;
   background: #111;
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px 20px 0 0;
   animation: lf-slideUp 0.25s ease;
-  box-shadow: 0 0 30px rgba(255,255,255,0.07), 0 -4px 40px rgba(0,0,0,0.6);
 }
 
 .lf-contact-body {
-  padding: 16px 18px 24px;
+  padding: 16px 18px 22px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -855,40 +784,66 @@
   align-items: center;
   gap: 8px;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 600;
   color: #f1f5f9;
   padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
-.lf-contact-item-name i { font-size: 18px; color: #6b7280; }
+
+.lf-contact-item-name i {
+  font-size: 18px;
+  color: #6b7280;
+}
 
 .lf-contact-row {
   display: flex;
   align-items: flex-start;
   gap: 12px;
 }
-.lf-contact-row i { font-size: 18px; color: #4b5563; flex-shrink: 0; margin-top: 1px; }
-.lf-contact-row > div { display: flex; flex-direction: column; gap: 2px; }
+
+.lf-contact-row i {
+  font-size: 18px;
+  color: #4b5563;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.lf-contact-row > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 
 .lf-contact-label {
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 600;
   color: #4b5563;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.5px;
 }
 
-.lf-contact-value { font-size: 13.5px; color: #cbd5e1; font-weight: 500; }
+.lf-contact-value {
+  font-size: 13.5px;
+  color: #cbd5e1;
+  font-weight: 500;
+}
 
 .lf-contact-link {
   font-size: 13.5px;
-  color: #e85d26;
+  color: #60a5fa;
   font-weight: 500;
   text-decoration: none;
 }
-.lf-contact-link:hover { color: #f06030; text-decoration: underline; }
 
-.lf-contact-row--muted { color: #4b5563; font-size: 13px; }
+.lf-contact-link:hover {
+  color: #93c5fd;
+  text-decoration: underline;
+}
+
+.lf-contact-row--muted {
+  color: #4b5563;
+  font-size: 13px;
+}
 
 .lf-email-btn {
   display: flex;
@@ -897,77 +852,28 @@
   gap: 7px;
   padding: 12px;
   border-radius: 10px;
-  background: #e85d26;
-  color: #fff;
+  background: #e2e8f0;
+  color: #0a0a0a;
   font-size: 13px;
   font-weight: 700;
   text-decoration: none;
   margin-top: 4px;
-  transition: background 0.15s, box-shadow 0.15s;
-  box-shadow: 0 0 14px rgba(232,93,38,0.3);
-}
-.lf-email-btn i { font-size: 16px; }
-.lf-email-btn:hover { background: #f06030; box-shadow: 0 0 18px rgba(232,93,38,0.4); }
-
-/* ════════════════════════════════
-   RESOLVE CONFIRM MODAL
-   ════════════════════════════════ */
-.lf-confirm-modal {
-  width: 88%;
-  max-width: 310px;
-  background: #111;
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 18px;
-  padding: 26px 22px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  text-align: center;
-  animation: lf-slideUp 0.22s ease;
-  box-shadow: 0 0 30px rgba(255,255,255,0.07);
+  transition: background 0.15s;
 }
 
-.lf-confirm-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
-  background: rgba(74,222,128,0.07);
-  border: 1px solid rgba(74,222,128,0.28);
-  box-shadow: 0 0 12px rgba(74,222,128,0.12);
-  display: grid;
-  place-items: center;
-  margin-bottom: 2px;
-}
-.lf-confirm-icon i { font-size: 24px; color: #4ade80; }
-
-.lf-confirm-title {
+.lf-email-btn i {
   font-size: 16px;
-  font-weight: 700;
-  color: #f1f5f9;
-  margin: 0;
 }
 
-.lf-confirm-sub {
-  font-size: 12.5px;
-  color: #4b5563;
-  margin: 0;
-  line-height: 1.5;
+.lf-email-btn:hover {
+  background: #f1f5f9;
 }
 
-.lf-confirm-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  width: 100%;
-  margin-top: 6px;
-}
-
-/* ════════════════════════════════
-   RESPONSIVE
-   ════════════════════════════════ */
+/* ── RESPONSIVE ── */
 @media (min-width: 640px) {
-  .lf-overlay { align-items: center; }
+  .lf-overlay {
+    align-items: center;
+  }
 
   .lf-modal,
   .lf-contact-modal {
@@ -982,5 +888,7 @@
 }
 
 @media (min-width: 1024px) {
-  .lf-cards { grid-template-columns: repeat(3, 1fr); }
+  .lf-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }

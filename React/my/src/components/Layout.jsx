@@ -39,7 +39,13 @@ const BROWSE_ITEMS = [
     path: "/complaint",
     name: "Raise Complaint",
   },
-{ icon: "bx-search-alt-2", label: "Lost & Found", path: "/lost-found", name: "Lost & Found" },  {
+  {
+    icon: "bx-search-alt-2",
+    label: "Lost & Found",
+    path: "/lost-found",
+    name: "Lost & Found",
+  },
+  {
     icon: "bx-briefcase",
     label: "Placements",
     path: "/placements",
@@ -51,7 +57,12 @@ const BROWSE_ITEMS = [
     path: "/facilities",
     name: "Facilities",
   },
-  { icon: "bx-bus", label: "Transport", path: "/transport", name: "Transport" },
+  {
+    icon: "bx-calendar-check",
+    label: "Attendance",
+    path: "/attendance",
+    name: "Attendance",
+  },
   {
     icon: "bx-food-menu",
     label: "Cafeteria",

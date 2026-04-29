@@ -29,7 +29,8 @@ import SupportUs from "./pages/SupportUs";
 import Syllabus from "./pages/Syllabus";
 import RaiseComplaint from "./pages/RaiseComplaint";
 import Placements from "./pages/Placements";
-import Attendancepage from "./pages/Attendance";
+import Attendance from "./pages/Attendance"; // ← updated import
+import AdminAttendance from "./pages/AdminAttendance"; // ← updated import
 import AdminPlacements from "./pages/AdminPlacements";
 import LostFound from "./pages/LostFound";
 
@@ -41,37 +42,6 @@ const ProtectedLayout = () =>
   isAuthenticated() ? <Layout /> : <Navigate to="/login" replace />;
 
 function App() {
-  // TEMP DEBUG — remove after fix
-  const components = {
-    AdminExplorer,
-    Layout,
-    Explorer,
-    Home,
-    Login,
-    Register,
-    ForgotPassword,
-    CompleteRegister,
-    LinkAccount,
-    Profile,
-    Bus,
-    FacultyProfile,
-    Settings,
-    Help,
-    SearchPage,
-    SupportUs,
-    Syllabus,
-    RaiseComplaint,
-    Placements,
-    AdminPlacements,
-    LostFound,
-    ComingSoon,
-  };
-  Object.entries(components).forEach(([name, comp]) => {
-    if (typeof comp !== "function") {
-      console.error(`❌ BAD IMPORT: ${name} is`, typeof comp, comp);
-    }
-  });
-
   return (
     <Router>
       <Routes>
@@ -103,7 +73,11 @@ function App() {
           <Route path="/complaint" element={<RaiseComplaint />} />
           <Route path="/placements" element={<Placements />} />
 
-          {/* Admin pages — Firebase will add role guard here later */}
+          {/* Attendance — now live ✅ */}
+          <Route path="/attendance" element={<Attendance />} />
+          <Route path="/admin/attendance" element={<AdminAttendance />} />
+
+          {/* Admin pages */}
           <Route path="/admin/placements" element={<AdminPlacements />} />
 
           {/* Lost & Found */}
@@ -115,9 +89,7 @@ function App() {
           <Route path="/transport" element={<ComingSoon />} />
           <Route path="/cafeteria" element={<ComingSoon />} />
           <Route path="/library" element={<ComingSoon />} />
-          <Route path="/attendance" element={<ComingSoon />} />
           <Route path="/results" element={<ComingSoon />} />
-          <Route path="/lost-found" element={<ComingSoon />} />
           <Route path="/events" element={<ComingSoon />} />
           <Route path="/notices" element={<ComingSoon />} />
           <Route path="/assignments" element={<ComingSoon />} />

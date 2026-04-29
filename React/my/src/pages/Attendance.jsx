@@ -1,35 +1,301 @@
 import { useState, useEffect } from "react";
-import styles from "./AttendancePage.css";
+import "../styles/Attendance.css";
 
-const subjects = [
-  { id: 1, name: "Mathematics", code: "MATH301", attended: 38, total: 45, icon: "📐" },
-  { id: 2, name: "Physics", code: "PHY201", attended: 30, total: 40, icon: "⚛️" },
-  { id: 3, name: "Computer Science", code: "CS401", attended: 42, total: 44, icon: "💻" },
-  { id: 4, name: "English", code: "ENG101", attended: 22, total: 35, icon: "📖" },
-  { id: 5, name: "Chemistry", code: "CHEM202", attended: 28, total: 38, icon: "🧪" },
-];
+const semesterData = {
+  1: [
+    {
+      id: 1,
+      name: "Mathematics I",
+      code: "MATH101",
+      attended: 38,
+      total: 45,
+      icon: "📐",
+    },
+    {
+      id: 2,
+      name: "Physics I",
+      code: "PHY101",
+      attended: 30,
+      total: 40,
+      icon: "⚛️",
+    },
+    {
+      id: 3,
+      name: "English",
+      code: "ENG101",
+      attended: 22,
+      total: 35,
+      icon: "📖",
+    },
+    {
+      id: 4,
+      name: "Programming Fundamentals",
+      code: "CS101",
+      attended: 42,
+      total: 44,
+      icon: "💻",
+    },
+  ],
+  2: [
+    {
+      id: 1,
+      name: "Mathematics II",
+      code: "MATH201",
+      attended: 35,
+      total: 42,
+      icon: "📐",
+    },
+    {
+      id: 2,
+      name: "Physics II",
+      code: "PHY201",
+      attended: 28,
+      total: 38,
+      icon: "⚛️",
+    },
+    {
+      id: 3,
+      name: "Chemistry",
+      code: "CHEM201",
+      attended: 20,
+      total: 36,
+      icon: "🧪",
+    },
+    {
+      id: 4,
+      name: "Data Structures",
+      code: "CS201",
+      attended: 40,
+      total: 44,
+      icon: "💻",
+    },
+  ],
+  3: [
+    {
+      id: 1,
+      name: "Discrete Mathematics",
+      code: "MATH301",
+      attended: 33,
+      total: 40,
+      icon: "📐",
+    },
+    {
+      id: 2,
+      name: "Computer Networks",
+      code: "CS301",
+      attended: 36,
+      total: 42,
+      icon: "🌐",
+    },
+    {
+      id: 3,
+      name: "Database Systems",
+      code: "CS302",
+      attended: 38,
+      total: 44,
+      icon: "🗄️",
+    },
+    {
+      id: 4,
+      name: "Operating Systems",
+      code: "CS303",
+      attended: 25,
+      total: 40,
+      icon: "⚙️",
+    },
+  ],
+  4: [
+    {
+      id: 1,
+      name: "Algorithms",
+      code: "CS401",
+      attended: 42,
+      total: 44,
+      icon: "🔢",
+    },
+    {
+      id: 2,
+      name: "Software Engineering",
+      code: "CS402",
+      attended: 30,
+      total: 40,
+      icon: "🛠️",
+    },
+    {
+      id: 3,
+      name: "Machine Learning",
+      code: "CS403",
+      attended: 28,
+      total: 38,
+      icon: "🤖",
+    },
+    {
+      id: 4,
+      name: "Web Development",
+      code: "CS404",
+      attended: 38,
+      total: 42,
+      icon: "🕸️",
+    },
+  ],
+  5: [
+    {
+      id: 1,
+      name: "Compiler Design",
+      code: "CS501",
+      attended: 30,
+      total: 40,
+      icon: "🔧",
+    },
+    {
+      id: 2,
+      name: "Computer Graphics",
+      code: "CS502",
+      attended: 22,
+      total: 36,
+      icon: "🎨",
+    },
+    {
+      id: 3,
+      name: "Cryptography",
+      code: "CS503",
+      attended: 35,
+      total: 44,
+      icon: "🔐",
+    },
+    {
+      id: 4,
+      name: "Cloud Computing",
+      code: "CS504",
+      attended: 38,
+      total: 42,
+      icon: "☁️",
+    },
+  ],
+  6: [
+    {
+      id: 1,
+      name: "Distributed Systems",
+      code: "CS601",
+      attended: 28,
+      total: 38,
+      icon: "🖧",
+    },
+    {
+      id: 2,
+      name: "AI & Deep Learning",
+      code: "CS602",
+      attended: 36,
+      total: 44,
+      icon: "🧠",
+    },
+    {
+      id: 3,
+      name: "Blockchain",
+      code: "CS603",
+      attended: 20,
+      total: 36,
+      icon: "⛓️",
+    },
+    {
+      id: 4,
+      name: "Project Management",
+      code: "CS604",
+      attended: 40,
+      total: 42,
+      icon: "📋",
+    },
+  ],
+  7: [
+    {
+      id: 1,
+      name: "Research Methodology",
+      code: "CS701",
+      attended: 18,
+      total: 24,
+      icon: "🔬",
+    },
+    {
+      id: 2,
+      name: "Data Mining",
+      code: "CS702",
+      attended: 20,
+      total: 28,
+      icon: "⛏️",
+    },
+    {
+      id: 3,
+      name: "IoT Systems",
+      code: "CS703",
+      attended: 22,
+      total: 28,
+      icon: "📡",
+    },
+    {
+      id: 4,
+      name: "Elective I",
+      code: "CS704",
+      attended: 16,
+      total: 22,
+      icon: "🎯",
+    },
+  ],
+  8: [
+    {
+      id: 1,
+      name: "Project Work",
+      code: "CS801",
+      attended: 18,
+      total: 20,
+      icon: "🚀",
+    },
+    {
+      id: 2,
+      name: "Seminar",
+      code: "CS802",
+      attended: 10,
+      total: 12,
+      icon: "🎤",
+    },
+    {
+      id: 3,
+      name: "Industrial Training",
+      code: "CS803",
+      attended: 28,
+      total: 30,
+      icon: "🏭",
+    },
+    {
+      id: 4,
+      name: "Elective II",
+      code: "CS804",
+      attended: 16,
+      total: 20,
+      icon: "🎓",
+    },
+  ],
+};
 
-function CircularProgress({ percentage, size = 110, strokeWidth = 9, color }) {
+function getRingColor(pct) {
+  if (pct >= 75) return "#4ade80";
+  if (pct >= 60) return "#facc15";
+  return "#f87171";
+}
+
+function CircularProgress({ percentage, size = 72, strokeWidth = 6 }) {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (percentage / 100) * circumference;
-
-  const getColor = (pct) => {
-    if (pct >= 75) return "#f97316";
-    if (pct >= 60) return "#eab308";
-    return "#ef4444";
-  };
-
-  const ringColor = color || getColor(percentage);
+  const color = getRingColor(percentage);
 
   return (
-    <svg width={size} height={size} className={styles.circularSvg}>
+    <svg width={size} height={size} className="att-ring">
       <circle
         cx={size / 2}
         cy={size / 2}
         r={radius}
         fill="none"
-        stroke="#2a2a2a"
+        stroke="rgba(255,255,255,0.08)"
         strokeWidth={strokeWidth}
       />
       <circle
@@ -37,13 +303,13 @@ function CircularProgress({ percentage, size = 110, strokeWidth = 9, color }) {
         cy={size / 2}
         r={radius}
         fill="none"
-        stroke={ringColor}
+        stroke={color}
         strokeWidth={strokeWidth}
         strokeDasharray={circumference}
         strokeDashoffset={offset}
         strokeLinecap="round"
         transform={`rotate(-90 ${size / 2} ${size / 2})`}
-        className={styles.progressRing}
+        style={{ transition: "stroke-dashoffset 0.8s cubic-bezier(.4,0,.2,1)" }}
       />
       <text
         x="50%"
@@ -51,9 +317,9 @@ function CircularProgress({ percentage, size = 110, strokeWidth = 9, color }) {
         dominantBaseline="middle"
         textAnchor="middle"
         fill="#fff"
-        fontSize="18"
+        fontSize={size * 0.2}
         fontWeight="700"
-        fontFamily="'Rajdhani', sans-serif"
+        fontFamily="'DM Mono', monospace"
       >
         {percentage}%
       </text>
@@ -61,253 +327,264 @@ function CircularProgress({ percentage, size = 110, strokeWidth = 9, color }) {
   );
 }
 
-function SubjectCard({ subject }) {
-  const percentage = Math.round((subject.attended / subject.total) * 100);
-  const isLow = percentage < 75;
+function SubjectCard({ subject, index }) {
+  const pct = Math.round((subject.attended / subject.total) * 100);
+  const isLow = pct < 75;
+  const color = getRingColor(pct);
 
   return (
-    <div className={`${styles.subjectCard} ${isLow ? styles.lowCard : ""}`}>
-      <div className={styles.subjectLeft}>
-        <span className={styles.subjectIcon}>{subject.icon}</span>
-        <div>
-          <p className={styles.subjectName}>{subject.name}</p>
-          <p className={styles.subjectCode}>{subject.code}</p>
-          <div className={styles.classesRow}>
-            <span className={styles.attended}>{subject.attended} attended</span>
-            <span className={styles.divider}>/</span>
-            <span className={styles.totalClasses}>{subject.total} total</span>
-          </div>
+    <div
+      className={`scard ${isLow ? "scard--low" : ""}`}
+      style={{ animationDelay: `${index * 55}ms` }}
+    >
+      <div className="scard__icon">{subject.icon}</div>
+      <div className="scard__body">
+        <div className="scard__name">{subject.name}</div>
+        <div className="scard__meta">
+          <span className="scard__code">{subject.code}</span>
+          <span className="scard__sep">·</span>
+          <span className="scard__count">
+            {subject.attended}/{subject.total}
+          </span>
+        </div>
+        <div className="scard__track">
+          <div
+            className="scard__fill"
+            style={{ width: `${pct}%`, background: color }}
+          />
         </div>
       </div>
-      <div className={styles.subjectRight}>
-        <CircularProgress percentage={percentage} size={70} strokeWidth={6} />
-        {isLow && <span className={styles.lowBadge}>LOW</span>}
+      <div className="scard__right">
+        <CircularProgress percentage={pct} size={58} strokeWidth={5} />
+        {isLow && <span className="scard__low">LOW</span>}
       </div>
     </div>
   );
 }
 
-function CalculatorTab() {
-  const [totalClasses, setTotalClasses] = useState("");
-  const [attendedClasses, setAttendedClasses] = useState("");
-  const [targetPercentage, setTargetPercentage] = useState(75);
+function Calculator() {
+  const [total, setTotal] = useState("");
+  const [attended, setAttended] = useState("");
   const [result, setResult] = useState(null);
+  const [err, setErr] = useState(false);
+
+  const pctLive =
+    total && attended
+      ? Math.min(100, Math.round((parseInt(attended) / parseInt(total)) * 100))
+      : 0;
 
   const calculate = () => {
-    const total = parseInt(totalClasses);
-    const attended = parseInt(attendedClasses);
-    if (!total || !attended || attended > total) return;
-
-    const current = Math.round((attended / total) * 100);
-    const target = targetPercentage;
-
-    // Classes needed to reach target
-    // (attended + x) / (total + x) = target/100
-    // attended + x = target/100 * (total + x)
-    // attended + x = target*total/100 + target*x/100
-    // x - target*x/100 = target*total/100 - attended
-    // x(1 - target/100) = target*total/100 - attended
-    // x = (target*total/100 - attended) / (1 - target/100)
-
-    let classesNeeded = 0;
-    let canBunk = 0;
-
-    if (current < target) {
-      classesNeeded = Math.ceil(
-        (target * total / 100 - attended) / (1 - target / 100)
-      );
-    } else {
-      // How many can be bunked?
-      // (attended) / (total + x) >= target/100
-      // attended >= target * (total + x) / 100
-      // 100*attended >= target*total + target*x
-      // 100*attended - target*total >= target*x
-      // x <= (100*attended - target*total) / target
-      canBunk = Math.floor((100 * attended - target * total) / target);
+    const t = parseInt(total);
+    const a = parseInt(attended);
+    if (!t || isNaN(a) || a > t || t <= 0 || a < 0) {
+      setErr(true);
+      setTimeout(() => setErr(false), 500);
+      return;
     }
-
-    setResult({ current, classesNeeded, canBunk, total, attended, target });
+    const current = Math.round((a / t) * 100);
+    const target = 75;
+    let classesNeeded = 0,
+      canBunk = 0;
+    if (current < target) {
+      classesNeeded = Math.ceil(((target * t) / 100 - a) / (1 - target / 100));
+    } else {
+      canBunk = Math.floor((100 * a - target * t) / target);
+    }
+    setResult({ current, classesNeeded, canBunk, total: t, attended: a });
   };
 
   return (
-    <div className={styles.calcContainer}>
-      <p className={styles.calcDesc}>
-        Find out how many classes you can skip — or need to attend.
+    <div className="calc">
+      <p className="calc__desc">
+        Enter your class data to find out how many you can skip or need to
+        attend to stay above 75%.
       </p>
 
-      <div className={styles.inputGroup}>
-        <label className={styles.inputLabel}>Total Classes Held</label>
-        <input
-          className={styles.calcInput}
-          type="number"
-          placeholder="e.g. 45"
-          value={totalClasses}
-          onChange={(e) => setTotalClasses(e.target.value)}
-          min="1"
-        />
+      <div className="calc__preview">
+        <CircularProgress percentage={pctLive} size={90} strokeWidth={7} />
+        <span className="calc__preview-lbl">Live Preview</span>
       </div>
 
-      <div className={styles.inputGroup}>
-        <label className={styles.inputLabel}>Classes Attended</label>
-        <input
-          className={styles.calcInput}
-          type="number"
-          placeholder="e.g. 38"
-          value={attendedClasses}
-          onChange={(e) => setAttendedClasses(e.target.value)}
-          min="0"
-        />
-      </div>
-
-      <div className={styles.inputGroup}>
-        <label className={styles.inputLabel}>
-          Target Attendance — <span className={styles.targetVal}>{targetPercentage}%</span>
-        </label>
-        <input
-          className={styles.rangeInput}
-          type="range"
-          min="50"
-          max="100"
-          value={targetPercentage}
-          onChange={(e) => setTargetPercentage(parseInt(e.target.value))}
-        />
-        <div className={styles.rangeLabels}>
-          <span>50%</span><span>75%</span><span>100%</span>
+      <div className={`calc__row ${err ? "calc__row--err" : ""}`}>
+        <div className="calc__field">
+          <label>Total Classes</label>
+          <input
+            type="number"
+            placeholder="45"
+            value={total}
+            min="1"
+            onChange={(e) => setTotal(e.target.value)}
+          />
+        </div>
+        <div className="calc__field">
+          <label>Attended</label>
+          <input
+            type="number"
+            placeholder="38"
+            value={attended}
+            min="0"
+            onChange={(e) => setAttended(e.target.value)}
+          />
         </div>
       </div>
 
-      <button className={styles.calcBtn} onClick={calculate}>
-        <span>⚡</span> Calculate
+      <button className="calc__btn" onClick={calculate}>
+        Calculate
       </button>
 
       {result && (
-        <div className={styles.resultBox}>
-          <div className={styles.resultHeader}>
-            <CircularProgress percentage={result.current} size={90} strokeWidth={7} />
-            <div>
-              <p className={styles.resultTitle}>Current Status</p>
-              <p className={styles.resultSub}>
-                {result.attended} / {result.total} classes
-              </p>
-            </div>
+        <div
+          className={`calc__result ${result.current < 75 ? "calc__result--bad" : "calc__result--good"}`}
+        >
+          <CircularProgress
+            percentage={result.current}
+            size={72}
+            strokeWidth={6}
+          />
+          <div className="calc__result-info">
+            <p className="calc__result-status">
+              {result.current >= 75 ? "You're Safe ✓" : "Below Target ✗"}
+            </p>
+            <p className="calc__result-fraction">
+              {result.attended}/{result.total} attended
+            </p>
+            <p className="calc__result-msg">
+              {result.current < 75 ? (
+                <>
+                  Need <strong>{result.classesNeeded}</strong> more classes to
+                  reach 75%
+                </>
+              ) : (
+                <>
+                  Can skip <strong>{result.canBunk}</strong> more and stay above
+                  75%
+                </>
+              )}
+            </p>
           </div>
-
-          {result.current < result.target ? (
-            <div className={styles.resultAlert + " " + styles.alertDanger}>
-              <span className={styles.alertIcon}>⚠️</span>
-              <div>
-                <p className={styles.alertTitle}>Attendance Below Target</p>
-                <p className={styles.alertMsg}>
-                  Attend <strong>{result.classesNeeded}</strong> consecutive classes to reach {result.target}%
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div className={styles.resultAlert + " " + styles.alertSuccess}>
-              <span className={styles.alertIcon}>✅</span>
-              <div>
-                <p className={styles.alertTitle}>You're on Track!</p>
-                <p className={styles.alertMsg}>
-                  You can skip up to <strong>{result.canBunk}</strong> more classes and stay above {result.target}%
-                </p>
-              </div>
-            </div>
-          )}
         </div>
       )}
     </div>
   );
 }
 
-export default function AttendancePage() {
-  const [activeTab, setActiveTab] = useState("overview");
+export default function Attendence() {
+  const [sem, setSem] = useState(3);
+  const [tab, setTab] = useState("subjects");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    setTimeout(() => setMounted(true), 40);
   }, []);
 
-  const totalAttended = subjects.reduce((a, s) => a + s.attended, 0);
-  const totalClasses = subjects.reduce((a, s) => a + s.total, 0);
-  const overallPct = Math.round((totalAttended / totalClasses) * 100);
-  const lowSubjects = subjects.filter(
-    (s) => Math.round((s.attended / s.total) * 100) < 75
-  );
+  const subjects = semesterData[sem] || [];
+  const totalAtt = subjects.reduce((a, s) => a + s.attended, 0);
+  const totalCls = subjects.reduce((a, s) => a + s.total, 0);
+  const overallPct = totalCls ? Math.round((totalAtt / totalCls) * 100) : 0;
+  const lowCount = subjects.filter(
+    (s) => Math.round((s.attended / s.total) * 100) < 75,
+  ).length;
 
   return (
-    <div className={`${styles.page} ${mounted ? styles.mounted : ""}`}>
+    <div className={`att ${mounted ? "att--in" : ""}`}>
       {/* Header */}
-      <div className={styles.header}>
-        <button className={styles.backBtn}>←</button>
-        <div className={styles.headerInfo}>
-          <div className={styles.headerIcon}>📊</div>
-          <div>
-            <h1 className={styles.headerTitle}>Attendance</h1>
-            <p className={styles.headerSub}>Track your academic presence</p>
+      <div className="att__header">
+        <button className="att__back" onClick={() => window.history.back()}>
+          ←
+        </button>
+        <h1 className="att__title">Attendance</h1>
+        <span
+          className="att__overall-badge"
+          style={{
+            color: getRingColor(overallPct),
+            borderColor: getRingColor(overallPct) + "44",
+          }}
+        >
+          {overallPct}%
+        </span>
+      </div>
+
+      {/* Semester Pills */}
+      <div className="sem-bar">
+        {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
+          <button
+            key={s}
+            className={`sem-btn ${sem === s ? "sem-btn--on" : ""}`}
+            onClick={() => setSem(s)}
+          >
+            Sem {s}
+          </button>
+        ))}
+      </div>
+
+      {/* Overview Card */}
+      <div className="overview">
+        <CircularProgress percentage={overallPct} size={100} strokeWidth={8} />
+        <div className="overview__info">
+          <p className="overview__label">SEMESTER {sem}</p>
+          <p className="overview__fraction">
+            {totalAtt}
+            <span>/{totalCls}</span>
+          </p>
+          <p className="overview__sub">classes attended</p>
+          <div className="overview__badges">
+            {lowCount > 0 ? (
+              <span className="badge badge--warn">⚠ {lowCount} below 75%</span>
+            ) : (
+              <span className="badge badge--ok">✓ All clear</span>
+            )}
+            <span className="badge badge--muted">
+              {totalCls - totalAtt} missed
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Overall Score Card */}
-      <div className={styles.overallCard}>
-        <div className={styles.overallLeft}>
-          <CircularProgress percentage={overallPct} size={110} strokeWidth={9} color="#f97316" />
-        </div>
-        <div className={styles.overallRight}>
-          <p className={styles.overallLabel}>OVERALL ATTENDANCE</p>
-          <p className={styles.overallFraction}>{totalAttended} / {totalClasses}</p>
-          <p className={styles.overallSemester}>Semester · 2025–26</p>
-          {lowSubjects.length > 0 ? (
-            <span className={styles.warnBadge}>⚠ {lowSubjects.length} subject{lowSubjects.length > 1 ? "s" : ""} below 75%</span>
-          ) : (
-            <span className={styles.goodBadge}>✓ All subjects healthy</span>
-          )}
-        </div>
-      </div>
-
-      {/* Stats Row */}
-      <div className={styles.statsRow}>
-        <div className={styles.statBox}>
-          <p className={styles.statVal}>{totalClasses}</p>
-          <p className={styles.statLbl}>Total Classes</p>
-        </div>
-        <div className={styles.statBox}>
-          <p className={styles.statVal}>{totalAttended}</p>
-          <p className={styles.statLbl}>Attended</p>
-        </div>
-        <div className={styles.statBox}>
-          <p className={`${styles.statVal} ${styles.missed}`}>{totalClasses - totalAttended}</p>
-          <p className={styles.statLbl}>Missed</p>
-        </div>
+      {/* Stats */}
+      <div className="stats">
+        {[
+          { label: "Total", val: totalCls, color: "#fff" },
+          { label: "Present", val: totalAtt, color: "#4ade80" },
+          { label: "Absent", val: totalCls - totalAtt, color: "#f87171" },
+        ].map((s) => (
+          <div key={s.label} className="stat">
+            <p className="stat__val" style={{ color: s.color }}>
+              {s.val}
+            </p>
+            <p className="stat__lbl">{s.label}</p>
+          </div>
+        ))}
       </div>
 
       {/* Tabs */}
-      <div className={styles.tabs}>
+      <div className="tabs">
         <button
-          className={`${styles.tab} ${activeTab === "overview" ? styles.activeTab : ""}`}
-          onClick={() => setActiveTab("overview")}
+          className={`tab-btn ${tab === "subjects" ? "tab-btn--on" : ""}`}
+          onClick={() => setTab("subjects")}
         >
           Subjects
         </button>
         <button
-          className={`${styles.tab} ${activeTab === "calculator" ? styles.activeTab : ""}`}
-          onClick={() => setActiveTab("calculator")}
+          className={`tab-btn ${tab === "calculator" ? "tab-btn--on" : ""}`}
+          onClick={() => setTab("calculator")}
         >
           ⚡ Calculator
         </button>
       </div>
 
-      {/* Tab Content */}
-      {activeTab === "overview" ? (
-        <div className={styles.subjectList}>
-          <p className={styles.sectionLabel}>SUBJECT-WISE BREAKDOWN</p>
-          {subjects.map((s) => (
-            <SubjectCard key={s.id} subject={s} />
-          ))}
-        </div>
-      ) : (
-        <CalculatorTab />
-      )}
+      {/* Content */}
+      <div className="att__content">
+        {tab === "subjects" ? (
+          <>
+            <p className="section-lbl">SUBJECT-WISE · SEM {sem}</p>
+            {subjects.map((s, i) => (
+              <SubjectCard key={s.id} subject={s} index={i} />
+            ))}
+          </>
+        ) : (
+          <Calculator />
+        )}
+      </div>
     </div>
   );
 }
