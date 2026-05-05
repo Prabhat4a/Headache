@@ -1423,3 +1423,58 @@ body {
   overflow-x: hidden;
   padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
 }
+/* Fix button styles bleeding into child page components */
+.page-content button {
+  background: revert;
+  border: revert;
+  padding: revert;
+  color: revert;
+}
+/* ═══════════════════════════════════════════════════════════
+   PATCH — add these lines at the very bottom of Explorer.css
+   Do NOT change anything else in Explorer.css
+═══════════════════════════════════════════════════════════ */
+
+/* 1. Stops the header search/bell/menu icons from visually
+      overflowing outside the header bar on small screens */
+.app-header {
+  overflow: hidden;
+}
+
+/* 2. Prevents the notification/menu panels from being clipped
+      (they need to escape the header — use a wrapper trick) */
+.notification-panel,
+.menu-panel {
+  overflow: visible !important;
+}
+
+/* 3. Explicit button base so child pages don't fight UA styles.
+      This is a NEUTRAL reset — it doesn't impose any visual style,
+      it just makes buttons a clean slate that child CSS can paint. */
+button {
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  /* Do NOT set background/border/color here — let child CSS handle it */
+}
+
+/* 4. Fix lf-tabs not wrapping — tab count badges were overflowing */
+.lf-tabs {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.lf-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+/* 5. Fix card-top flex direction — "LostYour Post" issue
+      The pill was rendering before the title due to RTL/flex quirk */
+.lf-card-top {
+  flex-direction: row !important;
+}
+
+/* 6. page-content overflow fix — sticky header inside needs this */
+.page-content.active {
+  position: relative;
+}
